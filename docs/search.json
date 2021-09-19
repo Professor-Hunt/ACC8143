@@ -5,16 +5,22 @@
       "title": "About this site",
       "description": "Some additional details about the website",
       "author": [],
-      "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2021-09-18T21:47:45-05:00"
+      "contents": "\r\nThe is a course website for ACC 8143 Accounting Data Analytics. This course is derived from a Deloitte Data Analytics course made by the University of Illinois.\r\nStudents will use R statistical software for ETL (extraction, transformation, and loading data). Specifically, R and RStudio (GUI for R) will be used in conjunction with Tidyverse R packages for advanced manipulation and visualizations. Students will learn to use Git and GitHub. Git and GitHub are extensively used for data analytics in practice. GitHub will show the students the importance of version control and the value of coding with care. Students will also learn Markdown which is a framework for presenting interactive reports, dashboards, and creating websites. Students will use RStudio, GitHub, Markdown, and Distill r package to make a professional website for showcasing their work in the class. This will help students learn the value of presenting information in a business analytics context and presenting their own work for others to see. Using Rstudio the students will learn how popular machine learning algorithms work, the difference between parametric and nonparametric algorithms, supervised and unsupervised algorithms, the bias-variance trade-off, and overfitting and underfitting algorithms with hands on examples in business contexts.\r\n\r\n\r\n\r\n",
+      "last_modified": "2021-09-18T23:18:37-05:00"
     },
     {
       "path": "index.html",
       "title": "ACC8143",
-      "description": "Welcome to the website. I hope you enjoy it!\n",
-      "author": [],
-      "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2021-09-18T21:47:45-05:00"
+      "description": "Accounting Data Analytics\n",
+      "author": [
+        {
+          "name": "Joshua O.S. Hunt",
+          "url": "https://professor-hunt.com"
+        }
+      ],
+      "date": "`r Sys.Date()`",
+      "contents": "\r\nThis Website will continue to evolve. I am running my course through our LMS (canvas), but I am providing this website and source code for other professors and students to use.\r\n\r\n\r\n\r\n",
+      "last_modified": "2021-09-18T23:18:38-05:00"
     }
   ],
   "collections": []
