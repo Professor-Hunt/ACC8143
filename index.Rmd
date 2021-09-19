@@ -1,7 +1,7 @@
 ---
 title: "ACC8143"
 description: |
-  Welcome to the website. I hope you enjoy it!
+  Accounting Data Analytics
 site: distill::distill_website
 ---
 
