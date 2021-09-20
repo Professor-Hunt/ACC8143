@@ -1,0 +1,364 @@
+---
+title: "Module 1"
+description: |
+  Introduction to machine learning
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+---
+
+# Game Plan
+
+This module provides the basis for the rest of the course by introducing the basic concepts behind machine learning, and, specifically, how to perform machine learning by using RStudio and the CARET R package. First, you will learn how machine learning and artificial intelligence are disrupting businesses. Next, you will learn about the basic types of machine learning and how to leverage these algorithms in a R script. Third, you will learn how linear regression can be considered a machine learning problem with parameters that must be determined computationally by minimizing a *cost* function. Finally, you will learn about neighbor-based algorithms, including the k-nearest neighbor algorithm, which can be used for both classification and regression tasks.
+
+# Objectives
+
+### **By the end of this module, you should be able to:**
+
+-   articulate the different types of machine learning algorithms and provide examples where each type might be applied within the Accounting profession,
+
+-   describe the challenges in cleaning and pre-processing data,
+
+-   apply the Caret Package to perform basic machine learning tasks,
+
+-   understand the importance of a *cost* function and the importance of minimizing this functions,
+
+-   perform general linear regression by using the Caret Package, and
+
+-   apply the k-nearest neighbor algorithm for both classification and regression tasks.
+
+## **Artificial Intelligence and Accountancy**
+
+This lesson explores the fundamentals of machine learning and artificial intelligence and how these tools are being used in accountancy and business in general.
+
+### Interesting Articles
+
+[How is accountancy and finance world using artificial intelligence](https://www.icas.com/ca-today-news/how-accountancy-and-finance-are-using-artificial-intelligence)
+
+[Financial Statement Audits](http://ww2.cfo.com/auditing/2017/02/artificial-intelligence-audits/)
+
+1.  What is the growing role artificial intelligence (and by association, machine learning) play in modern accounting?
+
+2.  What does the impact technology plays in shaping careers in modern accountancy?
+
+3.  How is artificial intelligence impacting financial auditing?
+
+## **Introduction to Machine Learning**[^1]
+
+[^1]: The is borrowed content from <https://insights.principa.co.za/4-types-of-data-analytics-descriptive-diagnostic-predictive-prescriptive>
+
+![](images/4-types-of-data-analytics-principa.png){width="100%"}
+
+*Your most important skill will be your ability to translate data into insights that are clear and meaningful to a stakeholder.*
+
+## **The Four Types of Data Analysis are:**
+
+### **1. Descriptive Analytics: What is happening?**
+
+This is the most common of all forms. In business, it provides the analyst with a view of key metrics and measures within the company.
+
+An example of this could be a monthly profit and loss statement. Similarly, an analyst could have data on a large population of customers. Understanding demographic information on their customers (e.g. 30% of our customers are self-employed) would be categorised as "descriptive analytics". Utilising useful visualisation tools enhances the message of descriptive analytics.
+
+### **2. Diagnostic Analytics: Why is it happening?**
+
+This is the next step in complexity in data analytics is descriptive analytics. On the assessment of the descriptive data, diagnostic analytical tools will empower an analyst to drill down and in so doing isolate the root-cause of a problem.
+
+Well-designed business information (BI) dashboards incorporating reading of time-series data (i.e. data over multiple successive points in time) and featuring filters and drill down capability allow for such analysis.
+
+### **3. Predictive Analytics: What is likely to happen?**
+
+Predictive analytics is all about forecasting. Whether it's the likelihood of an event happening in future, forecasting a quantifiable amount or estimating a point in time at which something might happen - these are all done through predictive models.
+
+Predictive models typically utilise a variety of variable data to make the prediction. The variability of the component data will have a relationship with what it is likely to predict (e.g. the older a person, the more susceptible they are to a heart-attack -- we would say that age has a linear correlation with heart-attack risk). These data are then compiled together into a score or prediction.
+
+In a world of significant uncertainty, being able to predict allows one to make better decisions. Predictive models are some of the most important utilised across many fields.
+
+[Common Issues with Prediction](https://insights.principa.co.za/the-top-predictive-analytics-pitfalls-to-avoid)
+
+### **4. Prescriptive Analytics: What do I need to do?**
+
+The next step up regarding value and complexity is the prescriptive model.  The prescriptive model utilises an understanding of what has happened, why it has happened and a variety of "what-might-happen" analysis to help the user determine the best course of action to take. A prescriptive analysis is typically not just with one individual response but is, in fact, a host of other actions.
+
+An excellent example of this is a traffic application helping you choose the best route home and taking into account the distance of each route, the speed at which one can travel on each road and, crucially, the current traffic constraints.
+
+Another example might be producing an exam time-table such that no students have clashing schedules.
+
+## Getting our hands dirty
+
+As a field, [machine learning](https://en.wikipedia.org/wiki/Machine_learning) is both expansive and mathematically complex. From deriving simple linear relationships via regression analysis to finding clusters of data points in an N-dimensional space; statistical and machine learning techniques can take years to fully master. However, given the short time available in this course, we will take the simpler approach of demonstrating several commonly used approaches in order to both introduce the fundamental concepts in machine learning and the methodology we will use in RStudio to apply these concepts to actual data. For the latter, we will use the standard machine learning library in R, which is the *Caret Package*.
+
+We will demonstrate the four main tasks of machine learning: classification, regression, dimensional reduction, and clustering. Note that this module is simply an introduction to these topics, we will explore these and other areas in more detail throughout this course. Finally, we will discuss how to persist machine learning models.
+
+### Set up
+
+Make sure you have the caret package installed.
+
+```{r, echo=TRUE, eval=FALSE}
+
+install.packages("caret")
+```
+
+Run your libraries
+
+```{r,echo=TRUE,warning=FALSE,message=FALSE}
+library(tidyverse)
+library(caret)
+```
+
+The first steps in any data analytics effort, once the business goal has been defined, are to understand and prepare the data of interest. For example, the [**Cross Industry Standard Process for Data Mining**](https://en.wikipedia.org/wiki/Cross_Industry_Standard_Process_for_Data_Mining) or (**CRISP-DM**) starts with the *Business Understanding* step, immediately followed by the *Data Understanding* and *Data Preparation* steps. For machine learning analyses, these latter two steps require loading the data into our notebook, exploring the data either systematically or in a cumulative sense to understand the typical features for different instances. We also can generate descriptive statistical summaries and visualizations, such as a *pair plot*, to understand the data in full. Finally, we will need to clean the data to properly account for missing data, data that are incomplete or formatted incorrectly, or to generate meta-features (such as a date-time) from existing features.
+
+![](images/800px-CRISP-DM_Process_Diagram.png){width="100%"}
+
+For this module, we will focus on a single, simple data set, the standard *Iris* dataset, which is included by default. Note that given a data set, such as the *Iris* data, we have rows, which correspond to different instances (e.g., different flowers), and columns, which correspond to different features of the instances (e.g., different measurements of the flowers). To understand the data, we first load this data into RStudio, before looking at several instances from the data. Next, we will group the data by species to explore cumulative quantities, before extracting a statistical summary of the entire data set. Finally, we will generate a pair plot to visually explore the data. Since this data has already been cleaned (and only consists of four features) we will not need to perform additional tasks.\
+
+Load the data
+
+```{r, echo=TRUE}
+#load the data
+iris<-iris
+```
+
+The data set consists of 150 total measurements of three different types of Iris flowers, equally divided between three classes: Iris setosa, Iris versicolor, and Iris virginica. Before proceeding, we can examine the DataFrame that contains these data to view typical instances, to see a cumulative summary, and a brief statistical summary.
+
+```{r, echo=TRUE}
+#examine the top 5 rows
+head(iris,5)
+
+#view the whole dataset
+knitr::kable(iris)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+```
+
+```{r,echo=TRUE}
+#examine grouped data
+iris%>%
+  group_by(Species)%>%
+  summarise(count=n())
+```
+
+```{r,echo=TRUE}
+# Get descriptive statistics
+summary(iris)
+
+```
+
+Another handy package
+
+```{r,echo=TRUE,eval=FALSE}
+install.packages("psych")
+
+```
+
+```{r,echo=TRUE}
+psych::describe(iris)
+
+?psych::describe
+
+```
+
+Look up what mad, se, skewness, and kurtosis is... 🕵️
+
+------------------------------------------------------------------------
+
+As demonstrated by the output from the previous code cells, our test data matches our expectations (note that the full Iris data set is listed on [Wikipedia](https://en.wikipedia.org/wiki/Iris_flower_data_set)). These data consist of three types, each with fifty instances, and every row has four measured features (i.e., attributes). The four primary features of the data are *Sepal Length*, *Sepal Width*, *Petal Length*, and *Petal Width*. In simple terms, petals are the showy, colorful part of the Iris flower, while the sepals provide protection and support for the petals.
+
+In addition, our cursory exploration of the DataFrame indicated the data are clean. One simple way to verify this is that the *count* is the same for every feature, and the descriptive statistics (e.g., *min*, *max*, and *mean*) are all numerical. If we had missing or bad data in our DataFrame, these measures would generally indicate the problem. If there were missing data, we could drop any instance with missing data by using the `na.omit` method, or alternatively insert a value by using [`mutate`](https://towardsdatascience.com/data-cleaning-with-r-and-the-tidyverse-detecting-missing-values-ea23c519bc62) . An alternative, and powerful, technique for handling missing data is known as **imputing**, where we apply machine learning[^2] to generate *realistic* values for any missing data. This approach will be demonstrated in a subsequent module.
+
+[^2]: This is a narrow definition because you can also impute with summary statistics such as mean or median.
+
+At this point, we have loaded our data, and verified the data are clean. The next step is to visualize the relationships between the different features in our data.
+
+Lets use another package 😆
+
+```{r, echo=TRUE,eval=FALSE}
+install.packages("GGally")
+```
+
+Look at me 👀 [ggpairs function](https://r-charts.com/correlation/ggpairs/) 👀
+
+```{r,echo=TRUE,warning=FALSE}
+GGally::ggpairs(iris)
+```
+
+```{r,echo=TRUE,warning=FALSE}
+GGally::ggpairs(iris, aes(color = Species, alpha = 0.5))
+```
+
+These figures indicate that the three Iris species cluster naturally in these dimensions, with minimal overlap. As a result, these data provide an excellent test for different machine learning algorithms.
+
+First, however, we will generate one [scatter plot](https://moderndive.com/2-viz.html#scatterplots) that displays a larger version of the *Sepal Width* versus *Petal Width* scatter plot to highlight the inherent structure in these data. Furthermore, we will refer back to this plot in later analyses in this Module.
+
+```{r, echo=TRUE}
+#crash course in plots?
+ggplot(data=iris,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species))+geom_point(alpha=0.5)
+```
+
+<details>
+
+<summary>
+
+### Side Note...Other plots 🙈
+
+</summary>
+
+<p>
+
+[Line Graph](https://moderndive.com/2-viz.html#linegraphs)
+
+```{r,echo=TRUE}
+#line graph..this is a TERRIBLE example...
+#ask me why
+iris.setosa<-iris%>%
+  filter(Species=="setosa")%>%
+  distinct(Sepal.Width,.keep_all = TRUE)
+
+ggplot(data=iris.setosa,mapping = aes(x=Sepal.Width,y=Sepal.Length))+geom_line()
+
+```
+
+[Histograms](https://moderndive.com/2-viz.html#histograms)
+
+```{r,echo=TRUE}
+ggplot(data=iris,mapping = aes(x=Sepal.Length,color=Species))+geom_histogram()
+```
+
+[Boxplots](https://moderndive.com/2-viz.html#boxplots)
+
+```{r,echo=TRUE}
+ggplot(data=iris,mapping = aes(x=Species,y=Sepal.Length))+geom_boxplot()
+```
+
+[Bar plots](https://moderndive.com/2-viz.html#geombar)
+
+```{r,echo=TRUE}
+ggplot(data=iris,mapping = aes(x=Species))+geom_bar()
+```
+
+</p>
+
+</details>
+
+# Introducing Machine Learning
+
+Machine learning algorithms can be classified by the method in which they are constructed. [Supervised learning](https://en.wikipedia.org/wiki/Supervised_learning) methods use training data to build a model, which is subsequently applied to additional data. On the other hand, [unsupervised learning](https://en.wikipedia.org/wiki/Unsupervised_learning) methods seek relationships among data points that can be leveraged to construct a model that is subsequently applied to the data of interest. In some cases, training data are used to validate the effectiveness of an unsupervised method, or perhaps to provide some level of supervision, which is known as [semi-supervised learning](https://en.wikipedia.org/wiki/Semi-supervised_learning).
+
+More recently, additional types of learning have been developed. First, [transfer learning](https://en.wikipedia.org/wiki/Transfer_learning) extends a model trained on a previous data set to new, related data. This can be viewed as learning by analogy, which is similar to how humans learn. Second, [reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning#Current_research) is a technique that explores how agents should behave within an environment by maximizing a cumulative reward. Finally, [deep learning](https://en.wikipedia.org/wiki/Deep_learning) applies artificial neural networks that have multiple hidden layers to complex tasks, often with spectacular success in areas from image recognition to natural language processing.
+
+Broadly speaking, the application of a machine learning algorithm will be one of four different categories:
+
+1.  [Classification](https://en.wikipedia.org/wiki/Statistical_classification): generates a model that predicts discrete categories for new, unseen data.
+
+2.  [Regression](https://en.wikipedia.org/wiki/Regression_analysis): generates a model that predicts continuous values for new, unseen data.
+
+3.  [Dimensionality reduction](https://en.wikipedia.org/wiki/Dimensionality_reduction): identifies (and optionally ranks) the most important (potentially new) features (or dimensions) for a data set.
+
+4.  [Clustering](https://en.wikipedia.org/wiki/Cluster_analysis): identifies clusters of instances in an N-dimensional feature space.
+
+![](images/Machine%20learning%20cheatsheet.png){width="100%"}
+
+One final point to clarify before proceeding with demonstrations of these different algorithm categories. When applying a machine learning algorithm to a problem, we often need to specify both model parameters and model hyperparameters. While they are similar, the difference between these two types of information depends on whether the value can be estimated from the data.
+
+**Parameter**
+
+:   A value that can be estimated from the data being analyzed and that is internal to the machine learning algorithm. A parameter is generally not specified by the programmer, and instead is determined automatically by the algorithm implementation (e.g., directly in the caret package). For example, the coefficients in a linear regression model are machine learning parameters.
+
+**Hyperparameter**
+
+:   A value that cannot be estimated from the data being analyzed and that is external to a specific machine learning algorithm. A hyperparameter is generally specified by the programmer prior to the start of the learning process. As a result, the hyperparameter directly influences the performance of the algorithm and thus is a tunable parameter. For example, the number of neighbors in a k-nearest neighbors implementation is a hyperparameter.
+
+## Introducing Caret[^3]
+
+[^3]: Content for this caret portion is borrowed from <https://www.rebeccabarter.com/blog/2017-11-17-caret_tutorial/>
+
+Caret stands for **C**lassification **A**nd **Re**gression **T**raining. Apparently caret has little to do with our orange friend, the carrot. 🥕
+
+Not only does caret allow you to run a plethora of ML methods, it also provides tools for auxiliary techniques such as:
+
+-   Data preparation (imputation, centering/scaling data, removing correlated predictors, reducing skewness)
+
+-   Data splitting
+
+-   Variable selection
+
+-   Model evaluation
+
+An extensive vignette for caret can be found here: <https://topepo.github.io/caret/index.html>
+
+### **Data Pre-Processing**
+
+Before we can apply a machine learning algorithm to the data of interest, we must divide the data into training and testing data sets. The *training* data are used to generate the supervised model, while the *testing* data are used to quantify the quality of the generated model. The function [`createDataPartition`](https://topepo.github.io/caret/data-splitting.html) can be used to create balanced splits of the data. If the `y` argument to this function is a factor, the random sampling occurs within each class and should preserve the overall class distribution of the data. For example, to create a single 60/40% split of the iris data:
+
+```{r,echo=TRUE}
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+head(trainIndex)
+
+#grab the data
+irisTrain <- iris[ trainIndex,]
+irisTest  <- iris[-trainIndex,]
+```
+
+### **Data Scaling**
+
+Many machine learning <!--# NOT ALL OF THEM --> estimators are sensitive to variations in the spread of features within a data set. For example, if all features but one span similar ranges (e.g., zero through one) and one feature spans a much larger range (e.g., zero through one hundred), an algorithm might focus on the one feature with a larger spread, even if this produces a sub-optimal result. To prevent this, we generally scale the features to improve the performance of a given estimator.
+
+Data scaling can take several forms:
+
+-   **Standardization**: the data are scaled to have zero mean and unit (i.e., one) variance.
+
+-   **Normalization**: the data are scaled to have unit mean and variance.
+
+-   **Range**: the data are scaled to span a defined range, such as [0,1].
+
+-   **Binarization**: the data are thresholded such that values below the threshold are zero (or False), and above the threshold are one (or True).
+
+One important caveat to scaling is that any scaling technique should be *trained* via the `fit` method on the training data used for the machine learning algorithm. Once trained, the scaling technique can be applied equally to the training and testing data. In this manner, the testing data will always match the space spanned by the training data, which is what is used to generate the predictive model.
+
+We demonstrate this approach in the following code cell, where we compute a standardization from our training data. This transformation is applied to both the training and testing data.
+
+```{r,echo=TRUE}
+
+preProcValues <- preProcess(irisTrain, method = c("center", "scale"))
+
+trainTransformed <- predict(preProcValues, irisTrain)
+testTransformed <- predict(preProcValues, irisTest)
+```
+
+```{r,echo=TRUE}
+
+psych::describe(trainTransformed)
+psych::describe(testTransformed)
+```
+
+With our data properly divided into training and testing samples, and the features appropriately scaled, we now change to the application of machine learning algorithms
+
+**Classification**
+
+The first type of algorithm we will demonstrate is classification, where we train an estimator to generate a model for the prediction of discrete labels. The following code cell completes this task by performing k-Nearest Neighbors classification. In this example, we use five nearest neighbors (but this value can be easily adjusted to see how the classification performance changes). As demonstrated in this code example, the standard classification process in caret is to first fit a model to the training data and to subsequently apply this model to predict values for the testing data. We can compute an accuracy measurement for our trained algorithm to compare the *predicted* and *known* labels for the testing data.
+
+Since we set the k there is no reason to actually train... 😖
+
+```{r, echo=TRUE}
+
+#fit knn
+knn_fit<-train(Species~.,
+               data=trainTransformed,
+               method="knn",
+               tuneGrid=data.frame(k=5))
+
+knn_fit
+```
+
+```{r, echo=TRUE}
+#predict on the test set
+knn_pred<-predict(knn_fit,testTransformed)
+
+#confusion
+confusionMatrix(knn_pred,testTransformed$Species)
+
+```
