@@ -5,7 +5,7 @@ description: |
 output: 
   distill::distill_article:
     toc: true
-    toc_depth: 2
+    toc_depth: 3
 ---
 
 # Game Plan
@@ -286,7 +286,7 @@ Not only does caret allow you to run a plethora of ML methods, it also provides 
 
 An extensive vignette for caret can be found here: <https://topepo.github.io/caret/index.html>
 
-### **Data Pre-Processing**
+### **Data Pre-Processing** {#data-pre-processing}
 
 Before we can apply a machine learning algorithm to the data of interest, we must divide the data into training and testing data sets. The *training* data are used to generate the supervised model, while the *testing* data are used to quantify the quality of the generated model. The function [`createDataPartition`](https://topepo.github.io/caret/data-splitting.html) can be used to create balanced splits of the data. If the `y` argument to this function is a factor, the random sampling occurs within each class and should preserve the overall class distribution of the data. For example, to create a single 60/40% split of the iris data:
 
@@ -326,6 +326,13 @@ We demonstrate this approach in the following code cell, where we compute a stan
 preProcValues <- preProcess(irisTrain, method = c("center", "scale"))
 
 trainTransformed <- predict(preProcValues, irisTrain)
+testTransformed <- predict(preProcValues, irisTest)
+```
+
+I made a mistake here...Can you spot it 👀
+
+```{r}
+preProcValues <- preProcess(irisTest, method = c("center", "scale"))
 testTransformed <- predict(preProcValues, irisTest)
 ```
 
@@ -508,7 +515,7 @@ plot(rout ~ sigmas, type="b")
 
 R-squared tanks hard with increasing sigma, even though the model is *completely correct* in every respect.
 
-2. *R-squared can be arbitrarily close to 1 when the model is totally wrong.*
+2.  *R-squared can be arbitrarily close to 1 when the model is totally wrong.*
 
 The point being made is that R-squared does not measure goodness of fit.
 
@@ -561,7 +568,7 @@ sum((fitted(mod1) - y)^2)/100
 
 The R-squared falls from 0.94 to 0.15 but the MSE remains the same. In other words the predictive ability is the same for both data sets, but the R-squared would lead you to believe the first example somehow had a model with more predictive power.
 
-4. *R-squared can easily go down when the model assumptions are better fulfilled.*
+4.  *R-squared can easily go down when the model assumptions are better fulfilled.*
 
 Let's examine this by generating data that would benefit from transformation. Notice the R code below is very much like our previous efforts but now we exponentiate our y variable.
 
@@ -590,7 +597,7 @@ summary(lm(log(y)~x))$r.squared
 
 It's even lower! This is an extreme case and it doesn't always happen like this. In fact, a log transformation will usually produce an increase in R-squared. But as just demonstrated, assumptions that are better fulfilled don't always lead to higher R-squared.
 
-5. *It is very common to say that R-squared is "the fraction of variance explained" by the regression. [Yet] if we regressed X on Y, we'd get exactly the same R-squared. This in itself should be enough to show that a high R-squared says nothing about explaining one variable by another.*
+5.  *It is very common to say that R-squared is "the fraction of variance explained" by the regression. [Yet] if we regressed X on Y, we'd get exactly the same R-squared. This in itself should be enough to show that a high R-squared says nothing about explaining one variable by another.*
 
 This is the easiest statement to demonstrate:
 
@@ -624,3 +631,162 @@ Let's recap:
 </p>
 
 </details>
+
+### **Dimensionality Reduction**
+
+When confronted with a large, multi-dimensional data set, one approach to simplify any subsequent analysis is to reduce the number of dimensions (or features) that must be processed. In some cases, features can be removed from an analysis based on business logic, or the features that contain the most information can be quantified somehow. More generally, however, we can employ [dimensional reduction](https://en.wikipedia.org/wiki/Dimensionality_reduction), a machine learning technique that quantifies relationships between the original dimensions (or features, attributes, or columns of a DataFrame) to identify new dimensions that better capture the inherent relationships within the data.
+
+The standard technique to perform this is known as [principal component analysis](https://en.wikipedia.org/wiki/Principal_component_analysis), or PCA. Mathematically, we can derive PCA by using linear algebra to solve a set of linear equations. This process effectively rotates the data into a new set of dimensions, and by ranking the importance of the new dimensions, we can optimally select fewer dimensions for use in other machine learning algorithms.
+
+The *PCA* estimator requires one tunable hyper-parameter that specifies the target number of dimensions. This value can be arbitrarily selected, perhaps based on prior information, or it can be iteratively determined. After the model is created, we fit the model to the data and next create our new, rotated data set. This is demonstrated in the next code cell.
+
+```{r,echo=TRUE}
+
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=2)
+
+caret.pca
+
+caret.pca$
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+
+#using stats
+stat.pca <- prcomp(dat[,-5],
+                 center = TRUE,
+                 scale. = TRUE) 
+
+# plot method
+plot(stat.pca, type = "l")
+
+summary(stat.pca)
+```
+
+Below is a graphical representation[^5]
+
+[^5]: <https://www.r-bloggers.com/2013/11/computing-and-visualizing-pca-in-r/>
+
+```{r,echo=FALSE,eval=FALSE}
+library(devtools)
+install_github("vqv/ggbiplot")
+```
+
+```{r,echo=FALSE}
+
+library(ggbiplot)
+g <- ggbiplot(stat.pca, obs.scale = 1, var.scale = 1, 
+              groups = dat$Species, ellipse = TRUE, 
+              circle = TRUE)
+g <- g + scale_color_discrete(name = '')
+g <- g + theme(legend.direction = 'horizontal', 
+               legend.position = 'top')
+print(g)
+
+```
+
+At the end of the previous code cell, we measure the amount of the original variance (or spread) in the original data that is captured by each new dimension. As this example shows, these two new dimensions capture almost 96% of the variance in the original data. This means that any analysis that uses only these two new dimensions will closely represent the analysis if performed on the entire data.
+
+### 
+
+**Clustering**
+
+The last machine learning technique we will explore in this notebook is [cluster finding](https://en.wikipedia.org/wiki/Cluster_analysis). In this introductory notebook, we will demonstrate one of the simplest clustering techniques, spatial clustering, which seeks to first find NN clusters in a data set and to subsequently identify to which cluster each instance (or data point) belongs. The specific algorithm we employ below is the [k-means algorithm](https://en.wikipedia.org/wiki/K-means_clustering), which is one of the simplest to understand. In this algorithm, we start with a guess for the number of clusters (again this can be based on prior information or iteratively quantified). We randomly place cluster centers in the data and determine how well the data *cluster* to these cluster centers. This information is used to pick new cluster centers, and the process continues until a solution converges (or we reach a predefined number of iterations).
+
+```{r,echo=TRUE}
+
+Clusters<-kmeans(trainTransformed[,-5],centers=3)
+
+Clusters
+
+```
+
+The above list is an output of the `kmeans()` function. Let's see some of the important ones closely:
+
+-   `cluster`: a vector of integers (from 1:k) indicating the cluster to which each point is allocated.
+
+-   `centers`: a matrix of cluster centers.
+
+-   `withinss`: vector of within-cluster sum of squares, one component per cluster.
+
+-   `tot.withinss`: total within-cluster sum of squares. That is, `sum(withinss)`.
+
+-   `size`: the number of points in each cluster.
+
+```{r}
+library(tidyverse)
+
+Clusterdata<-trainTransformed
+Clusterdata$Cluster<-as.factor(Clusters$cluster)
+
+#view the whole dataset
+knitr::kable(Clusterdata)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+```
+
+```{r}
+
+#Remember me
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Cluster))+geom_point(alpha=0.5)
+
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Cluster))+geom_point(alpha=0.5)+facet_wrap(~Species)
+
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species))+geom_point(alpha=0.5) + 
+   geom_point(data=as.data.frame(Clusters$centers), aes(color="Cluster center"), size=5) + theme(legend.title = element_blank())+ggtitle("Iris Cluster Demonstration")
+```
+
+## Exercise 1
+
+Using the code above, answer the following questions.
+
+1.  Change the p=.6 to p=.75 in the [Data Pre-Processing] section. How did the classification results change?
+
+2.  Change the p=.6 to p=.4 in the [Data Pre-Processing] section. How did the classification results change?
+
+3.  Change the `k` hyper-parameter in the k-nn estimator to three (and ten). In other words change the 5 to 10 in `tuneGrid=data.frame(k=5)` in the [Classification] section. How did the classification results change?
+
+4.  Change the p=.6 to p=.75 in the [Data Pre-Processing] section. How did the regression results change?
+
+5.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the [Dimensionality Reduction] section. What are the new explained variances?
+
+6.  Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the [Clustering] section. Where are the new cluster centers? Does this look better or worse?
+
+7.  What does the [set.seed](https://r-coder.com/set-seed-r/) function in R do? Why use it? Should we have used it above?
+
+## **Model Persistence[¶](#Model-Persistence)** {#model-persistence}
+
+------------------------------------------------------------------------
+
+As the previous code cells demonstrate, we can generate machine learning models rather easily for small data sets by using the caret library. For larger data sets, however, either in the number of instances, the number of features, or both, building a quality machine learning model can take considerable time and effort. As a result, we may wish to persist a trained machine learning model so that it can be applied to new data at a later time.
+
+```{r}
+
+#save our model
+save(DT_fit1,file = "DT_fit1.Rda")
+
+#remove it from  the environment
+rm(DT_fit1)
+```
+
+```{r}
+#load our model
+load(file = "DT_fit1.Rda")
+```
+
+Whenever you load it back you can use it just like before.
+
+::: {.l-page}
+::: {.panelset}
+::: {.panel}
+## Regression {.panel-name}
+:::
+
+::: {.panel}
+## K-Nearest Neighbor {.panel-name}
+:::
+:::
+:::
