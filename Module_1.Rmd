@@ -757,7 +757,7 @@ Using the code above, answer the following questions.
 
 7.  What does the [set.seed](https://r-coder.com/set-seed-r/) function in R do? Why use it? Should we have used it above?
 
-## **Model Persistence[¶](#Model-Persistence)** {#model-persistence}
+## **Model Persistence** {#model-persistence}
 
 ------------------------------------------------------------------------
 
