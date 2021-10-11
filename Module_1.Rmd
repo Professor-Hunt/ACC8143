@@ -6,6 +6,7 @@ output:
   distill::distill_article:
     toc: true
     toc_depth: 3
+    toc_float: true
 ---
 
 # Game Plan
@@ -154,7 +155,7 @@ install.packages("psych")
 ```{r,echo=TRUE}
 psych::describe(iris)
 
-?psych::describe
+# ?psych::describe
 
 ```
 
@@ -470,7 +471,8 @@ summary(mod)$r.squared
 
 ```
 
-One way to express R-squared is as the sum of squared fitted-value deviations divided by the sum of squared original-value deviations: $$
+One way to express R-squared is as the sum of squared fitted-value deviations divided by the sum of squared original-value deviations: 
+$$
 R^{2} =  \frac{\sum (\hat{y} – \bar{\hat{y}})^{2}}{\sum (y – \bar{y})^{2}}
 $$
 
@@ -779,14 +781,31 @@ load(file = "DT_fit1.Rda")
 
 Whenever you load it back you can use it just like before.
 
-::: {.l-page}
-::: {.panelset}
+```{r, include=FALSE}
+library(xaringan)
+library(xaringanExtra)
+
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+
+```
+
+## Deep Dive
+
+::::: {.panelset}
+
 ::: {.panel}
-## Regression {.panel-name}
+[Regression]{.panel-name}
+
+Regression Content
 :::
 
 ::: {.panel}
-## K-Nearest Neighbor {.panel-name}
+[K-NN]{.panel-name}
+
+K-NN Content
 :::
-:::
-:::
+
+:::::
+
+## Recap
