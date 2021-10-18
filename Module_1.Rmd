@@ -471,7 +471,9 @@ summary(mod)$r.squared
 
 ```
 
-One way to express R-squared is as the sum of squared fitted-value deviations divided by the sum of squared original-value deviations: $$
+One way to express R-squared is as the sum of squared fitted-value deviations divided by the sum of squared original-value deviations:
+
+$$
 R^{2} =  \frac{\sum (\hat{y} – \bar{\hat{y}})^{2}}{\sum (y – \bar{y})^{2}}
 $$
 
@@ -968,5 +970,92 @@ In general, however, we face two challenges:
 2.  our data will be higher dimensional.
 
 In general, we must employ a (potentially) complex mathematical technique to find the (hopefully) global minimum of the cost function. We can increase the complexity of our *cost* function analysis by extending the original model to include both a slope and an intercept. We now must find the minimum of this two dimensional model, given our observed data. We do this in the following code cell where we generate a grid of values in our two parameters, and compute the cost function for these different parameter combinations.
+
+To display the data which generates a sampling grid across potential values for the slope $\beta$ and intercept $\alpha$ in our model. We once again *vectorize* our cost function and broadcast it across the sampling grid. We accumulate the cost at each grid point and generate a two-dimensional image of the values of the cost function across our sampling grid. To make the image appear cleaner, we perform *Gaussian* interpolation between sample points.
+
+As the following two-dimensional image displays, our cost function is not aligned with either parameter, but is steeper in the slope parameter and less steep in the intercept parameter. Thus, we would expect that small changes in the slope will quickly increase our cost (which we saw in the previous one-dimensional example), while small changes in the intercept will produce smaller changes in our cost function (note that the range for intercepts is much larger than the range for the slope parameters).
+
+```{r cost2,echo=TRUE}
+
+#define our betas
+betas<-seq(-4,4,length.out=100)
+alphas<-seq(-40,40,length.out=100)
+
+#define our cost function
+l2n2 = mapply( function(m,b) log(sqrt(sum((as.matrix(tips$tip) - m*as.matrix(tips$total_bill) - b)^2))),as.matrix(betas),as.matrix(alphas))  # The L2-norm
+
+```
+
+```{r cost2 plot, echo=FALSE, eval=FALSE}
+#not done
+
+library(ggplot2)
+library(hrbrthemes)
+
+costplot2<-as.data.frame(cbind(betas,alphas,l2n2))
+
+# Using raster
+ggplot(costplot2,aes(betas, alphas)) +
+  geom_raster(aes(fill = l2n2))
+
+```
+
+![](images/contor%20pic.png)
+
+As we move to higher dimensional data sets or more complex cost functions, the challenge of finding the global minimum becomes increasingly difficult. As a result, many mathematical techniques have been developed to find the global minimum of a (potentially) complex function. The standard approach is [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent), where we use the fact that the first derivative (or gradient) measures the slope of a function at a given point. We can use the slope to infer which direction is *downhill* and thus travel (hopefully) towards the minimum.
+
+A major challenge with this approach is the potential to become stuck in a local and not global minima. Thus, modifications are often added to reduce the likelihood of becoming stuck in a local minimum. One popular example of this approach is known as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent). This algorithm employs standard gradient descent, but adds an occasional random jump in the parameter space to reduce the chances of being stuck in a local *valley*. Another, very different, approach to this problem is the use of [genetic algorithms](https://en.wikipedia.org/wiki/Genetic_algorithm), which employ techniques from evolutionary biology to minimize the cost function.
+
+For a mental picture of this process, imagine hiking in the mountains and flip the challenge to finding the highest peak, so we will use gradient ascent. Gradient ascent is similar to finding the local mountain peak and climbing it. This local peak might look like it is the largest, but a random jump away from the local peak might enable one to view much larger peaks beyond, which can subsequently be climbed with a new gradient ascent.
+
+Whenever you perform machine learning in the future, you should keep in mind that the model that you generate for a given data set has generally resulted from the minimization of a cost function. Thus, there remains the possibility that with more effort, more data, or a better cost minimization strategy, a new, and better model may potentially exist.
+
+\
+
+```{r rmse, echo=TRUE}
+
+#what is a function?
+rmse = function(actual, predicted) {
+  sqrt(mean((actual - predicted) ^ 2))
+}
+
+```
+
+```{r}
+
+#get our samples
+
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(tips$tip, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+#head(trainIndex)
+
+#grab the data
+tipsTrain <- tips[ trainIndex,]
+tipsTest  <- tips[-trainIndex,]
+```
+
+### **Linear Regression**
+
+In the following code cells, we use the `lm` estimator to fit our sample data, plot the results, and finally display the fit coefficients.
+
+The first code cell defines a function that will make two plots. The top plot is a comparison between a single independent variable (Total Bill) and the dependent variable (Tip). This plot differentiates the training data, the testing data, and the linear model. The bottom plot displays the model residuals (dependent variable - model result) as a function of the independent variable. The primary benefit of this plot is the ability to identify any structure in the residuals, which can indicate a bad model. For example, if the residual plot shows a linear relationship, that indicates the original model incorrectly related the independent and dependent variables.
+
+In the following code cells, we first compute a linear fit with no intercept, after which we compute a linear fit with both a slope and an intercept. The fit results are displayed as well as the regression and residual plots.
+
+```{r}
+
+#fit simple linear regression model
+model_noint <- lm(tip ~ 0+total_bill , data = tips)
+
+#create scatterplot of data
+plot(tips$total_bill, tips$tip)
+
+#add fitted regression line
+abline(model_noint)
+
+```
 
 ## Recap
