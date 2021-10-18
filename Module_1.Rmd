@@ -825,6 +825,14 @@ You were introduced to the concept of linear regression by learning about simple
 
 We will use the *tips* data set. After loading this data, we display several rows, and next compute a simple linear regression to predict the `tip` feature from the `total_bill` feature.
 
+For this section we need to load libraries:
+
+```{r setup1, echo=TRUE}
+library(tidyverse)
+library(caret)
+
+```
+
 ```{r load data, echo=TRUE}
 
 #load data. 
@@ -835,10 +843,130 @@ We will use the *tips* data set. After loading this data, we display several row
 
 library(curl)
 
-load(curl("https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.Rda"))
+load(curl("https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.rda"))
+
+```
+
+```{r look, echo=TRUE}
+
+head(tips,5)
+
+#view the whole dataset
+knitr::kable(tips)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+```
+
+Perform simple linear regression
+
+```{r OLS1, echo=TRUE}
+
+OLS1<-lm(formula=tip~total_bill,data=tips)
+#general output
+OLS1
+#more common output
+summary(OLS1)
+#correlation or R-squared...
+cor(tips$total_bill,tips$tip)^2
+```
+
+\
+**Formalism**
+
+------------------------------------------------------------------------
+
+Formally, this simple linear model related the independent variables $x_i$ to the dependent variables $y_i$ in our data set via two parameters: an intercept, and a slope. Mathematically, we express this relation in the following form:
+
+$$
+f(x_i) = \beta * x_i + \alpha + \epsilon_i
+$$
+
+where $\epsilon_i$ accounts for the difference between the model and the data for each data point $(x_i,y_i)$. If we have a perfect model, these errors, $\epsilon_i$, are all zero, and $y_i = f(x_i)$. In real life, however, the error terms rarely vanish because even if the original relationship is perfect noise creeps into the measurement process.
+
+As a result, in this simple example we wish to determine the model parameters: $\beta_i$, and $\alpha_i$ that minimize the values of $\epsilon_i$. We could perform this process in an iterative manner, trying different values for the model parameters and measuring the error function. This approach is often used in machine learning, where we define a **cost function** that we seek to minimize by selecting the best model parameters.
+
+In the case of a simple linear model, we have several potential cost (or loss) functions that we could seek to minimize, but we will use the common *l2-norm*: $\epsilon_i^2 = \left( \ y_i - f(x_i) \ \right)^2$, where $f(x_i)$ is defined by our model parameters. We demonstrate this approach visually in the following code block, where we minimize the sum of the *l2-norm* model residuals, which is done by finding the best model parameters: $\hat{\beta}$, and $\hat{\alpha}$.
+
+```{r Anscombe, echo=TRUE}
+
+#Get some data
+AnsDat<-anscombe%>%
+  select(y1,x1)
+
+#extract x and y columns
+Y<-AnsDat$y1
+X<-AnsDat$x1
+
+#find the number of data points
+n<-nrow(AnsDat)
+
+#determine mean values
+mean_x<-mean(X,na.rm = TRUE)
+mean_y<-mean(Y,na.rm = TRUE)
+
+#determine best fit model parameters (from simple linear regression)
+beta = sum((X - mean_x) * (Y - mean_y)) / sum((X - mean_x)**2)
+beta
+
+alpha = mean_y - beta * mean_x
+alpha
+
+#lets double check
+summary(lm(formula=Y~X,data=AnsDat))
+```
+
+Plots
+
+```{r plots1,echo=TRUE}
+
+library(ggplot2)
+
+#create regression plot
+ggplot(AnsDat,aes(x1, y1)) +
+  geom_point() +
+  geom_smooth(method='lm', se=FALSE) +
+  geom_segment(aes(x=X, xend=X, y=Y, yend=lm(Y~X)$fitted.values, color="error"))+
+  theme_minimal() +
+  labs(x='X Values', y='Y Values', title='Linear Regression Plot') +
+  theme(plot.title = element_text(hjust=0.5, size=20, face='bold')) + 
+  theme(legend.title = element_blank())
+
 
 ```
 
 \
+**Cost Function**
+
+This simple example demonstrates a fundamental concept in machine learning, namely the minimization of a cost (or loss) function, which quantifies how well a model represents a data set. For a given data set, the cost function is completely specified by the model parameters, thus a more complex model has a more complex cost function, which can become difficult to minimize. To clarify this point, we now turn to the exploration of the shape of cost functions.
+
+For simplicity, we start with a one-dimensional cost function, a linear model with no intercept: $f(x_i) = \beta x_i$. In the following code cell, we compute the cost function for a given data set as a function of the unknown parameter $\beta$. In this case, the minimum is easy to visualize, given the steepness of the cost function around the minimum.
+
+```{r cost function, echo=TRUE}
+
+#define our betas
+betas<-seq(-4,4,length.out=100)
+
+#define our cost function
+l2n = sapply(as.matrix(betas), function(m) log(sqrt(sum((as.matrix(tips$tip) - m*as.matrix(tips$total_bill))^2))))  # The L2-norm
+
+```
+
+```{r cost plot, echo=TRUE}
+
+library(ggplot2)
+costplot<-as.data.frame(cbind(betas,l2n))
+#create regression plot
+ggplot(costplot,aes(betas, l2n)) +
+  geom_point(color="blue") + geom_line()+
+  geom_vline(xintercept=0, color="red")
+```
+
+In general, however, we face two challenges:
+
+1.  the cost function will likely be more complex, and
+
+2.  our data will be higher dimensional.
+
+In general, we must employ a (potentially) complex mathematical technique to find the (hopefully) global minimum of the cost function. We can increase the complexity of our *cost* function analysis by extending the original model to include both a slope and an intercept. We now must find the minimum of this two dimensional model, given our observed data. We do this in the following code cell where we generate a grid of values in our two parameters, and compute the cost function for these different parameter combinations.
 
 ## Recap

@@ -2458,6 +2458,13 @@ Modules
 <li><a href="#exercise-1">Exercise 1</a></li>
 <li><a href="#model-persistence"><strong>Model Persistence</strong></a></li>
 <li><a href="#deep-dive">Deep Dive</a></li>
+</ul></li>
+<li><a href="#regression-1">Regression</a>
+<ul>
+<li><a href="#introduction-to-linear-regression"><strong>Introduction to Linear Regression</strong></a>
+<ul>
+<li><a href="#objectives-1"><strong>Objectives</strong></a></li>
+</ul></li>
 <li><a href="#recap">Recap</a></li>
 </ul></li>
 </ul>
@@ -5322,11 +5329,11 @@ Species*      0.00    -1.52 0.07</code></pre>
 </div>
 <pre><code>     Resample1
 [1,]         1
-[2,]         3
+[2,]         2
 [3,]         4
 [4,]         6
 [5,]         7
-[6,]         8</code></pre>
+[6,]         9</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#grab the data</span>
 <span class='va'>irisTrain</span> <span class='op'>&lt;-</span> <span class='va'>iris</span><span class='op'>[</span> <span class='va'>trainIndex</span>,<span class='op'>]</span>
@@ -5368,32 +5375,32 @@ Species*      0.00    -1.52 0.07</code></pre>
 </code></pre>
 </div>
 <pre><code>             vars  n mean   sd median trimmed  mad   min  max range
-Sepal.Length    1 90    0 1.00   0.00   -0.04 1.12 -1.68 2.38  4.06
-Sepal.Width     2 90    0 1.00  -0.08   -0.03 0.97 -2.26 2.98  5.24
-Petal.Length    3 90    0 1.00   0.34   -0.01 0.96 -1.40 1.75  3.16
-Petal.Width     4 90    0 1.00   0.12   -0.02 1.37 -1.46 1.70  3.16
+Sepal.Length    1 90    0 1.00  -0.08   -0.05 1.14 -1.80 2.22  4.02
+Sepal.Width     2 90    0 1.00  -0.05   -0.02 1.00 -2.31 2.66  4.97
+Petal.Length    3 90    0 1.00   0.36    0.00 1.00 -1.55 1.76  3.30
+Petal.Width     4 90    0 1.00   0.16   -0.02 1.27 -1.43 1.74  3.17
 Species*        5 90    2 0.82   2.00    2.00 1.48  1.00 3.00  2.00
               skew kurtosis   se
-Sepal.Length  0.29    -0.66 0.11
-Sepal.Width   0.33     0.18 0.11
-Petal.Length -0.24    -1.40 0.11
-Petal.Width  -0.08    -1.35 0.11
+Sepal.Length  0.36    -0.58 0.11
+Sepal.Width   0.19    -0.15 0.11
+Petal.Length -0.24    -1.42 0.11
+Petal.Width  -0.07    -1.37 0.11
 Species*      0.00    -1.53 0.09</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>psych</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/psych/man/describe.html'>describe</a></span><span class='op'>(</span><span class='va'>testTransformed</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>             vars  n mean   sd median trimmed  mad   min  max range
-Sepal.Length    1 60    0 1.00  -0.17   -0.04 1.14 -1.96 2.39  4.35
-Sepal.Width     2 60    0 1.00  -0.22   -0.03 0.74 -1.96 2.52  4.48
-Petal.Length    3 60    0 1.00   0.31    0.02 1.09 -1.53 1.63  3.17
-Petal.Width     4 60    0 1.00   0.15   -0.01 1.44 -1.40 1.58  2.98
+Sepal.Length    1 60    0 1.00  -0.10   -0.03 1.29 -1.83 2.51  4.34
+Sepal.Width     2 60    0 1.00  -0.15   -0.05 0.88 -1.92 3.04  4.96
+Petal.Length    3 60    0 1.00   0.28    0.01 1.10 -1.46 1.63  3.09
+Petal.Width     4 60    0 1.00   0.10   -0.01 1.34 -1.45 1.65  3.10
 Species*        5 60    2 0.82   2.00    2.00 1.48  1.00 3.00  2.00
               skew kurtosis   se
-Sepal.Length  0.32    -0.66 0.13
-Sepal.Width   0.33    -0.22 0.13
-Petal.Length -0.31    -1.51 0.13
-Petal.Width  -0.12    -1.43 0.13
+Sepal.Length  0.22    -0.72 0.13
+Sepal.Width   0.56     0.35 0.13
+Petal.Length -0.31    -1.47 0.13
+Petal.Width  -0.14    -1.40 0.13
 Species*      0.00    -1.55 0.11</code></pre>
 </div>
 <p>With our data properly divided into training and testing samples, and the features appropriately scaled, we now change to the application of machine learning algorithms</p>
@@ -5423,7 +5430,7 @@ Summary of sample sizes: 90, 90, 90, 90, 90, 90, ...
 Resampling results:
 
   Accuracy   Kappa    
-  0.9128603  0.8671738
+  0.9050895  0.8543292
 
 Tuning parameter &#39;k&#39; was held constant at a value of 5</code></pre>
 </div>
@@ -5441,31 +5448,31 @@ Tuning parameter &#39;k&#39; was held constant at a value of 5</code></pre>
             Reference
 Prediction   setosa versicolor virginica
   setosa         20          0         0
-  versicolor      0         19         1
-  virginica       0          1        19
+  versicolor      0         20         1
+  virginica       0          0        19
 
 Overall Statistics
                                           
-               Accuracy : 0.9667          
-                 95% CI : (0.8847, 0.9959)
+               Accuracy : 0.9833          
+                 95% CI : (0.9106, 0.9996)
     No Information Rate : 0.3333          
     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
                                           
-                  Kappa : 0.95            
+                  Kappa : 0.975           
                                           
  Mcnemar&#39;s Test P-Value : NA              
 
 Statistics by Class:
 
                      Class: setosa Class: versicolor Class: virginica
-Sensitivity                 1.0000            0.9500           0.9500
-Specificity                 1.0000            0.9750           0.9750
-Pos Pred Value              1.0000            0.9500           0.9500
-Neg Pred Value              1.0000            0.9750           0.9750
+Sensitivity                 1.0000            1.0000           0.9500
+Specificity                 1.0000            0.9750           1.0000
+Pos Pred Value              1.0000            0.9524           1.0000
+Neg Pred Value              1.0000            1.0000           0.9756
 Prevalence                  0.3333            0.3333           0.3333
-Detection Rate              0.3333            0.3167           0.3167
-Detection Prevalence        0.3333            0.3333           0.3333
-Balanced Accuracy           1.0000            0.9625           0.9625</code></pre>
+Detection Rate              0.3333            0.3333           0.3167
+Detection Prevalence        0.3333            0.3500           0.3167
+Balanced Accuracy           1.0000            0.9875           0.9750</code></pre>
 </div>
 <h3 id="regression"><strong>Regression</strong></h3>
 <p>The second machine learning application we will demonstrate is regression. To demonstrate regression, we will introduce the <a href="https://en.wikipedia.org/wiki/Decision_tree_learning">Decision Tree</a>. A decision tree simply asks a set of questions of the data, and based on the answers, constructs a model representation. The tree (or model) is constructed by recursively splitting a data set into new groupings based on a statistical measure of the data along each different dimension (popular measures include the Gini coefficient or the entropy).</p>
@@ -5492,12 +5499,12 @@ Summary of sample sizes: 90, 90, 90, 90, 90, 90, ...
 Resampling results across tuning parameters:
 
   cp          RMSE       Rsquared   MAE      
-  0.01971694  0.3505007  0.8791955  0.2665461
-  0.13281863  0.4340798  0.8036276  0.3432574
-  0.77997117  0.7123865  0.7330870  0.5921690
+  0.02410587  0.3445218  0.8806168  0.2604488
+  0.12964929  0.4198005  0.8182361  0.3259925
+  0.78071151  0.8392276  0.7238194  0.7118876
 
 RMSE was used to select the optimal model using the smallest value.
-The final value used for the model was cp = 0.01971694.</code></pre>
+The final value used for the model was cp = 0.02410587.</code></pre>
 </div>
 <p>Install another package</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -5534,20 +5541,20 @@ The final value used for the model was cp = 0.01971694.</code></pre>
 <span class='va'>rsq</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.9195415</code></pre>
+<pre><code>[1] 0.9400814</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#another</span>
 <span class='va'>regss</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='op'>(</span><span class='va'>preds</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>preds</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='co'>## regression sum of squares</span>
 <span class='va'>regss</span> <span class='op'>/</span> <span class='va'>tss</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.9236026</code></pre>
+<pre><code>[1] 0.8867751</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#another</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>preds</span>,<span class='va'>actual</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.9195711</code></pre>
+<pre><code>[1] 0.9415157</code></pre>
 </div>
 <details>
 <summary>
@@ -5817,31 +5824,31 @@ Cumulative Proportion  0.7296 0.9581 0.99482 1.00000</code></pre>
 <span class='va'>Clusters</span>
 </code></pre>
 </div>
-<pre><code>K-means clustering with 3 clusters of sizes 37, 23, 30
+<pre><code>K-means clustering with 3 clusters of sizes 31, 29, 30
 
 Cluster means:
   Sepal.Length Sepal.Width Petal.Length Petal.Width
-1   0.06302743  -0.7881899    0.3884042   0.3177698
-2   1.22769501   0.2521992    1.0629616   1.1088291
-3  -1.01896667   0.7787481   -1.2939691  -1.2420184
+1   -0.0668598  -0.9073218    0.3257720    0.257427
+2    1.0953277   0.1314365    0.9856477    1.010276
+3   -0.9897283   0.8105106   -1.2894238   -1.242608
 
 Clustering vector:
-  1   3   4   6   7   8   9  10  11  12  16  17  18  21  24  25  26 
+  1   2   4   6   7   9  11  14  19  20  21  23  24  25  26  27  28 
   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3 
- 27  34  35  37  39  42  43  44  45  46  47  48  50  52  57  58  60 
-  3   3   3   3   3   3   3   3   3   3   3   3   3   2   2   1   1 
- 61  63  64  65  66  68  69  70  71  72  73  74  76  77  78  79  82 
-  1   1   1   1   2   1   1   1   1   1   1   1   1   1   2   1   1 
- 83  84  85  88  90  91  97  98 100 101 105 107 108 109 110 111 112 
-  1   1   1   1   1   1   1   1   1   2   2   1   2   1   2   2   1 
-113 115 118 119 120 121 123 124 126 128 129 131 132 134 137 139 140 
-  2   1   2   2   1   2   2   1   2   1   2   2   2   1   2   1   2 
-142 145 147 148 150 
-  2   2   1   2   1 
+ 29  32  33  34  35  36  38  40  41  42  43  46  50  51  52  53  58 
+  3   3   3   3   3   3   3   3   3   3   3   3   3   2   2   2   1 
+ 59  60  61  63  65  67  68  69  71  73  74  77  79  80  81  82  84 
+  2   1   1   1   1   1   1   1   2   1   1   2   1   1   1   1   1 
+ 86  88  89  91  92  95  96  98  99 104 105 107 108 110 112 113 116 
+  2   1   1   1   1   1   1   1   1   2   2   1   2   2   2   2   2 
+117 118 119 120 122 123 124 127 128 129 130 131 135 136 137 140 143 
+  2   2   2   1   1   2   1   1   2   2   2   2   1   2   2   2   1 
+144 145 147 149 150 
+  2   2   1   2   2 
 
 Within cluster sum of squares by cluster:
-[1] 33.45988 24.42124 29.42150
- (between_SS / total_SS =  75.5 %)
+[1] 26.78217 32.33674 27.51658
+ (between_SS / total_SS =  75.7 %)
 
 Available components:
 
@@ -5902,16 +5909,16 @@ Cluster
 1
 </td>
 <td style="text-align:right;">
--0.8719259
+-0.8519015
 </td>
 <td style="text-align:right;">
-1.0116447
+1.0815172
 </td>
 <td style="text-align:right;">
--1.3485114
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -5922,19 +5929,19 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-3
+2
 </td>
 <td style="text-align:right;">
--1.3362652
+-1.0881761
 </td>
 <td style="text-align:right;">
-0.3566230
+-0.0476771
 </td>
 <td style="text-align:right;">
--1.4049344
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -5948,16 +5955,16 @@ setosa
 4
 </td>
 <td style="text-align:right;">
--1.4523500
+-1.4425881
 </td>
 <td style="text-align:right;">
-0.1382824
+0.1781618
 </td>
 <td style="text-align:right;">
--1.2920883
+-1.2651655
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -5971,16 +5978,16 @@ setosa
 6
 </td>
 <td style="text-align:right;">
--0.5236715
+-0.4974894
 </td>
 <td style="text-align:right;">
-1.8850071
+1.9848726
 </td>
 <td style="text-align:right;">
--1.1792422
+-1.1532039
 </td>
 <td style="text-align:right;">
--1.0664681
+-1.0315988
 </td>
 <td style="text-align:left;">
 setosa
@@ -5994,39 +6001,16 @@ setosa
 7
 </td>
 <td style="text-align:right;">
--1.4523500
+-1.4425881
 </td>
 <td style="text-align:right;">
-0.7933041
+0.8556783
 </td>
 <td style="text-align:right;">
--1.3485114
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.1981308
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-8
-</td>
-<td style="text-align:right;">
--0.9880107
-</td>
-<td style="text-align:right;">
-0.7933041
-</td>
-<td style="text-align:right;">
--1.2920883
-</td>
-<td style="text-align:right;">
--1.3297935
+-1.1634794
 </td>
 <td style="text-align:left;">
 setosa
@@ -6040,39 +6024,16 @@ setosa
 9
 </td>
 <td style="text-align:right;">
--1.6845196
+-1.6788628
 </td>
 <td style="text-align:right;">
--0.2983988
+-0.2735160
 </td>
 <td style="text-align:right;">
--1.3485114
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.3297935
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-10
-</td>
-<td style="text-align:right;">
--1.1040955
-</td>
-<td style="text-align:right;">
-0.1382824
-</td>
-<td style="text-align:right;">
--1.2920883
-</td>
-<td style="text-align:right;">
--1.4614563
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6086,16 +6047,16 @@ setosa
 11
 </td>
 <td style="text-align:right;">
--0.5236715
+-0.4974894
 </td>
 <td style="text-align:right;">
-1.4483259
+1.5331949
 </td>
 <td style="text-align:right;">
--1.2920883
+-1.2651655
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6106,19 +6067,19 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-12
+14
 </td>
 <td style="text-align:right;">
--1.2201803
+-1.7970001
 </td>
 <td style="text-align:right;">
-0.7933041
+-0.0476771
 </td>
 <td style="text-align:right;">
--1.2356652
+-1.4890886
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.4272404
 </td>
 <td style="text-align:left;">
 setosa
@@ -6129,19 +6090,19 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-16
+19
 </td>
 <td style="text-align:right;">
--0.1754170
+-0.1430774
 </td>
 <td style="text-align:right;">
-2.9767100
+1.7590338
 </td>
 <td style="text-align:right;">
--1.2920883
+-1.1532039
 </td>
 <td style="text-align:right;">
--1.0664681
+-1.1634794
 </td>
 <td style="text-align:left;">
 setosa
@@ -6152,42 +6113,19 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-17
+20
 </td>
 <td style="text-align:right;">
--0.5236715
+-0.8519015
 </td>
 <td style="text-align:right;">
-1.8850071
+1.7590338
 </td>
 <td style="text-align:right;">
--1.4049344
+-1.2651655
 </td>
 <td style="text-align:right;">
--1.0664681
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-18
-</td>
-<td style="text-align:right;">
--0.8719259
-</td>
-<td style="text-align:right;">
-1.0116447
-</td>
-<td style="text-align:right;">
--1.3485114
-</td>
-<td style="text-align:right;">
--1.1981308
+-1.1634794
 </td>
 <td style="text-align:left;">
 setosa
@@ -6201,16 +6139,39 @@ setosa
 21
 </td>
 <td style="text-align:right;">
--0.5236715
+-0.4974894
 </td>
 <td style="text-align:right;">
-0.7933041
+0.8556783
 </td>
 <td style="text-align:right;">
--1.1792422
+-1.1532039
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:right;">
+-1.4425881
+</td>
+<td style="text-align:right;">
+1.3073561
+</td>
+<td style="text-align:right;">
+-1.5450693
+</td>
+<td style="text-align:right;">
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6224,16 +6185,16 @@ setosa
 24
 </td>
 <td style="text-align:right;">
--0.8719259
+-0.8519015
 </td>
 <td style="text-align:right;">
-0.5749635
+0.6298395
 </td>
 <td style="text-align:right;">
--1.1792422
+-1.1532039
 </td>
 <td style="text-align:right;">
--0.9348054
+-0.8997183
 </td>
 <td style="text-align:left;">
 setosa
@@ -6247,16 +6208,16 @@ setosa
 25
 </td>
 <td style="text-align:right;">
--1.2201803
+-1.2063135
 </td>
 <td style="text-align:right;">
-0.7933041
+0.8556783
 </td>
 <td style="text-align:right;">
--1.0663960
+-1.0412424
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6270,16 +6231,16 @@ setosa
 26
 </td>
 <td style="text-align:right;">
--0.9880107
+-0.9700388
 </td>
 <td style="text-align:right;">
--0.0800582
+-0.0476771
 </td>
 <td style="text-align:right;">
--1.2356652
+-1.2091847
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6293,16 +6254,108 @@ setosa
 27
 </td>
 <td style="text-align:right;">
--0.9880107
+-0.9700388
 </td>
 <td style="text-align:right;">
-0.7933041
+0.8556783
 </td>
 <td style="text-align:right;">
--1.2356652
+-1.2091847
 </td>
 <td style="text-align:right;">
--1.0664681
+-1.0315988
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:right;">
+-0.7337641
+</td>
+<td style="text-align:right;">
+1.0815172
+</td>
+<td style="text-align:right;">
+-1.2651655
+</td>
+<td style="text-align:right;">
+-1.2953599
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:right;">
+-0.7337641
+</td>
+<td style="text-align:right;">
+0.8556783
+</td>
+<td style="text-align:right;">
+-1.3211462
+</td>
+<td style="text-align:right;">
+-1.2953599
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:right;">
+-0.4974894
+</td>
+<td style="text-align:right;">
+0.8556783
+</td>
+<td style="text-align:right;">
+-1.2651655
+</td>
+<td style="text-align:right;">
+-1.0315988
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:right;">
+-0.7337641
+</td>
+<td style="text-align:right;">
+2.4365504
+</td>
+<td style="text-align:right;">
+-1.2651655
+</td>
+<td style="text-align:right;">
+-1.4272404
 </td>
 <td style="text-align:left;">
 setosa
@@ -6316,16 +6369,16 @@ setosa
 34
 </td>
 <td style="text-align:right;">
--0.4075867
+-0.3793521
 </td>
 <td style="text-align:right;">
-2.5400288
+2.6623892
 </td>
 <td style="text-align:right;">
--1.3485114
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6339,16 +6392,16 @@ setosa
 35
 </td>
 <td style="text-align:right;">
--1.1040955
+-1.0881761
 </td>
 <td style="text-align:right;">
-0.1382824
+0.1781618
 </td>
 <td style="text-align:right;">
--1.2920883
+-1.2651655
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6359,19 +6412,19 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-37
+36
 </td>
 <td style="text-align:right;">
--0.4075867
+-0.9700388
 </td>
 <td style="text-align:right;">
-1.0116447
+0.4040006
 </td>
 <td style="text-align:right;">
--1.4049344
+-1.4331078
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6382,19 +6435,65 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-39
+38
 </td>
 <td style="text-align:right;">
--1.6845196
+-1.0881761
 </td>
 <td style="text-align:right;">
--0.0800582
+1.3073561
 </td>
 <td style="text-align:right;">
--1.4049344
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.4272404
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+40
+</td>
+<td style="text-align:right;">
+-0.8519015
+</td>
+<td style="text-align:right;">
+0.8556783
+</td>
+<td style="text-align:right;">
+-1.2651655
+</td>
+<td style="text-align:right;">
+-1.2953599
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:right;">
+-0.9700388
+</td>
+<td style="text-align:right;">
+1.0815172
+</td>
+<td style="text-align:right;">
+-1.3771270
+</td>
+<td style="text-align:right;">
+-1.1634794
 </td>
 <td style="text-align:left;">
 setosa
@@ -6408,16 +6507,16 @@ setosa
 42
 </td>
 <td style="text-align:right;">
--1.5684348
+-1.5607255
 </td>
 <td style="text-align:right;">
--1.6084423
+-1.6285491
 </td>
 <td style="text-align:right;">
--1.4049344
+-1.3771270
 </td>
 <td style="text-align:right;">
--1.1981308
+-1.1634794
 </td>
 <td style="text-align:left;">
 setosa
@@ -6431,62 +6530,16 @@ setosa
 43
 </td>
 <td style="text-align:right;">
--1.6845196
+-1.6788628
 </td>
 <td style="text-align:right;">
-0.3566230
+0.4040006
 </td>
 <td style="text-align:right;">
--1.4049344
+-1.3771270
 </td>
 <td style="text-align:right;">
--1.3297935
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-44
-</td>
-<td style="text-align:right;">
--0.9880107
-</td>
-<td style="text-align:right;">
-1.0116447
-</td>
-<td style="text-align:right;">
--1.2356652
-</td>
-<td style="text-align:right;">
--0.8031426
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-45
-</td>
-<td style="text-align:right;">
--0.8719259
-</td>
-<td style="text-align:right;">
-1.6666665
-</td>
-<td style="text-align:right;">
--1.0663960
-</td>
-<td style="text-align:right;">
--1.0664681
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6500,62 +6553,16 @@ setosa
 46
 </td>
 <td style="text-align:right;">
--1.2201803
+-1.2063135
 </td>
 <td style="text-align:right;">
--0.0800582
+-0.0476771
 </td>
 <td style="text-align:right;">
--1.3485114
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.1981308
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-47
-</td>
-<td style="text-align:right;">
--0.8719259
-</td>
-<td style="text-align:right;">
-1.6666665
-</td>
-<td style="text-align:right;">
--1.2356652
-</td>
-<td style="text-align:right;">
--1.3297935
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-48
-</td>
-<td style="text-align:right;">
--1.4523500
-</td>
-<td style="text-align:right;">
-0.3566230
-</td>
-<td style="text-align:right;">
--1.3485114
-</td>
-<td style="text-align:right;">
--1.3297935
+-1.1634794
 </td>
 <td style="text-align:left;">
 setosa
@@ -6569,16 +6576,16 @@ setosa
 50
 </td>
 <td style="text-align:right;">
--0.9880107
+-0.9700388
 </td>
 <td style="text-align:right;">
-0.5749635
+0.6298395
 </td>
 <td style="text-align:right;">
--1.3485114
+-1.3211462
 </td>
 <td style="text-align:right;">
--1.3297935
+-1.2953599
 </td>
 <td style="text-align:left;">
 setosa
@@ -6589,19 +6596,19 @@ setosa
 </tr>
 <tr>
 <td style="text-align:left;">
-52
+51
 </td>
 <td style="text-align:right;">
-0.6371766
+1.3927079
 </td>
 <td style="text-align:right;">
-0.3566230
+0.4040006
 </td>
 <td style="text-align:right;">
-0.4006038
+0.5262193
 </td>
 <td style="text-align:right;">
-0.3818219
+0.2872065
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6612,19 +6619,42 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-57
+52
 </td>
 <td style="text-align:right;">
-0.5210918
+0.6838839
 </td>
 <td style="text-align:right;">
-0.5749635
+0.4040006
 </td>
 <td style="text-align:right;">
-0.5134499
+0.4142577
 </td>
 <td style="text-align:right;">
-0.5134846
+0.4190870
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+53
+</td>
+<td style="text-align:right;">
+1.2745706
+</td>
+<td style="text-align:right;">
+0.1781618
+</td>
+<td style="text-align:right;">
+0.6381808
+</td>
+<td style="text-align:right;">
+0.4190870
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6638,16 +6668,16 @@ versicolor
 58
 </td>
 <td style="text-align:right;">
--1.1040955
+-1.0881761
 </td>
 <td style="text-align:right;">
--1.3901017
+-1.4027102
 </td>
 <td style="text-align:right;">
--0.2764730
+-0.2575116
 </td>
 <td style="text-align:right;">
--0.2764917
+-0.2403156
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6658,19 +6688,42 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
+59
+</td>
+<td style="text-align:right;">
+0.9201586
+</td>
+<td style="text-align:right;">
+-0.2735160
+</td>
+<td style="text-align:right;">
+0.4702385
+</td>
+<td style="text-align:right;">
+0.1553260
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 60
 </td>
 <td style="text-align:right;">
--0.7558411
+-0.7337641
 </td>
 <td style="text-align:right;">
--0.7350800
+-0.7251937
 </td>
 <td style="text-align:right;">
-0.0620654
+0.0783731
 </td>
 <td style="text-align:right;">
-0.2501592
+0.2872065
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6684,16 +6737,16 @@ versicolor
 61
 </td>
 <td style="text-align:right;">
--0.9880107
+-0.9700388
 </td>
 <td style="text-align:right;">
--2.2634641
+-2.3060657
 </td>
 <td style="text-align:right;">
--0.1636269
+-0.1455500
 </td>
 <td style="text-align:right;">
--0.2764917
+-0.2403156
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6707,39 +6760,16 @@ versicolor
 63
 </td>
 <td style="text-align:right;">
-0.1728374
+0.2113346
 </td>
 <td style="text-align:right;">
--1.8267829
+-1.8543880
 </td>
 <td style="text-align:right;">
-0.1184884
+0.1343539
 </td>
 <td style="text-align:right;">
--0.2764917
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-64
-</td>
-<td style="text-align:right;">
-0.2889222
-</td>
-<td style="text-align:right;">
--0.2983988
-</td>
-<td style="text-align:right;">
-0.5134499
-</td>
-<td style="text-align:right;">
-0.2501592
+-0.2403156
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6753,16 +6783,16 @@ versicolor
 65
 </td>
 <td style="text-align:right;">
--0.2915019
+-0.2612148
 </td>
 <td style="text-align:right;">
--0.2983988
+-0.2735160
 </td>
 <td style="text-align:right;">
--0.1072038
+-0.0895692
 </td>
 <td style="text-align:right;">
-0.1184965
+0.1553260
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6773,25 +6803,25 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-66
+67
 </td>
 <td style="text-align:right;">
-0.9854311
+-0.2612148
 </td>
 <td style="text-align:right;">
-0.1382824
+-0.0476771
 </td>
 <td style="text-align:right;">
-0.3441807
+0.4142577
 </td>
 <td style="text-align:right;">
-0.2501592
+0.4190870
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-2
+1
 </td>
 </tr>
 <tr>
@@ -6799,16 +6829,16 @@ versicolor
 68
 </td>
 <td style="text-align:right;">
--0.0593322
+-0.0249401
 </td>
 <td style="text-align:right;">
--0.7350800
+-0.7251937
 </td>
 <td style="text-align:right;">
-0.1749115
+0.1903346
 </td>
 <td style="text-align:right;">
--0.2764917
+-0.2403156
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6822,39 +6852,16 @@ versicolor
 69
 </td>
 <td style="text-align:right;">
-0.4050070
+0.4476092
 </td>
 <td style="text-align:right;">
--1.8267829
+-1.8543880
 </td>
 <td style="text-align:right;">
-0.4006038
+0.4142577
 </td>
 <td style="text-align:right;">
-0.3818219
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-70
-</td>
-<td style="text-align:right;">
--0.2915019
-</td>
-<td style="text-align:right;">
--1.1717612
-</td>
-<td style="text-align:right;">
-0.0620654
-</td>
-<td style="text-align:right;">
--0.1448290
+0.4190870
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6868,45 +6875,22 @@ versicolor
 71
 </td>
 <td style="text-align:right;">
-0.0567526
+0.0931972
 </td>
 <td style="text-align:right;">
-0.3566230
+0.4040006
 </td>
 <td style="text-align:right;">
-0.5698730
+0.5822000
 </td>
 <td style="text-align:right;">
-0.7768101
+0.8147286
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-72
-</td>
-<td style="text-align:right;">
-0.2889222
-</td>
-<td style="text-align:right;">
--0.5167394
-</td>
-<td style="text-align:right;">
-0.1184884
-</td>
-<td style="text-align:right;">
-0.1184965
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -6914,16 +6898,16 @@ versicolor
 73
 </td>
 <td style="text-align:right;">
-0.5210918
+0.5657466
 </td>
 <td style="text-align:right;">
--1.1717612
+-1.1768714
 </td>
 <td style="text-align:right;">
-0.6262961
+0.6381808
 </td>
 <td style="text-align:right;">
-0.3818219
+0.4190870
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6937,39 +6921,16 @@ versicolor
 74
 </td>
 <td style="text-align:right;">
-0.2889222
+0.3294719
 </td>
 <td style="text-align:right;">
--0.5167394
+-0.4993548
 </td>
 <td style="text-align:right;">
-0.5134499
+0.5262193
 </td>
 <td style="text-align:right;">
--0.0131663
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-76
-</td>
-<td style="text-align:right;">
-0.8693462
-</td>
-<td style="text-align:right;">
--0.0800582
-</td>
-<td style="text-align:right;">
-0.3441807
-</td>
-<td style="text-align:right;">
-0.2501592
+0.0234454
 </td>
 <td style="text-align:left;">
 versicolor
@@ -6983,39 +6944,16 @@ versicolor
 77
 </td>
 <td style="text-align:right;">
-1.1015159
+1.1564333
 </td>
 <td style="text-align:right;">
--0.5167394
+-0.4993548
 </td>
 <td style="text-align:right;">
-0.5698730
+0.5822000
 </td>
 <td style="text-align:right;">
-0.2501592
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-78
-</td>
-<td style="text-align:right;">
-0.9854311
-</td>
-<td style="text-align:right;">
--0.0800582
-</td>
-<td style="text-align:right;">
-0.6827191
-</td>
-<td style="text-align:right;">
-0.6451474
+0.2872065
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7029,16 +6967,62 @@ versicolor
 79
 </td>
 <td style="text-align:right;">
-0.1728374
+0.2113346
 </td>
 <td style="text-align:right;">
--0.2983988
+-0.2735160
 </td>
 <td style="text-align:right;">
-0.4006038
+0.4142577
 </td>
 <td style="text-align:right;">
-0.3818219
+0.4190870
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+80
+</td>
+<td style="text-align:right;">
+-0.1430774
+</td>
+<td style="text-align:right;">
+-0.9510325
+</td>
+<td style="text-align:right;">
+-0.1455500
+</td>
+<td style="text-align:right;">
+-0.2403156
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+81
+</td>
+<td style="text-align:right;">
+-0.3793521
+</td>
+<td style="text-align:right;">
+-1.4027102
+</td>
+<td style="text-align:right;">
+0.0223923
+</td>
+<td style="text-align:right;">
+-0.1084351
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7052,39 +7036,16 @@ versicolor
 82
 </td>
 <td style="text-align:right;">
--0.4075867
+-0.3793521
 </td>
 <td style="text-align:right;">
--1.3901017
+-1.4027102
 </td>
 <td style="text-align:right;">
--0.0507808
+-0.0335885
 </td>
 <td style="text-align:right;">
--0.2764917
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-83
-</td>
-<td style="text-align:right;">
--0.0593322
-</td>
-<td style="text-align:right;">
--0.7350800
-</td>
-<td style="text-align:right;">
-0.0620654
-</td>
-<td style="text-align:right;">
--0.0131663
+-0.2403156
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7098,16 +7059,16 @@ versicolor
 84
 </td>
 <td style="text-align:right;">
-0.1728374
+0.2113346
 </td>
 <td style="text-align:right;">
--0.7350800
+-0.7251937
 </td>
 <td style="text-align:right;">
-0.7391422
+0.7501424
 </td>
 <td style="text-align:right;">
-0.5134846
+0.5509676
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7118,25 +7079,25 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-85
+86
 </td>
 <td style="text-align:right;">
--0.5236715
+0.2113346
 </td>
 <td style="text-align:right;">
--0.0800582
+0.8556783
 </td>
 <td style="text-align:right;">
-0.4006038
+0.4142577
 </td>
 <td style="text-align:right;">
-0.3818219
+0.5509676
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -7144,16 +7105,16 @@ versicolor
 88
 </td>
 <td style="text-align:right;">
-0.5210918
+0.5657466
 </td>
 <td style="text-align:right;">
--1.6084423
+-1.6285491
 </td>
 <td style="text-align:right;">
-0.3441807
+0.3582769
 </td>
 <td style="text-align:right;">
-0.1184965
+0.1553260
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7164,19 +7125,19 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-90
+89
 </td>
 <td style="text-align:right;">
--0.4075867
+-0.2612148
 </td>
 <td style="text-align:right;">
--1.1717612
+-0.0476771
 </td>
 <td style="text-align:right;">
-0.1184884
+0.1903346
 </td>
 <td style="text-align:right;">
-0.1184965
+0.1553260
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7190,16 +7151,16 @@ versicolor
 91
 </td>
 <td style="text-align:right;">
--0.4075867
+-0.3793521
 </td>
 <td style="text-align:right;">
--0.9534206
+-0.9510325
 </td>
 <td style="text-align:right;">
-0.3441807
+0.3582769
 </td>
 <td style="text-align:right;">
--0.0131663
+0.0234454
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7210,19 +7171,65 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-97
+92
 </td>
 <td style="text-align:right;">
--0.1754170
+0.3294719
 </td>
 <td style="text-align:right;">
--0.2983988
+-0.0476771
 </td>
 <td style="text-align:right;">
-0.2313346
+0.4702385
 </td>
 <td style="text-align:right;">
-0.1184965
+0.2872065
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+95
+</td>
+<td style="text-align:right;">
+-0.2612148
+</td>
+<td style="text-align:right;">
+-0.7251937
+</td>
+<td style="text-align:right;">
+0.2463154
+</td>
+<td style="text-align:right;">
+0.1553260
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+96
+</td>
+<td style="text-align:right;">
+-0.1430774
+</td>
+<td style="text-align:right;">
+-0.0476771
+</td>
+<td style="text-align:right;">
+0.2463154
+</td>
+<td style="text-align:right;">
+0.0234454
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7236,16 +7243,16 @@ versicolor
 98
 </td>
 <td style="text-align:right;">
-0.4050070
+0.4476092
 </td>
 <td style="text-align:right;">
--0.2983988
+-0.2735160
 </td>
 <td style="text-align:right;">
-0.2877577
+0.3022962
 </td>
 <td style="text-align:right;">
-0.1184965
+0.1553260
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7256,19 +7263,19 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-100
+99
 </td>
 <td style="text-align:right;">
--0.1754170
+-0.8519015
 </td>
 <td style="text-align:right;">
--0.5167394
+-1.1768714
 </td>
 <td style="text-align:right;">
-0.1749115
+-0.4254539
 </td>
 <td style="text-align:right;">
-0.1184965
+-0.1084351
 </td>
 <td style="text-align:left;">
 versicolor
@@ -7279,19 +7286,19 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-101
+104
 </td>
 <td style="text-align:right;">
-0.5210918
+0.5657466
 </td>
 <td style="text-align:right;">
-0.5749635
+-0.2735160
 </td>
 <td style="text-align:right;">
-1.2469498
+1.0300462
 </td>
 <td style="text-align:right;">
-1.6984492
+0.8147286
 </td>
 <td style="text-align:left;">
 virginica
@@ -7305,16 +7312,16 @@ virginica
 105
 </td>
 <td style="text-align:right;">
-0.7532614
+0.8020212
 </td>
 <td style="text-align:right;">
--0.0800582
+-0.0476771
 </td>
 <td style="text-align:right;">
-1.1341037
+1.1420078
 </td>
 <td style="text-align:right;">
-1.3034610
+1.3422508
 </td>
 <td style="text-align:left;">
 virginica
@@ -7328,16 +7335,16 @@ virginica
 107
 </td>
 <td style="text-align:right;">
--1.1040955
+-1.0881761
 </td>
 <td style="text-align:right;">
--1.1717612
+-1.1768714
 </td>
 <td style="text-align:right;">
-0.4006038
+0.4142577
 </td>
 <td style="text-align:right;">
-0.6451474
+0.6828481
 </td>
 <td style="text-align:left;">
 virginica
@@ -7351,45 +7358,22 @@ virginica
 108
 </td>
 <td style="text-align:right;">
-1.6819399
+1.7471199
 </td>
 <td style="text-align:right;">
--0.2983988
+-0.2735160
 </td>
 <td style="text-align:right;">
-1.4162191
+1.4219116
 </td>
 <td style="text-align:right;">
-0.7768101
+0.8147286
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
 2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-109
-</td>
-<td style="text-align:right;">
-0.9854311
-</td>
-<td style="text-align:right;">
--1.1717612
-</td>
-<td style="text-align:right;">
-1.1341037
-</td>
-<td style="text-align:right;">
-0.7768101
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-1
 </td>
 </tr>
 <tr>
@@ -7397,39 +7381,16 @@ virginica
 110
 </td>
 <td style="text-align:right;">
-1.5658551
+1.6289826
 </td>
 <td style="text-align:right;">
-1.2299853
+1.3073561
 </td>
 <td style="text-align:right;">
-1.3033729
+1.3099501
 </td>
 <td style="text-align:right;">
-1.6984492
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-111
-</td>
-<td style="text-align:right;">
-0.7532614
-</td>
-<td style="text-align:right;">
-0.3566230
-</td>
-<td style="text-align:right;">
-0.7391422
-</td>
-<td style="text-align:right;">
-1.0401355
+1.7378924
 </td>
 <td style="text-align:left;">
 virginica
@@ -7443,39 +7404,16 @@ virginica
 112
 </td>
 <td style="text-align:right;">
-0.6371766
+0.6838839
 </td>
 <td style="text-align:right;">
--0.7350800
+-0.7251937
 </td>
 <td style="text-align:right;">
-0.8519884
+0.8621039
 </td>
 <td style="text-align:right;">
-0.9084728
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-113
-</td>
-<td style="text-align:right;">
-1.1015159
-</td>
-<td style="text-align:right;">
--0.0800582
-</td>
-<td style="text-align:right;">
-0.9648345
-</td>
-<td style="text-align:right;">
-1.1717983
+0.9466092
 </td>
 <td style="text-align:left;">
 virginica
@@ -7486,25 +7424,71 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-115
+113
 </td>
 <td style="text-align:right;">
--0.0593322
+1.1564333
 </td>
 <td style="text-align:right;">
--0.5167394
+-0.0476771
 </td>
 <td style="text-align:right;">
-0.7391422
+0.9740655
 </td>
 <td style="text-align:right;">
-1.5667864
+1.2103702
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+116
+</td>
+<td style="text-align:right;">
+0.6838839
+</td>
+<td style="text-align:right;">
+0.4040006
+</td>
+<td style="text-align:right;">
+0.8621039
+</td>
+<td style="text-align:right;">
+1.4741313
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+117
+</td>
+<td style="text-align:right;">
+0.8020212
+</td>
+<td style="text-align:right;">
+-0.0476771
+</td>
+<td style="text-align:right;">
+0.9740655
+</td>
+<td style="text-align:right;">
+0.8147286
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
 </td>
 </tr>
 <tr>
@@ -7512,16 +7496,16 @@ virginica
 118
 </td>
 <td style="text-align:right;">
-2.1462792
+2.2196693
 </td>
 <td style="text-align:right;">
-1.6666665
+1.7590338
 </td>
 <td style="text-align:right;">
-1.6419113
+1.6458347
 </td>
 <td style="text-align:right;">
-1.3034610
+1.3422508
 </td>
 <td style="text-align:left;">
 virginica
@@ -7535,16 +7519,16 @@ virginica
 119
 </td>
 <td style="text-align:right;">
-2.1462792
+2.2196693
 </td>
 <td style="text-align:right;">
--0.9534206
+-0.9510325
 </td>
 <td style="text-align:right;">
-1.7547575
+1.7577963
 </td>
 <td style="text-align:right;">
-1.4351237
+1.4741313
 </td>
 <td style="text-align:left;">
 virginica
@@ -7558,16 +7542,16 @@ virginica
 120
 </td>
 <td style="text-align:right;">
-0.1728374
+0.2113346
 </td>
 <td style="text-align:right;">
--1.8267829
+-1.8543880
 </td>
 <td style="text-align:right;">
-0.6827191
+0.6941616
 </td>
 <td style="text-align:right;">
-0.3818219
+0.4190870
 </td>
 <td style="text-align:left;">
 virginica
@@ -7578,25 +7562,25 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-121
+122
 </td>
 <td style="text-align:right;">
-1.2176007
+-0.2612148
 </td>
 <td style="text-align:right;">
-0.3566230
+-0.4993548
 </td>
 <td style="text-align:right;">
-1.0776806
+0.6381808
 </td>
 <td style="text-align:right;">
-1.4351237
+1.0784897
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-2
+1
 </td>
 </tr>
 <tr>
@@ -7604,16 +7588,16 @@ virginica
 123
 </td>
 <td style="text-align:right;">
-2.1462792
+2.2196693
 </td>
 <td style="text-align:right;">
--0.5167394
+-0.4993548
 </td>
 <td style="text-align:right;">
-1.6419113
+1.6458347
 </td>
 <td style="text-align:right;">
-1.0401355
+1.0784897
 </td>
 <td style="text-align:left;">
 virginica
@@ -7627,16 +7611,16 @@ virginica
 124
 </td>
 <td style="text-align:right;">
-0.5210918
+0.5657466
 </td>
 <td style="text-align:right;">
--0.7350800
+-0.7251937
 </td>
 <td style="text-align:right;">
-0.6262961
+0.6381808
 </td>
 <td style="text-align:right;">
-0.7768101
+0.8147286
 </td>
 <td style="text-align:left;">
 virginica
@@ -7647,19 +7631,42 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-126
+127
 </td>
 <td style="text-align:right;">
-1.5658551
+0.4476092
 </td>
 <td style="text-align:right;">
-0.3566230
+-0.4993548
 </td>
 <td style="text-align:right;">
-1.2469498
+0.5822000
 </td>
 <td style="text-align:right;">
-0.7768101
+0.8147286
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+128
+</td>
+<td style="text-align:right;">
+0.3294719
+</td>
+<td style="text-align:right;">
+-0.0476771
+</td>
+<td style="text-align:right;">
+0.6381808
+</td>
+<td style="text-align:right;">
+0.8147286
 </td>
 <td style="text-align:left;">
 virginica
@@ -7670,42 +7677,42 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-128
+129
 </td>
 <td style="text-align:right;">
-0.2889222
+0.6838839
 </td>
 <td style="text-align:right;">
--0.0800582
+-0.4993548
 </td>
 <td style="text-align:right;">
-0.6262961
+1.0300462
 </td>
 <td style="text-align:right;">
-0.7768101
+1.2103702
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-129
+130
 </td>
 <td style="text-align:right;">
-0.6371766
+1.6289826
 </td>
 <td style="text-align:right;">
--0.5167394
+-0.0476771
 </td>
 <td style="text-align:right;">
-1.0212576
+1.1420078
 </td>
 <td style="text-align:right;">
-1.1717983
+0.5509676
 </td>
 <td style="text-align:left;">
 virginica
@@ -7719,16 +7726,16 @@ virginica
 131
 </td>
 <td style="text-align:right;">
-1.7980247
+1.8652573
 </td>
 <td style="text-align:right;">
--0.5167394
+-0.4993548
 </td>
 <td style="text-align:right;">
-1.3033729
+1.3099501
 </td>
 <td style="text-align:right;">
-0.9084728
+0.9466092
 </td>
 <td style="text-align:left;">
 virginica
@@ -7739,48 +7746,48 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-132
+135
 </td>
 <td style="text-align:right;">
-2.3784488
+0.3294719
 </td>
 <td style="text-align:right;">
-1.6666665
+-0.9510325
 </td>
 <td style="text-align:right;">
-1.4726421
+1.0300462
 </td>
 <td style="text-align:right;">
-1.0401355
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-134
-</td>
-<td style="text-align:right;">
-0.5210918
-</td>
-<td style="text-align:right;">
--0.5167394
-</td>
-<td style="text-align:right;">
-0.7391422
-</td>
-<td style="text-align:right;">
-0.3818219
+0.2872065
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
 1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+136
+</td>
+<td style="text-align:right;">
+2.2196693
+</td>
+<td style="text-align:right;">
+-0.0476771
+</td>
+<td style="text-align:right;">
+1.3099501
+</td>
+<td style="text-align:right;">
+1.4741313
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
 </td>
 </tr>
 <tr>
@@ -7788,16 +7795,16 @@ virginica
 137
 </td>
 <td style="text-align:right;">
-0.5210918
+0.5657466
 </td>
 <td style="text-align:right;">
-0.7933041
+0.8556783
 </td>
 <td style="text-align:right;">
-1.0212576
+1.0300462
 </td>
 <td style="text-align:right;">
-1.5667864
+1.6060118
 </td>
 <td style="text-align:left;">
 virginica
@@ -7808,19 +7815,42 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-139
+140
 </td>
 <td style="text-align:right;">
-0.1728374
+1.2745706
 </td>
 <td style="text-align:right;">
--0.0800582
+0.1781618
 </td>
 <td style="text-align:right;">
-0.5698730
+0.9180847
 </td>
 <td style="text-align:right;">
-0.7768101
+1.2103702
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+143
+</td>
+<td style="text-align:right;">
+-0.0249401
+</td>
+<td style="text-align:right;">
+-0.7251937
+</td>
+<td style="text-align:right;">
+0.7501424
+</td>
+<td style="text-align:right;">
+0.9466092
 </td>
 <td style="text-align:left;">
 virginica
@@ -7831,42 +7861,19 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-140
+144
 </td>
 <td style="text-align:right;">
-1.2176007
+1.1564333
 </td>
 <td style="text-align:right;">
-0.1382824
+0.4040006
 </td>
 <td style="text-align:right;">
-0.9084114
+1.1979885
 </td>
 <td style="text-align:right;">
-1.1717983
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-142
-</td>
-<td style="text-align:right;">
-1.2176007
-</td>
-<td style="text-align:right;">
-0.1382824
-</td>
-<td style="text-align:right;">
-0.7391422
-</td>
-<td style="text-align:right;">
-1.4351237
+1.4741313
 </td>
 <td style="text-align:left;">
 virginica
@@ -7880,16 +7887,16 @@ virginica
 145
 </td>
 <td style="text-align:right;">
-0.9854311
+1.0382959
 </td>
 <td style="text-align:right;">
-0.5749635
+0.6298395
 </td>
 <td style="text-align:right;">
-1.0776806
+1.0860270
 </td>
 <td style="text-align:right;">
-1.6984492
+1.7378924
 </td>
 <td style="text-align:left;">
 virginica
@@ -7903,16 +7910,16 @@ virginica
 147
 </td>
 <td style="text-align:right;">
-0.5210918
+0.5657466
 </td>
 <td style="text-align:right;">
--1.1717612
+-1.1768714
 </td>
 <td style="text-align:right;">
-0.6827191
+0.6941616
 </td>
 <td style="text-align:right;">
-0.9084728
+0.9466092
 </td>
 <td style="text-align:left;">
 virginica
@@ -7923,19 +7930,19 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-148
+149
 </td>
 <td style="text-align:right;">
-0.7532614
+0.4476092
 </td>
 <td style="text-align:right;">
--0.0800582
+0.8556783
 </td>
 <td style="text-align:right;">
-0.7955653
+0.9180847
 </td>
 <td style="text-align:right;">
-1.0401355
+1.4741313
 </td>
 <td style="text-align:left;">
 virginica
@@ -7949,22 +7956,22 @@ virginica
 150
 </td>
 <td style="text-align:right;">
-0.0567526
+0.0931972
 </td>
 <td style="text-align:right;">
--0.0800582
+-0.0476771
 </td>
 <td style="text-align:right;">
-0.7391422
+0.7501424
 </td>
 <td style="text-align:right;">
-0.7768101
+0.8147286
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 </tbody>
@@ -8026,15 +8033,5873 @@ virginica
 <div class="panelset">
 <div class="panel">
 <p><span class="panel-name">Regression</span></p>
-<p>Regression Content</p>
+<p>Regression is awesome</p>
 </div>
 <div class="panel">
 <p><span class="panel-name">K-NN</span></p>
-<p>K-NN Content</p>
+<p>K-NN is simple, but awesome</p>
 </div>
 </div>
+<h1 id="regression-1">Regression</h1>
+<h2 id="introduction-to-linear-regression"><strong>Introduction to Linear Regression</strong></h2>
+<p>This lesson builds on the ordinary linear regression concept, introduced in business statistics, to discuss linear regression as a machine learning task. Regression, or the creation of a predictive model from data, is one of the key machine learning tasks. By using linear regression, which can often be solved analytically, we will introduce the concept of minimizing a cost function to determine the optimal model parameters in a straight-forward manner.</p>
+<h3 id="objectives-1"><strong>Objectives</strong></h3>
+<p>By the end of this lesson, you will be able to</p>
+<ul>
+<li>explain the role of the loss function in machine learning,</li>
+<li>articulate how to compute a regression on multiple variables,</li>
+<li>explain the different statistical measures that quantify the quality of a regression,</li>
+<li>utilize categorical variables in a machine learning model, and</li>
+<li>compute a linear regression model</li>
+</ul>
+<p>You were introduced to the concept of linear regression by learning about simple linear regression. This initial approach treated linear regression as a statistical technique where the relation between independent variables (or features) and a dependent variable (or target) was determined by a mathematical relation. While powerful, the previous approach treated linear regression as a distinct, statistical approach to relating independent variables with a dependent variable. In this lesson, we instead treat linear regression as a machine learning task. As a result, we will use regression to <em>fit a model to data</em>. The model generated in this fashion can be explored in greater detail to either understand why the provided data follow the generated model (i.e., gain insight into the data), or the model can be used to generate new dependent values from future or unseen data (i.e., make predictions from the model).</p>
+<p>We will use the <em>tips</em> data set. After loading this data, we display several rows, and next compute a simple linear regression to predict the <code>tip</code> feature from the <code>total_bill</code> feature.</p>
+<p>For this section we need to load libraries:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/topepo/caret/'>caret</a></span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#load data. </span>
+<span class='co'>#curl package lets us download data from a website with the proper location</span>
+<span class='co'>#check the packages tab and see if you have curl</span>
+<span class='co'>#try following</span>
+  <span class='co'>#?curl</span>
+
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/jeroen/curl'>curl</a></span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/load.html'>load</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/curl/man/curl.html'>curl</a></span><span class='op'>(</span><span class='st'>"https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.rda"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>tips</span>,<span class='fl'>5</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 5 x 7
+  total_bill   tip sex    smoker day   time    size
+       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
+1       17.0  1.01 Female No     Sun   Dinner     2
+2       10.3  1.66 Male   No     Sun   Dinner     3
+3       21.0  3.5  Male   No     Sun   Dinner     3
+4       23.7  3.31 Male   No     Sun   Dinner     2
+5       24.6  3.61 Female No     Sun   Dinner     4</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#view the whole dataset</span>
+<span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='va'>tips</span><span class='op'>)</span><span class='op'>%&gt;%</span>
+  <span class='fu'>kableExtra</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/kableExtra/man/kable_styling.html'>kable_styling</a></span><span class='op'>(</span><span class='st'>"striped"</span><span class='op'>)</span><span class='op'>%&gt;%</span>
+  <span class='fu'>kableExtra</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/kableExtra/man/scroll_box.html'>scroll_box</a></span><span class='op'>(</span>width <span class='op'>=</span> <span class='st'>"100%"</span>,height<span class='op'>=</span><span class='st'>"300px"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+total_bill
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+tip
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+sex
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+smoker
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+day
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+time
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+size
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+16.99
+</td>
+<td style="text-align:right;">
+1.01
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.34
+</td>
+<td style="text-align:right;">
+1.66
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21.01
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23.68
+</td>
+<td style="text-align:right;">
+3.31
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.59
+</td>
+<td style="text-align:right;">
+3.61
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.29
+</td>
+<td style="text-align:right;">
+4.71
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8.77
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+26.88
+</td>
+<td style="text-align:right;">
+3.12
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.04
+</td>
+<td style="text-align:right;">
+1.96
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.78
+</td>
+<td style="text-align:right;">
+3.23
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.27
+</td>
+<td style="text-align:right;">
+1.71
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+35.26
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.42
+</td>
+<td style="text-align:right;">
+1.57
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.43
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.83
+</td>
+<td style="text-align:right;">
+3.02
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21.58
+</td>
+<td style="text-align:right;">
+3.92
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.33
+</td>
+<td style="text-align:right;">
+1.67
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.29
+</td>
+<td style="text-align:right;">
+3.71
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.97
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.65
+</td>
+<td style="text-align:right;">
+3.35
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.92
+</td>
+<td style="text-align:right;">
+4.08
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.29
+</td>
+<td style="text-align:right;">
+2.75
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.77
+</td>
+<td style="text-align:right;">
+2.23
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+39.42
+</td>
+<td style="text-align:right;">
+7.58
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.82
+</td>
+<td style="text-align:right;">
+3.18
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.81
+</td>
+<td style="text-align:right;">
+2.34
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.37
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.69
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21.70
+</td>
+<td style="text-align:right;">
+4.30
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.65
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9.55
+</td>
+<td style="text-align:right;">
+1.45
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.35
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.06
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.69
+</td>
+<td style="text-align:right;">
+2.45
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.78
+</td>
+<td style="text-align:right;">
+3.27
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.06
+</td>
+<td style="text-align:right;">
+3.60
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.31
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.93
+</td>
+<td style="text-align:right;">
+3.07
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.69
+</td>
+<td style="text-align:right;">
+2.31
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+31.27
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.04
+</td>
+<td style="text-align:right;">
+2.24
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.46
+</td>
+<td style="text-align:right;">
+2.54
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.94
+</td>
+<td style="text-align:right;">
+3.06
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9.68
+</td>
+<td style="text-align:right;">
+1.32
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+30.40
+</td>
+<td style="text-align:right;">
+5.60
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.29
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.23
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+32.40
+</td>
+<td style="text-align:right;">
+6.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28.55
+</td>
+<td style="text-align:right;">
+2.05
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.04
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.54
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.29
+</td>
+<td style="text-align:right;">
+2.60
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34.81
+</td>
+<td style="text-align:right;">
+5.20
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9.94
+</td>
+<td style="text-align:right;">
+1.56
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.56
+</td>
+<td style="text-align:right;">
+4.34
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.49
+</td>
+<td style="text-align:right;">
+3.51
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+38.01
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+26.41
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.24
+</td>
+<td style="text-align:right;">
+1.76
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+48.27
+</td>
+<td style="text-align:right;">
+6.73
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.29
+</td>
+<td style="text-align:right;">
+3.21
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.81
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.02
+</td>
+<td style="text-align:right;">
+1.98
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.29
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.59
+</td>
+<td style="text-align:right;">
+2.64
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.08
+</td>
+<td style="text-align:right;">
+3.15
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.45
+</td>
+<td style="text-align:right;">
+2.47
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.07
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.23
+</td>
+<td style="text-align:right;">
+2.01
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.01
+</td>
+<td style="text-align:right;">
+2.09
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.02
+</td>
+<td style="text-align:right;">
+1.97
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.07
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+26.86
+</td>
+<td style="text-align:right;">
+3.14
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.28
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.73
+</td>
+<td style="text-align:right;">
+2.20
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.51
+</td>
+<td style="text-align:right;">
+1.25
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.92
+</td>
+<td style="text-align:right;">
+3.08
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+27.20
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.76
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.29
+</td>
+<td style="text-align:right;">
+2.71
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.44
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.66
+</td>
+<td style="text-align:right;">
+3.40
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.07
+</td>
+<td style="text-align:right;">
+1.83
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+32.68
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.98
+</td>
+<td style="text-align:right;">
+2.03
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34.83
+</td>
+<td style="text-align:right;">
+5.17
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.03
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.28
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.71
+</td>
+<td style="text-align:right;">
+5.85
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21.16
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28.97
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.49
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5.75
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.32
+</td>
+<td style="text-align:right;">
+4.30
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.75
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.17
+</td>
+<td style="text-align:right;">
+4.73
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+27.28
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.03
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21.01
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.46
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.35
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.38
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+44.30
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.42
+</td>
+<td style="text-align:right;">
+3.48
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.92
+</td>
+<td style="text-align:right;">
+4.08
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.36
+</td>
+<td style="text-align:right;">
+1.64
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.49
+</td>
+<td style="text-align:right;">
+4.06
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.21
+</td>
+<td style="text-align:right;">
+4.29
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.24
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.31
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.00
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7.25
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+38.07
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23.95
+</td>
+<td style="text-align:right;">
+2.55
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.71
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.31
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+29.93
+</td>
+<td style="text-align:right;">
+5.07
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.65
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.43
+</td>
+<td style="text-align:right;">
+1.80
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.08
+</td>
+<td style="text-align:right;">
+2.92
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.69
+</td>
+<td style="text-align:right;">
+2.31
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.42
+</td>
+<td style="text-align:right;">
+1.68
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.26
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.95
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.48
+</td>
+<td style="text-align:right;">
+2.52
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+29.80
+</td>
+<td style="text-align:right;">
+4.20
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8.52
+</td>
+<td style="text-align:right;">
+1.48
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.52
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.38
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.82
+</td>
+<td style="text-align:right;">
+2.18
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.08
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.27
+</td>
+<td style="text-align:right;">
+2.83
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.17
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.26
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.26
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8.51
+</td>
+<td style="text-align:right;">
+1.25
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.33
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.15
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.00
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.16
+</td>
+<td style="text-align:right;">
+2.75
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.47
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34.30
+</td>
+<td style="text-align:right;">
+6.70
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+41.19
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+27.05
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.43
+</td>
+<td style="text-align:right;">
+2.30
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8.35
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.64
+</td>
+<td style="text-align:right;">
+1.36
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.87
+</td>
+<td style="text-align:right;">
+1.63
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9.78
+</td>
+<td style="text-align:right;">
+1.73
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7.51
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.07
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.13
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.26
+</td>
+<td style="text-align:right;">
+2.74
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.55
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.77
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+29.85
+</td>
+<td style="text-align:right;">
+5.14
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+48.17
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.00
+</td>
+<td style="text-align:right;">
+3.75
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.39
+</td>
+<td style="text-align:right;">
+2.61
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.49
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21.50
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.66
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.21
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.81
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.51
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.52
+</td>
+<td style="text-align:right;">
+3.48
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.76
+</td>
+<td style="text-align:right;">
+2.24
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+31.71
+</td>
+<td style="text-align:right;">
+4.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.59
+</td>
+<td style="text-align:right;">
+1.61
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.63
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+50.81
+</td>
+<td style="text-align:right;">
+10.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.81
+</td>
+<td style="text-align:right;">
+3.16
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7.25
+</td>
+<td style="text-align:right;">
+5.15
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+31.85
+</td>
+<td style="text-align:right;">
+3.18
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.82
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+32.90
+</td>
+<td style="text-align:right;">
+3.11
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.89
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14.48
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9.60
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34.63
+</td>
+<td style="text-align:right;">
+3.55
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34.65
+</td>
+<td style="text-align:right;">
+3.68
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23.33
+</td>
+<td style="text-align:right;">
+5.65
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+45.35
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23.17
+</td>
+<td style="text-align:right;">
+6.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.55
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.69
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.90
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+30.46
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.15
+</td>
+<td style="text-align:right;">
+3.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23.10
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.69
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sun
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19.81
+</td>
+<td style="text-align:right;">
+4.19
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28.44
+</td>
+<td style="text-align:right;">
+2.56
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.48
+</td>
+<td style="text-align:right;">
+2.02
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.58
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7.56
+</td>
+<td style="text-align:right;">
+1.44
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.34
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+43.11
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.00
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.51
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.71
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.74
+</td>
+<td style="text-align:right;">
+2.01
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.00
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.40
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.53
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.47
+</td>
+<td style="text-align:right;">
+3.23
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+26.59
+</td>
+<td style="text-align:right;">
+3.41
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+38.73
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.27
+</td>
+<td style="text-align:right;">
+2.03
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.76
+</td>
+<td style="text-align:right;">
+2.23
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+30.06
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25.89
+</td>
+<td style="text-align:right;">
+5.16
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+48.33
+</td>
+<td style="text-align:right;">
+9.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.27
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28.17
+</td>
+<td style="text-align:right;">
+6.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.90
+</td>
+<td style="text-align:right;">
+1.10
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28.15
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.59
+</td>
+<td style="text-align:right;">
+1.50
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7.74
+</td>
+<td style="text-align:right;">
+1.44
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+30.14
+</td>
+<td style="text-align:right;">
+3.09
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.16
+</td>
+<td style="text-align:right;">
+2.20
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.42
+</td>
+<td style="text-align:right;">
+3.48
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8.58
+</td>
+<td style="text-align:right;">
+1.92
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.98
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.42
+</td>
+<td style="text-align:right;">
+1.58
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16.27
+</td>
+<td style="text-align:right;">
+2.50
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.09
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Fri
+</td>
+<td style="text-align:left;">
+Lunch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20.45
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13.28
+</td>
+<td style="text-align:right;">
+2.72
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.12
+</td>
+<td style="text-align:right;">
+2.88
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24.01
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.69
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11.61
+</td>
+<td style="text-align:right;">
+3.39
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.77
+</td>
+<td style="text-align:right;">
+1.47
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15.53
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10.07
+</td>
+<td style="text-align:right;">
+1.25
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12.60
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+32.83
+</td>
+<td style="text-align:right;">
+1.17
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+35.83
+</td>
+<td style="text-align:right;">
+4.67
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+29.03
+</td>
+<td style="text-align:right;">
+5.92
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+27.18
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22.67
+</td>
+<td style="text-align:right;">
+2.00
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+Yes
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17.82
+</td>
+<td style="text-align:right;">
+1.75
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Sat
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18.78
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+No
+</td>
+<td style="text-align:left;">
+Thur
+</td>
+<td style="text-align:left;">
+Dinner
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Perform simple linear regression</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>OLS1</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span>formula<span class='op'>=</span><span class='va'>tip</span><span class='op'>~</span><span class='va'>total_bill</span>,data<span class='op'>=</span><span class='va'>tips</span><span class='op'>)</span>
+<span class='co'>#general output</span>
+<span class='va'>OLS1</span>
+</code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = tip ~ total_bill, data = tips)
+
+Coefficients:
+(Intercept)   total_bill  
+     0.9203       0.1050  </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#more common output</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>OLS1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = tip ~ total_bill, data = tips)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.1982 -0.5652 -0.0974  0.4863  3.7434 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.920270   0.159735   5.761 2.53e-08 ***
+total_bill  0.105025   0.007365  14.260  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.022 on 242 degrees of freedom
+Multiple R-squared:  0.4566,    Adjusted R-squared:  0.4544 
+F-statistic: 203.4 on 1 and 242 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#correlation or R-squared...</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>tips</span><span class='op'>$</span><span class='va'>total_bill</span>,<span class='va'>tips</span><span class='op'>$</span><span class='va'>tip</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span>
+</code></pre>
+</div>
+<pre><code>[1] 0.4566166</code></pre>
+</div>
+<p><br />
+<strong>Formalism</strong></p>
+<hr />
+<p>Formally, this simple linear model related the independent variables <span class="math inline">\(x_i\)</span> to the dependent variables <span class="math inline">\(y_i\)</span> in our data set via two parameters: an intercept, and a slope. Mathematically, we express this relation in the following form:</p>
+<p><span class="math display">\[
+f(x_i) = \beta * x_i + \alpha + \epsilon_i
+\]</span></p>
+<p>where <span class="math inline">\(\epsilon_i\)</span> accounts for the difference between the model and the data for each data point <span class="math inline">\((x_i,y_i)\)</span>. If we have a perfect model, these errors, <span class="math inline">\(\epsilon_i\)</span>, are all zero, and <span class="math inline">\(y_i = f(x_i)\)</span>. In real life, however, the error terms rarely vanish because even if the original relationship is perfect noise creeps into the measurement process.</p>
+<p>As a result, in this simple example we wish to determine the model parameters: <span class="math inline">\(\beta_i\)</span>, and <span class="math inline">\(\alpha_i\)</span> that minimize the values of <span class="math inline">\(\epsilon_i\)</span>. We could perform this process in an iterative manner, trying different values for the model parameters and measuring the error function. This approach is often used in machine learning, where we define a <strong>cost function</strong> that we seek to minimize by selecting the best model parameters.</p>
+<p>In the case of a simple linear model, we have several potential cost (or loss) functions that we could seek to minimize, but we will use the common <em>l2-norm</em>: <span class="math inline">\(\epsilon_i^2 = \left( \ y_i - f(x_i) \ \right)^2\)</span>, where <span class="math inline">\(f(x_i)\)</span> is defined by our model parameters. We demonstrate this approach visually in the following code block, where we minimize the sum of the <em>l2-norm</em> model residuals, which is done by finding the best model parameters: <span class="math inline">\(\hat{\beta}\)</span>, and <span class="math inline">\(\hat{\alpha}\)</span>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#Get some data</span>
+<span class='va'>AnsDat</span><span class='op'>&lt;-</span><span class='va'>anscombe</span><span class='op'>%&gt;%</span>
+  <span class='fu'>select</span><span class='op'>(</span><span class='va'>y1</span>,<span class='va'>x1</span><span class='op'>)</span>
+
+<span class='co'>#extract x and y columns</span>
+<span class='va'>Y</span><span class='op'>&lt;-</span><span class='va'>AnsDat</span><span class='op'>$</span><span class='va'>y1</span>
+<span class='va'>X</span><span class='op'>&lt;-</span><span class='va'>AnsDat</span><span class='op'>$</span><span class='va'>x1</span>
+
+<span class='co'>#find the number of data points</span>
+<span class='va'>n</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>AnsDat</span><span class='op'>)</span>
+
+<span class='co'>#determine mean values</span>
+<span class='va'>mean_x</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>X</span>,na.rm <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>mean_y</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>Y</span>,na.rm <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='co'>#determine best fit model parameters (from simple linear regression)</span>
+<span class='va'>beta</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='op'>(</span><span class='va'>X</span> <span class='op'>-</span> <span class='va'>mean_x</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='va'>Y</span> <span class='op'>-</span> <span class='va'>mean_y</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>/</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='op'>(</span><span class='va'>X</span> <span class='op'>-</span> <span class='va'>mean_x</span><span class='op'>)</span><span class='op'>**</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>beta</span>
+</code></pre>
+</div>
+<pre><code>[1] 0.5000909</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>alpha</span> <span class='op'>=</span> <span class='va'>mean_y</span> <span class='op'>-</span> <span class='va'>beta</span> <span class='op'>*</span> <span class='va'>mean_x</span>
+<span class='va'>alpha</span>
+</code></pre>
+</div>
+<pre><code>[1] 3.000091</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#lets double check</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span>formula<span class='op'>=</span><span class='va'>Y</span><span class='op'>~</span><span class='va'>X</span>,data<span class='op'>=</span><span class='va'>AnsDat</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = Y ~ X, data = AnsDat)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.92127 -0.45577 -0.04136  0.70941  1.83882 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)   3.0001     1.1247   2.667  0.02573 * 
+X             0.5001     0.1179   4.241  0.00217 **
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 1.237 on 9 degrees of freedom
+Multiple R-squared:  0.6665,    Adjusted R-squared:  0.6295 
+F-statistic: 17.99 on 1 and 9 DF,  p-value: 0.00217</code></pre>
+</div>
+<p>Plots</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+
+<span class='co'>#create regression plot</span>
+<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>AnsDat</span>,<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>x1</span>, <span class='va'>y1</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span>method<span class='op'>=</span><span class='st'>'lm'</span>, se<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_segment.html'>geom_segment</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>X</span>, xend<span class='op'>=</span><span class='va'>X</span>, y<span class='op'>=</span><span class='va'>Y</span>, yend<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>Y</span><span class='op'>~</span><span class='va'>X</span><span class='op'>)</span><span class='op'>$</span><span class='va'>fitted.values</span>, color<span class='op'>=</span><span class='st'>"error"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_minimal</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>x<span class='op'>=</span><span class='st'>'X Values'</span>, y<span class='op'>=</span><span class='st'>'Y Values'</span>, title<span class='op'>=</span><span class='st'>'Linear Regression Plot'</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>plot.title <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>hjust<span class='op'>=</span><span class='fl'>0.5</span>, size<span class='op'>=</span><span class='fl'>20</span>, face<span class='op'>=</span><span class='st'>'bold'</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>legend.title <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_blank</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="Module_1_files/figure-html5/plots1-1.png" width="624" /></p>
+</div>
+<p><br />
+<strong>Cost Function</strong></p>
+<p>This simple example demonstrates a fundamental concept in machine learning, namely the minimization of a cost (or loss) function, which quantifies how well a model represents a data set. For a given data set, the cost function is completely specified by the model parameters, thus a more complex model has a more complex cost function, which can become difficult to minimize. To clarify this point, we now turn to the exploration of the shape of cost functions.</p>
+<p>For simplicity, we start with a one-dimensional cost function, a linear model with no intercept: <span class="math inline">\(f(x_i) = \beta x_i\)</span>. In the following code cell, we compute the cost function for a given data set as a function of the unknown parameter <span class="math inline">\(\beta\)</span>. In this case, the minimum is easy to visualize, given the steepness of the cost function around the minimum.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#define our betas</span>
+<span class='va'>betas</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>4</span>,<span class='fl'>4</span>,length.out<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
+
+<span class='co'>#define our cost function</span>
+<span class='va'>l2n</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>betas</span><span class='op'>)</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>tips</span><span class='op'>$</span><span class='va'>tip</span><span class='op'>)</span> <span class='op'>-</span> <span class='va'>m</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>tips</span><span class='op'>$</span><span class='va'>total_bill</span><span class='op'>)</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'># The L2-norm</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+<span class='va'>costplot</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>betas</span>,<span class='va'>l2n</span><span class='op'>)</span><span class='op'>)</span>
+<span class='co'>#create regression plot</span>
+<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>costplot</span>,<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>betas</span>, <span class='va'>l2n</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>color<span class='op'>=</span><span class='st'>"blue"</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_abline.html'>geom_vline</a></span><span class='op'>(</span>xintercept<span class='op'>=</span><span class='fl'>0</span>, color<span class='op'>=</span><span class='st'>"red"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="Module_1_files/figure-html5/cost%20plot-1.png" width="624" /></p>
+</div>
+<p>In general, however, we face two challenges:</p>
+<ol type="1">
+<li><p>the cost function will likely be more complex, and</p></li>
+<li><p>our data will be higher dimensional.</p></li>
+</ol>
+<p>In general, we must employ a (potentially) complex mathematical technique to find the (hopefully) global minimum of the cost function. We can increase the complexity of our <em>cost</em> function analysis by extending the original model to include both a slope and an intercept. We now must find the minimum of this two dimensional model, given our observed data. We do this in the following code cell where we generate a grid of values in our two parameters, and compute the cost function for these different parameter combinations.</p>
 <h2 id="recap">Recap</h2>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
