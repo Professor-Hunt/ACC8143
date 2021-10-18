@@ -471,8 +471,7 @@ summary(mod)$r.squared
 
 ```
 
-One way to express R-squared is as the sum of squared fitted-value deviations divided by the sum of squared original-value deviations: 
-$$
+One way to express R-squared is as the sum of squared fitted-value deviations divided by the sum of squared original-value deviations: $$
 R^{2} =  \frac{\sum (\hat{y} – \bar{\hat{y}})^{2}}{\sum (y – \bar{y})^{2}}
 $$
 
@@ -792,20 +791,54 @@ xaringanExtra::style_panelset_tabs(font_family = "inherit")
 
 ## Deep Dive
 
-::::: {.panelset}
-
+::: {.panelset}
 ::: {.panel}
 [Regression]{.panel-name}
 
-Regression Content
+Regression is awesome
 :::
 
 ::: {.panel}
 [K-NN]{.panel-name}
 
-K-NN Content
+K-NN is simple, but awesome
+:::
 :::
 
-:::::
+# Regression
+
+## **Introduction to Linear Regression**
+
+This lesson builds on the ordinary linear regression concept, introduced in business statistics, to discuss linear regression as a machine learning task. Regression, or the creation of a predictive model from data, is one of the key machine learning tasks. By using linear regression, which can often be solved analytically, we will introduce the concept of minimizing a cost function to determine the optimal model parameters in a straight-forward manner.
+
+### **Objectives**
+
+By the end of this lesson, you will be able to
+
+-   explain the role of the loss function in machine learning,
+-   articulate how to compute a regression on multiple variables,
+-   explain the different statistical measures that quantify the quality of a regression,
+-   utilize categorical variables in a machine learning model, and
+-   compute a linear regression model
+
+You were introduced to the concept of linear regression by learning about simple linear regression. This initial approach treated linear regression as a statistical technique where the relation between independent variables (or features) and a dependent variable (or target) was determined by a mathematical relation. While powerful, the previous approach treated linear regression as a distinct, statistical approach to relating independent variables with a dependent variable. In this lesson, we instead treat linear regression as a machine learning task. As a result, we will use regression to *fit a model to data*. The model generated in this fashion can be explored in greater detail to either understand why the provided data follow the generated model (i.e., gain insight into the data), or the model can be used to generate new dependent values from future or unseen data (i.e., make predictions from the model).
+
+We will use the *tips* data set. After loading this data, we display several rows, and next compute a simple linear regression to predict the `tip` feature from the `total_bill` feature.
+
+```{r load data, echo=TRUE}
+
+#load data. 
+#curl package lets us download data from a website with the proper location
+#check the packages tab and see if you have curl
+#try following
+  #?curl
+
+library(curl)
+
+load(curl("https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.Rda"))
+
+```
+
+\
 
 ## Recap
