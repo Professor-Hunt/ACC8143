@@ -1,0 +1,55 @@
+---
+title: "Logic or the lack thereof"
+description: |
+  Logic fallacies are a tool for the foolish and recognizing them is your only defense.
+author: "Professor Hunt"
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+# Logical Fallacies
+
+Logical fallacies are dangerous because people can use them unintentionally or worse intentionally because their argument is poor. Critical thinking and logic are inseparable, but I would argue that one cannot think critically without understanding logic.
+
+This page lists common logical fallacies and gives examples. I plan on adding to this list until it is complete.
+
+## The List
+
+### **argumentum ad speculum**
+
+#### Counterfactual fallacy
+
+Occurs when someone states a fact, then states something would be true if the stated fact were not true without other evidence.
+
+##### Common layout
+
+-   A causes B
+
+-   A is true
+
+-   Therefore, B is true
+
+**Fallacy**: Therefore, if counterfactual A was false, then counterfactual B would be false
+
+##### Worse
+
+-   A is true
+
+-   B is true
+
+**Fallacy**: Therefore, if counterfactual A was false, then counterfactual B would be false
+
+**Counterfactual**: a conditional statement the first clause of which expresses something contrary to fact, as "If I had known."
+
+**Example**: My cousin died of covid, but he would not have died if he were vaccinated.
+
+-   Cousin died
+
+-   Vaccines reduce the chance of death
+
+**Fallacy**: My cousin would have lived, if he had taken the vaccine.
+
+[**This is literally unknowable**]{.ul}
