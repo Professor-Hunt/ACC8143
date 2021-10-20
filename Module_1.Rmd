@@ -344,7 +344,7 @@ psych::describe(testTransformed)
 
 With our data properly divided into training and testing samples, and the features appropriately scaled, we now change to the application of machine learning algorithms
 
-### **Classification**
+### **Classification** {#classification}
 
 The first type of algorithm we will demonstrate is classification, where we train an estimator to generate a model for the prediction of discrete labels. The following code cell completes this task by performing k-Nearest Neighbors classification. In this example, we use five nearest neighbors (but this value can be easily adjusted to see how the classification performance changes). As demonstrated in this code example, the standard classification process in caret is to first fit a model to the training data and to subsequently apply this model to predict values for the testing data. We can compute an accuracy measurement for our trained algorithm to compare the *predicted* and *known* labels for the testing data.
 
@@ -370,7 +370,7 @@ confusionMatrix(knn_pred,testTransformed$Species)
 
 ```
 
-### **Regression**
+### **Regression** {#regression}
 
 The second machine learning application we will demonstrate is regression. To demonstrate regression, we will introduce the [Decision Tree](https://en.wikipedia.org/wiki/Decision_tree_learning). A decision tree simply asks a set of questions of the data, and based on the answers, constructs a model representation. The tree (or model) is constructed by recursively splitting a data set into new groupings based on a statistical measure of the data along each different dimension (popular measures include the Gini coefficient or the entropy).
 
@@ -634,7 +634,7 @@ Let's recap:
 
 </details>
 
-### **Dimensionality Reduction**
+### **Dimensionality Reduction** {#dimensionality-reduction}
 
 When confronted with a large, multi-dimensional data set, one approach to simplify any subsequent analysis is to reduce the number of dimensions (or features) that must be processed. In some cases, features can be removed from an analysis based on business logic, or the features that contain the most information can be quantified somehow. More generally, however, we can employ [dimensional reduction](https://en.wikipedia.org/wiki/Dimensionality_reduction), a machine learning technique that quantifies relationships between the original dimensions (or features, attributes, or columns of a DataFrame) to identify new dimensions that better capture the inherent relationships within the data.
 
@@ -702,7 +702,7 @@ detach(package:plyr)
 
 ```
 
-### **Clustering**
+### **Clustering** {#clustering}
 
 The last machine learning technique we will explore in this notebook is [cluster finding](https://en.wikipedia.org/wiki/Cluster_analysis). In this introductory notebook, we will demonstrate one of the simplest clustering techniques, spatial clustering, which seeks to first find NN clusters in a data set and to subsequently identify to which cluster each instance (or data point) belongs. The specific algorithm we employ below is the [k-means algorithm](https://en.wikipedia.org/wiki/K-means_clustering), which is one of the simplest to understand. In this algorithm, we start with a guess for the number of clusters (again this can be based on prior information or iteratively quantified). We randomly place cluster centers in the data and determine how well the data *cluster* to these cluster centers. This information is used to pick new cluster centers, and the process continues until a solution converges (or we reach a predefined number of iterations).
 
@@ -753,23 +753,33 @@ ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species)
 
 Using the code above, answer the following questions.
 
-1.  Change the p=.6 to p=.75 in the [Data Pre-Processing] section. How did the classification results change?
+1.  Change the p=.6 to p=.75 in the [Data Pre-Processing](#data-pre-processing) section. How did the [classification](#classification) results change?
 
-2.  Change the p=.6 to p=.4 in the [Data Pre-Processing] section. How did the classification results change?
+    Where do I start? Well I know that I need to split the data differently. The question asks me to split the data where 75% of the full dataset is split into Training data and that would leave 25% left for Testing data. Why do we have Training data and Testing data? Running and evaluating the model on the training data is like
 
-3.  Change the `k` hyper-parameter in the k-nn estimator to three (and ten). In other words change the 5 to 10 in `tuneGrid=data.frame(k=5)` in the [Classification]section. How did the classification results change?
+    ```{r 1.1.1_setup,echo=TRUE,warning=FALSE,message=FALSE}
 
-4.  Change the p=.6 to p=.75 in the [Data Pre-Processing] section. How did the regression results change?
 
-5.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the [Dimensionality Reduction] section. What are the new explained variances?
+    library(caret)
+    trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
 
-6.  Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the [Clustering]. Where are the new cluster centers? Does this look better or worse?
+
+
+    ```
+
+2.  Change the p=.6 to p=.4 in the [Data Pre-Processing](#data-pre-processing) section. How did the [classification](#classification) results change?
+
+3.  Change the `k` hyper-parameter in the k-nn estimator to three (and ten). In other words change the 5 to 10 in `tuneGrid=data.frame(k=5)` in the [Classification](#classification) section. How did the [classification](#classification) results change?
+
+4.  Change the p=.6 to p=.75 in the [Data Pre-Processing](#data-pre-processing) section. How did the [regression](#regression) results change?
+
+5.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the [Dimensionality Reduction](#dimensionality-reduction) section. What are the new explained variances?
+
+6.  Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the [Clustering](#clustering) section. Where are the new cluster centers? Does this look better or worse?
 
 7.  What does the [set.seed](https://r-coder.com/set-seed-r/) function in R do? Why use it? Should we have used it above?
 
 ## **Model Persistence** {#model-persistence}
-
-------------------------------------------------------------------------
 
 As the previous code cells demonstrate, we can generate machine learning models rather easily for small data sets by using the caret library. For larger data sets, however, either in the number of instances, the number of features, or both, building a quality machine learning model can take considerable time and effort. As a result, we may wish to persist a trained machine learning model so that it can be applied to new data at a later time.
 
@@ -814,7 +824,7 @@ K-NN is simple, but awesome
 :::
 :::
 
-# Regression
+# Regression {#regression2}
 
 ## **Introduction to Linear Regression**
 
@@ -1267,7 +1277,7 @@ scatter.plot<- add_trace(p = scatter.plot,
 hide_colorbar(scatter.plot)
 ```
 
-## Exercise 1
+## Exercise 2
 
 1.  Run a simple regression to predict `total_bill` with `tip`. What is the RSquared? What is the RMSE?
 2.  Plot the regression and the residuals from number 1.
@@ -1391,7 +1401,7 @@ ggplot(testwithpred4,aes(x=total_bill, y=error)) +
 
 ## [Interpreting the coefficients?](https://www.statology.org/how-to-interpret-regression-coefficients/)
 
-## Exercise 2
+## Exercise 3
 
 1.  We used multi-variate linear regression to predict the `tip` feature from the `total_bill` and categorical `day` features. Repeat this process, but use the `total_bill`, `size`, `sex`, and `time` features. Has the prediction performance improved, i.e., what is the RSquared and RMSE?
 2.  Interpret 2 of the coefficients.
