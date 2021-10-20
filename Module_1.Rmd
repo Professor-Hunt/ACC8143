@@ -702,7 +702,7 @@ detach(package:plyr)
 
 ```
 
-**Clustering**
+### **Clustering**
 
 The last machine learning technique we will explore in this notebook is [cluster finding](https://en.wikipedia.org/wiki/Cluster_analysis). In this introductory notebook, we will demonstrate one of the simplest clustering techniques, spatial clustering, which seeks to first find NN clusters in a data set and to subsequently identify to which cluster each instance (or data point) belongs. The specific algorithm we employ below is the [k-means algorithm](https://en.wikipedia.org/wiki/K-means_clustering), which is one of the simplest to understand. In this algorithm, we start with a guess for the number of clusters (again this can be based on prior information or iteratively quantified). We randomly place cluster centers in the data and determine how well the data *cluster* to these cluster centers. This information is used to pick new cluster centers, and the process continues until a solution converges (or we reach a predefined number of iterations).
 
@@ -753,17 +753,17 @@ ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species)
 
 Using the code above, answer the following questions.
 
-1.  Change the p=.6 to p=.75 in the \[Data Pre-Processing\] section. How did the classification results change?
+1.  Change the p=.6 to p=.75 in the [Data Pre-Processing] section. How did the classification results change?
 
-2.  Change the p=.6 to p=.4 in the \[Data Pre-Processing\] section. How did the classification results change?
+2.  Change the p=.6 to p=.4 in the [Data Pre-Processing] section. How did the classification results change?
 
-3.  Change the `k` hyper-parameter in the k-nn estimator to three (and ten). In other words change the 5 to 10 in `tuneGrid=data.frame(k=5)` in the \[Classification\] section. How did the classification results change?
+3.  Change the `k` hyper-parameter in the k-nn estimator to three (and ten). In other words change the 5 to 10 in `tuneGrid=data.frame(k=5)` in the [Classification]section. How did the classification results change?
 
-4.  Change the p=.6 to p=.75 in the \[Data Pre-Processing\] section. How did the regression results change?
+4.  Change the p=.6 to p=.75 in the [Data Pre-Processing] section. How did the regression results change?
 
-5.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the \[Dimensionality Reduction\] section. What are the new explained variances?
+5.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the [Dimensionality Reduction] section. What are the new explained variances?
 
-6.  Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the \[Clustering\] section. Where are the new cluster centers? Does this look better or worse?
+6.  Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the [Clustering]. Where are the new cluster centers? Does this look better or worse?
 
 7.  What does the [set.seed](https://r-coder.com/set-seed-r/) function in R do? Why use it? Should we have used it above?
 
@@ -892,6 +892,22 @@ where $\epsilon_i$ accounts for the difference between the model and the data fo
 As a result, in this simple example we wish to determine the model parameters: $\beta_i$, and $\alpha_i$ that minimize the values of $\epsilon_i$. We could perform this process in an iterative manner, trying different values for the model parameters and measuring the error function. This approach is often used in machine learning, where we define a **cost function** that we seek to minimize by selecting the best model parameters.
 
 In the case of a simple linear model, we have several potential cost (or loss) functions that we could seek to minimize, but we will use the common *l2-norm*: $\epsilon_i^2 = \left( \ y_i - f(x_i) \ \right)^2$, where $f(x_i)$ is defined by our model parameters. We demonstrate this approach visually in the following code block, where we minimize the sum of the *l2-norm* model residuals, which is done by finding the best model parameters: $\hat{\beta}$, and $\hat{\alpha}$.
+
+<details>
+
+<summary>
+
+***Formulas*** 😢
+
+</summary>
+
+<p>
+
+![](images/beta%20formula.png){width="100%"}
+
+</p>
+
+</details>
 
 ```{r Anscombe, echo=TRUE}
 
