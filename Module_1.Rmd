@@ -1817,7 +1817,7 @@ Machine learning algorithms often have tuning parameters that are extrinsic to t
 
 A decision surface is a visualization that shows a particular space occupied by the training data, in this case just the two dimensions: Sepal Width and Petal Width. The training data, color coded by their class, are displayed on this plot. In addition, the entire space spanned by the plot has been divided into a mesh grid, and each point in the mesh grid has been classified by the algorithm being analyzed. This has the effect of showing how new test data points would be classified as they move around the plot region. By comparing decision surfaces that correspond to different hyperparameter values, we can understand the corresponding change in the algorithm's performance.
 
-```{r}
+```{r decision1, echo=TRUE}
 
 library(caret) 
 data(iris)
@@ -1861,6 +1861,131 @@ ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGr
 
 ```
 
+### Decsion surface with k=2
+
+```{r decision2k, echo=FALSE}
+library(caret)
+library(tidyverse)
+
+
+knnModel2k <- train(Species ~.,
+                  data = train,
+                  method = 'knn',
+                  tuneGrid=data.frame(k=2))
+
+pl = seq(min(test$Petal.Length), max(test$Petal.Length), by=0.1)
+pw = seq(min(test$Petal.Width), max(test$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+knnPredGrid <- predict(knnModel2k, newdata=lgrid)
+knnPredGrid = as.numeric(knnPredGrid)
+
+# get the points from the test data...
+testPred <- predict(knnModel2k, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(knnPredGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
+  theme_bw()+ 
+  labs(color = "Species")+
+  ggtitle("Decision Surface with K=2")+
+  scale_color_hue(labels=c('setosa', 'versicolor', 'virginica'))
+
+```
+
+### Decsion surface with k=3
+
+```{r decision3k, echo=FALSE}
+library(caret)
+library(tidyverse)
+
+
+knnModel3k <- train(Species ~.,
+                  data = train,
+                  method = 'knn',
+                  tuneGrid=data.frame(k=3))
+
+pl = seq(min(test$Petal.Length), max(test$Petal.Length), by=0.1)
+pw = seq(min(test$Petal.Width), max(test$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+knnPredGrid <- predict(knnModel3k, newdata=lgrid)
+knnPredGrid = as.numeric(knnPredGrid)
+
+# get the points from the test data...
+testPred <- predict(knnModel3k, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(knnPredGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
+  theme_bw()+ 
+  labs(color = "Species")+
+  ggtitle("Decision Surface with K=3")+
+  scale_color_hue(labels=c('setosa', 'versicolor', 'virginica'))
+
+```
+
+### Decsion surface with k=4
+
+```{r decision4k, echo=FALSE}
+library(caret)
+library(tidyverse)
+
+
+knnModel4k <- train(Species ~.,
+                  data = train,
+                  method = 'knn',
+                  tuneGrid=data.frame(k=4))
+
+pl = seq(min(test$Petal.Length), max(test$Petal.Length), by=0.1)
+pw = seq(min(test$Petal.Width), max(test$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+knnPredGrid <- predict(knnModel4k, newdata=lgrid)
+knnPredGrid = as.numeric(knnPredGrid)
+
+# get the points from the test data...
+testPred <- predict(knnModel4k, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(knnPredGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
+  theme_bw()+ 
+  labs(color = "Species")+
+  ggtitle("Decision Surface with K=4")+
+  scale_color_hue(labels=c('setosa', 'versicolor', 'virginica'))
+
+```
 #### **Neighbors**
 
 As the number of neighbors increases, we tend to average over the distribution of training data, which makes the decision surface cleaner with smaller variations. Depending on the data being analyzed, this can be either a good or bad result.
