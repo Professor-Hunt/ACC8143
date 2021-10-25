@@ -313,7 +313,7 @@ Data scaling can take several forms:
 
 -   **Normalization**: the data are scaled to have unit mean and variance.
 
--   **Range**: the data are scaled to span a defined range, such as \[0,1\].
+-   **Range**: the data are scaled to span a defined range, such as $$0,1$$.
 
 -   **Binarization**: the data are thresholded such that values below the threshold are zero (or False), and above the threshold are one (or True).
 
@@ -599,7 +599,7 @@ summary(lm(log(y)~x))$r.squared
 
 It's even lower! This is an extreme case and it doesn't always happen like this. In fact, a log transformation will usually produce an increase in R-squared. But as just demonstrated, assumptions that are better fulfilled don't always lead to higher R-squared.
 
-5.  *It is very common to say that R-squared is "the fraction of variance explained" by the regression. \[Yet\] if we regressed X on Y, we'd get exactly the same R-squared. This in itself should be enough to show that a high R-squared says nothing about explaining one variable by another.*
+5.  *It is very common to say that R-squared is "the fraction of variance explained" by the regression.* $$Yet$$ if we regressed X on Y, we'd get exactly the same R-squared. This in itself should be enough to show that a high R-squared says nothing about explaining one variable by another.
 
 This is the easiest statement to demonstrate:
 
@@ -755,17 +755,142 @@ Using the code above, answer the following questions.
 
 1.  Change the p=.6 to p=.75 in the [Data Pre-Processing](#data-pre-processing) section. How did the [classification](#classification) results change?
 
-    Where do I start? Well I know that I need to split the data differently. The question asks me to split the data where 75% of the full dataset is split into Training data and that would leave 25% left for Testing data. Why do we have Training data and Testing data? Running and evaluating the model on the training data is like
+```{r, include=FALSE}
+library(xaringan)
+library(xaringanExtra)
+#lets me use panels
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
 
-    ```{r 1.1.1_setup,echo=TRUE,warning=FALSE,message=FALSE}
+```
+
+<details>
+
+<summary>
+
+#### Answer
+
+</summary>
+
+<p>
+
+::: panelset
+::: panel
+[Explanation]{.panel-name}
+
+For the first code chunk: Where do I start? Well, I know that I need to split the data differently. The question asks me to split the data where 75% of the original dataset is split into Training data and that would leave 25% left for Testing data. Why do we have Training data and Testing data? Running and evaluating the model on the training data is like me giving you a study guide to an exam and then giving you an exam that is exactly the study guide...not a great measure of your abilities.
+
+For the second code chunk: K-NN is our classification algorithm. Because K-NN uses distance we need the variables to have the same unit of measure. You can't subtract centimeters from inches without doing a conversion. Here we standardize the variables to make them have the same measure...which is standard deviations.
+
+For the third code chunk: Run the model. We have done the prep work, we split the data into training and testing and we standardized the variables. Now we run the model on the training data.
+
+For the fourth code chunk: Get the results. First we have to use the model to predict on the testing dataset. Basically for K-NN this means for whatever our k tuning parameter is (5 in this example) is the number of neighbors we use to make our prediction. So, we have a row of data in the testing set and that generates a point in N-dimensional space (look at my 3d graphs for an example of a 3-dimensional space) and K-NN looks for the 5 nearest points from the training data and sets to prediction to majority vote...so if 3 of the points are setosa, then that prediction is set to setosa.
+:::
+
+::: panel
+[Code]{.panel-name}
+
+**First Code Chunk**
+
+```{r 1.1.1_split,echo=TRUE,warning=FALSE,message=FALSE}
+
+library(tidyverse)
+library(caret)
+#change the p=.6 to p=.75
+#what does createDataPartition do?
+#run the following code: ?createDataPartition
+
+#this creates an index of rows in include in the training
+#literally lists the rows to keep
+trainIndex <- createDataPartition(iris$Species, p = .75, list = FALSE, times = 1)
+
+#rows to keep
+knitr::kable(trainIndex)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="200px")
+
+#grab the data
+#take these rows
+irisTrain <- iris[ trainIndex,]
+#don't take these rows
+irisTest  <- iris[-trainIndex,]
+
+#we now have training and testing data sets
+
+```
+
+**Second Code Chunk**
+
+```{r 1.1.1_standardize,echo=TRUE,warning=FALSE,message=FALSE}
 
 
-    library(caret)
-    trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+#for the algorithm we are using it requires that we standardize
 
+#center= subtract the means and 
+#scale = divide by standard deviation
+#?preProcess sets the conversion up 
+preProcValues <- preProcess(irisTrain, method = c("center", "scale"))
 
+preProcValues
+#this predict actual change the variables
+trainTransformed <- predict(preProcValues, irisTrain)
+#repeat for testing
+preProcValues <- preProcess(irisTest, method = c("center", "scale"))
+testTransformed <- predict(preProcValues, irisTest)
+```
 
-    ```
+**Third Code Chunk**
+
+```{r 1.1.1_Model,echo=TRUE,warning=FALSE,message=FALSE}
+#data is split and standardized
+#time to run the model
+#fit knn
+
+#use train function and set up the equation
+knn_fit<-train(Species~Sepal.Length+Sepal.Width+Petal.Length+Petal.Width,
+              #data we are using
+              data=trainTransformed,
+              #algorithm we are using
+              method="knn",
+              #the hyperparameter or tuning parameter is the
+              #number of neighbors...here we set it to 5
+              tuneGrid=data.frame(k=5))
+
+#this is the object that holds the model
+knn_fit
+
+```
+
+**Fourth Code Chunk**
+
+```{r 1.1.1_Results,echo=TRUE,warning=FALSE,message=FALSE}
+
+#predict on the test set
+knn_pred<-predict(knn_fit,testTransformed)
+
+#confusion matrix gives us the results
+confusionMatrix(knn_pred,testTransformed$Species)
+
+```
+:::
+
+::: panel
+[Answer]{.panel-name}
+
+We would have to do a test to know whether the models produced results that were statistically different. But for now we can compare the accuracy and kappa. Comparing the results below to what is in the module we see that the model performs worse. Both the accuracy and the kappa are lower than the model in the module.
+
+```{r 1.1.1_Answer,echo=TRUE,warning=FALSE,message=FALSE}
+
+#The result was always the goal
+confusionMatrix(knn_pred,testTransformed$Species)
+
+```
+:::
+:::
+
+</p>
+
+</details>
 
 2.  Change the p=.6 to p=.4 in the [Data Pre-Processing](#data-pre-processing) section. How did the [classification](#classification) results change?
 
@@ -774,6 +899,131 @@ Using the code above, answer the following questions.
 4.  Change the p=.6 to p=.75 in the [Data Pre-Processing](#data-pre-processing) section. How did the [regression](#regression) results change?
 
 5.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the [Dimensionality Reduction](#dimensionality-reduction) section. What are the new explained variances?
+
+<details>
+
+<summary>
+
+#### Answer
+
+</summary>
+
+<p>
+
+::: panelset
+::: panel
+[Explanation]{.panel-name} For the first code chunk: First let me apologize for not doing this initially. I did not have it added in because you have to do the calculations by hand, but here they are...This is using 2 principal components and then calculating the proportion of variance explained by each component. I use an apply function and do it the long way. This sets us up to try the of number of components
+
+For the second code chunk: Change the number of components to 3.
+
+For the third code chunk: Change the number of components to 4.
+:::
+
+::: panel
+[Code]{.panel-name}
+
+**First Code Chunk**
+
+```{r 1.1.5_PCA2,echo=TRUE,warning=FALSE,message=FALSE}
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=2)
+
+caret.pca
+
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+#apply runs a loop for you
+#dat2 is the data
+#the 2 tells it to run the loop over the columns (1 is rows)
+#sd is the function for standard deviation
+#^2 squares it so we can find variance
+#sum adds them to get total variance
+Components2<-apply(dat2,2,sd)^2/sum((apply(dat2,2,sd))^2)
+
+Components2
+
+#doing the above by hand
+sd(dat2$PC1)^2/(sd(dat2$PC1)^2+sd(dat2$PC2)^2)
+
+sd(dat2$PC2)^2/(sd(dat2$PC1)^2+sd(dat2$PC2)^2)
+
+
+```
+
+**Second Code Chunk**
+
+```{r 1.1.5_PCA3,echo=TRUE,warning=FALSE,message=FALSE}
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=3)
+
+caret.pca
+
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+#apply runs a loop for you
+#dat2 is the data
+#the 2 tells it to run the loop over the columns (1 is rows)
+#sd is the function for standard deviation
+#^2 squares it so we can find variance
+#sum adds them to get total variance
+Components3<-apply(dat2,2,sd)^2/sum((apply(dat2,2,sd))^2)
+
+Components3
+
+```
+
+**Third Code Chunk**
+
+```{r 1.1.5_PCA4,echo=TRUE,warning=FALSE,message=FALSE}
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=4)
+
+caret.pca
+
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+#apply runs a loop for you
+#dat2 is the data
+#the 2 tells it to run the loop over the columns (1 is rows)
+#sd is the function for standard deviation
+#^2 squares it so we can find variance
+#sum adds them to get total variance
+Components4<-apply(dat2,2,sd)^2/sum((apply(dat2,2,sd))^2)
+
+Components4
+
+```
+:::
+
+::: panel
+[Answer]{.panel-name}
+
+By comparing the variances we see that as the number of components increase each individual component's explained variance drops.
+
+```{r 1.1.5_Answer,echo=TRUE,warning=FALSE,message=FALSE}
+Components2
+Components3
+Components4
+
+```
+:::
+:::
+
+</p>
+
+</details>
 
 6.  Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the [Clustering](#clustering) section. Where are the new cluster centers? Does this look better or worse?
 
@@ -798,15 +1048,6 @@ load(file = "DT_fit1.Rda")
 ```
 
 Whenever you load it back you can use it just like before.
-
-```{r, include=FALSE}
-library(xaringan)
-library(xaringanExtra)
-
-xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
-
-```
 
 ## Deep Dive
 
