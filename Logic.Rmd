@@ -19,12 +19,39 @@ This page lists common logical fallacies and gives examples. I plan on adding to
 ## The List
 
 ```{=html}
-<details><summary>
+
+<style>
+.collapsible {
+  background-color: white;
+  color: #5D1725;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: white;
+}
+</style>
+
+<button type="button" class="collapsible">argumentum ad speculum</button>
+<div class="content">
+  <p>
 ```
 ### argumentum ad speculum
-```{=html}
-</summary><p>
-```
+
 
 #### Counterfactual fallacy
 
@@ -60,19 +87,21 @@ Occurs when someone states a fact, then states something would be true if the st
 
 [**This is literally unknowable**]{.ul}
 
+
 ```{=html}
-</p></details>
+</p>
+</div>
 ```
 
-## 
+
 
 ```{=html}
-<details><summary>
+<button type="button" class="collapsible">Straw Man</button>
+<div class="content">
+  <p>
 ```
 ### Straw Man
-```{=html}
-</summary><p>
-```
+
 
 Occurs when someone argues against a made up argument, while completely side stepping the original argument.
 
@@ -99,7 +128,38 @@ Occurs when someone argues against a made up argument, while completely side ste
 -   Exaggerating (sometimes grossly exaggerating) an opponent's argument, then attacking this exaggerated version.
 
 ```{=html}
-</p></details>
+</p>
+</div>
 ```
 
-## 
+```{=html}
+<button type="button" class="collapsible">Next Fallacy</button>
+<div class="content">
+  <p>
+```
+Information on the next one
+```{=html}
+</p>
+</div>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+```
+
+
+
+fin
