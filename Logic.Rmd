@@ -18,7 +18,13 @@ This page lists common logical fallacies and gives examples. I plan on adding to
 
 ## The List
 
-### **argumentum ad speculum**
+```{=html}
+<details><summary>
+```
+### argumentum ad speculum
+```{=html}
+</summary><p>
+```
 
 #### Counterfactual fallacy
 
@@ -53,3 +59,47 @@ Occurs when someone states a fact, then states something would be true if the st
 **Fallacy**: My cousin would have lived, if he had taken the vaccine.
 
 [**This is literally unknowable**]{.ul}
+
+```{=html}
+</p></details>
+```
+
+## 
+
+```{=html}
+<details><summary>
+```
+### Straw Man
+```{=html}
+</summary><p>
+```
+
+Occurs when someone argues against a made up argument, while completely side stepping the original argument.
+
+##### Common layout
+
+-   Person 1 asserts A
+
+-   Person 2 argues an extreme version of A or something tangentially related B, but never addresses A.
+
+**Example**:
+
+-   Wife: I'd rather have a dog than a cat.
+
+-   Husband: Why do you hate cats?
+
+**Fallacy:** The wife never said that she hated cats, only that she preferred dogs. The husband either assumed or pretended that her argument was against cats instead of for dogs. Now the wife must argue that she doesn't hate cats --- which completely changes the course of the discussion.
+
+**Other forms**:
+
+-   Quoting an opponent's words out of context
+
+-   Oversimplifying an opponent's argument, then attacking this oversimplified version.
+
+-   Exaggerating (sometimes grossly exaggerating) an opponent's argument, then attacking this exaggerated version.
+
+```{=html}
+</p></details>
+```
+
+## 
