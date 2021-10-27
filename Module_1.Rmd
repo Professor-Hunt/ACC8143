@@ -1851,7 +1851,7 @@ test$Pred <- testPred
 
 probs <- matrix(knnPredGrid, length(pl), length(pw))
 
-ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=10) +
   geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
   geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
   theme_bw()+ 
@@ -1893,7 +1893,7 @@ test$Pred <- testPred
 
 probs <- matrix(knnPredGrid, length(pl), length(pw))
 
-ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=10) +
   geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
   geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
   theme_bw()+ 
@@ -1935,7 +1935,7 @@ test$Pred <- testPred
 
 probs <- matrix(knnPredGrid, length(pl), length(pw))
 
-ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=10) +
   geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
   geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
   theme_bw()+ 
@@ -1977,7 +1977,7 @@ test$Pred <- testPred
 
 probs <- matrix(knnPredGrid, length(pl), length(pw))
 
-ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=2) +
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGrid),bins=10) +
   geom_point(aes(x=Petal.Length, y=Petal.Width, colour=as.factor(knnPredGrid)))+
   geom_point(data=test, aes(x=Petal.Length, y=Petal.Width), size=3, alpha=0.75, color="darkred")+
   theme_bw()+ 
