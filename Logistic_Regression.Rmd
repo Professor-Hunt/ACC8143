@@ -1,0 +1,17 @@
+---
+title: "Logistic Regression"
+description: |
+  Introduction to machine learning
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+# Game Plan
+
+In previous sections, we have seen how to perform linear regression on input data to predict a continuous value. In some cases, however, we wish to predict a categorical value, such as True/False or Yes/No. Traditional regression methods are not optimal for these problems, since this requires the prediction of a discrete and not continuous value. In this section we introduce a technique that simulates linear regression, but with an additional function employed that maps the continuous value predicted by linear regression methods into a probability, or specifically the range \[0,1\] . In this manner, we can apply a threshold to this probability to predict a binary response.
+
+While several functions might be suitable for this transformation, the most popular function is the logit function. Note that some older analyses might reference the probit function. Performing regression by using the logit function is known as logistic regression (the inverse of the logit function is known as the logistic function). The name might seem confusing since technically this algorithm is used to perform classification, but since logistic regression borrows heavily in its approach from linear regression, the descriptive name was maintained. A major benefit of logistic regression is the creation of a parametric model that can be explored to understand why predictions are made, in the same manner as a linear regression model.
+
+In this notebook, we introduce the logit function and how it can be used to construct a binary model. Next, we introduce logistic regression, and specifically show how logistic regression can be performed by using estimators from the scikit-learn library. We also introduce several popular performance metrics and show how they can be calculated for binary classification tasks. We demonstrate logistic regression on several data sets, including one that contains categorical features. We also demonstrate how to perform logistic regression by using the statsmodels module with a formula interface, and introduce how to use this same formula interface with scikit-learn estimators. Finally, we discuss topics such as marginal effects and odds ratios, which are concepts that often prove useful in interpreting logistic regression models.

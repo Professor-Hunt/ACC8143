@@ -313,7 +313,7 @@ Data scaling can take several forms:
 
 -   **Normalization**: the data are scaled to have unit mean and variance.
 
--   **Range**: the data are scaled to span a defined range, such as $$0,1$$.
+-   **Range**: the data are scaled to span a defined range, such as $0,1$.
 
 -   **Binarization**: the data are thresholded such that values below the threshold are zero (or False), and above the threshold are one (or True).
 
