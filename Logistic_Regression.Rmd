@@ -54,7 +54,8 @@ x<-seq(-10,10,.5)
 y<-1/(1+exp(-x))
 
 library(ggplot2)
-ggplot(data=as.data.frame(cbind(x,y)),aes(x,y))+geom_line(color="lightblue",size=.75)+geom_hline(aes(yintercept=.5),color="black",linetype="dashed") +
+ggplot(data=as.data.frame(cbind(x,y)),aes(x,y))+geom_line(color="lightblue",size=.75)+
+  geom_hline(aes(yintercept=.5),color="black",linetype="dashed") +
   theme_minimal() +
   labs(x=expression(alpha), y=expression(Rho), title='Logistic Function') +
   theme(plot.title = element_text(hjust=0.25, size=15, face='bold'))
@@ -72,7 +73,7 @@ The logistic regression model fits the following logistic model:
 
 $$\textrm{logistic}(y) = \frac{1}{1 + \exp(-y)}$$
 
-The generally used cost (or loss) function for logistic regression is the sum of the squared errors between the actual classes and the predicted classes. One of the most popular techniques for finding the minimum of this cost function is to use [*stochastic gradient descent*](https://en.wikipedia.org/wiki/Stochastic_gradient_descent). [Gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) computes the derivate of (or finds the slope of the tangent line to) the cost function at a particular point. This can be used to modify the parameters of our model to move in a direction that is expected to reach the minimum of the cost function. Standard gradient descent computes these corrections by summing up all the contributions from each training data point. In stochastic gradient descent (or **SGD**), however, the corrections are computed for each training point. As a result, SGD often generates a path towards the minimum that is somewhat rambling, but this has the benefit of avoiding local minima and being more robust.
+The generally used cost (or loss) function for logistic regression is the sum of the squared errors between the actual classes and the predicted classes. One of the most popular techniques for finding the minimum of this cost function is to use [*stochastic gradient descent*](https://en.wikipedia.org/wiki/Stochastic_gradient_descent). [Gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) computes the derivative of (or finds the slope of the tangent line to) the cost function at a particular point. This can be used to modify the parameters of our model to move in a direction that is expected to reach the minimum of the cost function. Standard gradient descent computes these corrections by summing up all the contributions from each training data point. In stochastic gradient descent (or **SGD**), however, the corrections are computed for each training point. As a result, SGD often generates a path towards the minimum that is somewhat rambling, but this has the benefit of avoiding local minima and being more robust.
 
 The following Code cell generates a figure to help explain gradient descent. A fictitious cost function is displayed, along with the tangent (or derivative) at a particular point. The arrows specify the direction that the derivative indicates we must move to reach the minimum. The repeated use of arrows signifies how an incremental approach to gradient descent, such as that employed by stochastic gradient descent, might converge to the true minimum of the cost function.
 
@@ -81,7 +82,11 @@ x<-seq(-4,4,length.out=100)
 y=x^2
 
 library(ggplot2)
-ggplot(data=as.data.frame(cbind(x,y)),aes(x,y))+geom_line(color="lightblue",size=.75)+geom_abline(aes(intercept=-1,slope=2),color="red",linetype="dashed") +xlim(-1,3)+ylim(-.5,10)+geom_point(aes(0,0),pch=4,col="red",size=2,stroke=2)+
+ggplot(data=as.data.frame(cbind(x,y)),aes(x,y))+
+  geom_line(color="lightblue",size=.75)+
+  geom_abline(aes(intercept=-1,slope=2),color="red",linetype="dashed")+
+  xlim(-1,3)+ylim(-.5,10)+
+  geom_point(aes(0,0),pch=4,col="red",size=2,stroke=2)+
   theme_minimal() +
   labs(x=expression(x), y=expression(y), title='Gradient Descent') +
   theme(plot.title = element_text(hjust=0.25, size=15, face='bold'))+ 
@@ -125,6 +130,173 @@ sum( (X %*% theta - y)^2 ) / (2*length(y))
  abline(coef=theta, col='blue') # Plots a straight line with intercept as theta[1] and slope
 # as theta[2]
 
+```
+
+Another example of Gradient Descent[^1]
+
+[^1]: This code is borrowed from <https://www.machinegurning.com/rstats/gradient-descent/>
+
+Consider the following function:
+
+$$ h_{\theta}=1.2(x-2)^2 + 3.2 $$
+
+So we can state our objective to minimize $\theta_1$ or $\min\limits_{\theta_1}J(\theta_1)$ and $\theta_1\in\mathbb{R}$
+
+### Cost function
+
+We define the cost function $J(\theta_1)$ using calculus as $J(\theta)=2.4(x−2)$
+
+$$
+\begin{multline}
+\text{repeat until convergence} \{\\
+ 
+\theta_1:=\theta_1 - \alpha\frac{d}{d\theta_1}J(\theta_1)\\
+ 
+\}
+\end{multline}
+$$
+
+-   where $α$ is the learning rate governing the size of the step take with each iteration.
+
+```{r gradient_borrowed, echo=TRUE}
+
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+ 
+ 
+xs <- seq(0,4,len = 100) # create some values
+ 
+# define the function we want to optimize
+ 
+f <-  function(x) {
+  1.2 * (x-2)^2 + 3.2
+  }
+ 
+# plot the function 
+ 
+create_plot <- function(title) {
+  plot(
+    ylim = c(3,8),
+    x = xs,
+    y = f(xs), 
+    type = "l", 
+    ylab = expression(1.2(x-2)^2 + 3.2),
+    xlab = "x",
+    main = title
+    )
+  
+  abline(
+    h = 3.2,
+    v = 2, 
+    col = "red", 
+    type = 2
+    )
+  
+}
+ 
+# J(theta)
+ 
+cost <- function(x){
+  1.2 * 2 * (x-2)
+}
+```
+
+Below is the actual implementation of gradient descent.
+
+```{r gradient_borrowed2}
+# gradient descent implementation
+ 
+grad <- function(x = 0.1, alpha = 0.6, j = 1000) {
+  
+  xtrace <- x
+  ftrace <- f(x)
+  
+  for (i in 1:j) {
+    
+    x <- x - alpha * cost(x)
+    
+    xtrace <- c(xtrace,x)
+    ftrace <- c(ftrace,f(x))
+    
+    }
+  
+  data.frame(
+    "x" = xtrace,
+    "f_x" = ftrace
+    )
+  }
+
+```
+
+Now I use the plotting function to produce plots, and populate these with points using the gradient descent algorithm.
+
+```{r gradient_borrowed3}
+
+create_plot(expression(Low~alpha))
+ 
+with(
+  alpha_too_low <- grad(
+    x = 0.1, # initialisation of x
+    alpha = 0.1, # learning rate
+    j = 100 # iterations
+    ),
+  points(
+    x, 
+    f_x, 
+    type = "b", 
+    col = "green"
+    )
+  )
+
+create_plot(expression(alpha~just~right))
+ 
+with(
+  alpha_just_right <- grad(
+    x = 0.1, # initialisation of x
+    alpha = 0.6, # learning rate
+    j = 100 # iterations
+    ),
+  points(
+    x, 
+    f_x, 
+    type = "b",  
+    col = "blue"
+    )
+  )
+
+create_plot(expression(High~alpha))
+ 
+with(
+  alpha_too_high <- grad(
+    x = 0.1, # initialisation of x
+    alpha = 0.8, # learning rate
+    j = 100 # iterations
+    ),
+  points(
+    x, 
+    f_x, 
+    type = "b",
+    col = "red"
+    )
+  )
+
+```
+
+Another way to look at the rate of convergence is to plot the number of iterations against the output of $f(x)$. Vertical lines show when convergence occurs. When $\alpha$ is set very low, it takes much longer than necessary (although it does converge). When $\alpha$ is too high, convergence doesn't occur at all within a hundred iterations.
+
+```{r gradient_borrowed4}
+
+par(mfrow=c(1,3))
+ 
+plot(alpha_too_low$x, type = "l",col = "green")
+abline(v = (round(alpha_too_low$x,4) != 2) %>% which %>% length)
+ 
+plot(alpha_just_right$x, type = "l",col = "blue")
+abline(v = (round(alpha_just_right$x,4) != 2) %>% which %>% length)
+ 
+plot(alpha_too_high$x, type = "l", col = "red")
+abline(v = (round(alpha_too_high$x,4) != 2) %>% which %>% length)
 ```
 
 # Logistic Modeling
@@ -181,7 +353,7 @@ table(NASA2$thermal_distress)
 ```{r runlogit, echo=TRUE, message=FALSE, warning=FALSE}
 
 #fit logistic regression model
-model <- glm(thermal_distress ~ launch_temp, data=NASA2, family=binomial)
+model <- glm(factor(thermal_distress) ~ launch_temp, data=NASA2, family=binomial)
 
 #define new data frame that contains predictor variable
 newdata <- data.frame(launch_temp=seq(min(NASA2$launch_temp), max(NASA2$launch_temp),len=500))
@@ -227,7 +399,7 @@ set.seed(1)
 #get our samples
 
 #lets split the data 60/40
-library(caret)
+
 trainIndex <- createDataPartition(NASA2$thermal_distress, p = .6, list = FALSE, times = 1)
 
 #look at the first few
@@ -239,7 +411,7 @@ logisticTest  <- NASA2[-trainIndex,]
 
 
 NASA_logistic <- train(
-  form = thermal_distress ~ launch_temp,
+  form = factor(thermal_distress) ~ launch_temp,
   data = NASA2,
   trControl = trainControl(method = "cv", number = 10),
   method = "glm",
@@ -250,12 +422,14 @@ NASA_logistic
 
 summary(NASA_logistic)
 
-NASA_Pred<-predict(NASA_logistic,logisticTest)
+NASA_Pred<-predict(NASA_logistic,logisticTest,type="prob")
 
-NASA_Pred
+knitr::kable(NASA_Pred)
 
-testpred<-cbind(NASA_Pred,logisticTest)
+testpred<-cbind(NASA_Pred$`1`,logisticTest)
 
+testpred<-testpred%>%
+  rename(NASA_Pred="NASA_Pred$`1`")
 
 plot(pROC::roc(testpred$thermal_distress,testpred$NASA_Pred))
 
@@ -265,8 +439,9 @@ testpred<-testpred%>%
   mutate(prediction=if_else(NASA_Pred>.5,1,0))
 
 confusionMatrix(factor(testpred$prediction),factor(testpred$thermal_distress),positive = "1")
+```
 
-
+```{r confusion, fig.width=7, fig.height=7}
 ConfusionTableR::binary_visualiseR(train_labels = factor(testpred$prediction),
                                    truth_labels= factor(testpred$thermal_distress),
                                    class_label1 = "Thermal Distress", 
@@ -275,14 +450,353 @@ ConfusionTableR::binary_visualiseR(train_labels = factor(testpred$prediction),
                                    quadrant_col2 = "#777777", 
                                    custom_title = "Logistic Confusion Matrix", 
                                    text_col= "black")
-
-
 ```
 
-# 
-Exercise 1
+# Exercise 1
 
 Using the code above:
 
 1.  Try including another feature in the model, such as `leak_check_pressure` or `temporal_order_of_flight`, one at a time. Do either of these features improve the performance?
 2.  Discuss at least 3 difference performance measures from the confusion matrix results from number 1.
+
+```{r logisticwithpred,echo=TRUE, warning=FALSE, message=FALSE}
+
+#plot logistic regression curve
+ggplot(NASA2, aes(x=launch_temp, y=thermal_distress)) + 
+  geom_point(alpha=.5,color="lightblue") +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial),color="lightgreen",linetype = "dashed")+
+  theme_minimal() +
+  labs(x="launch temperature", y="thermal distress", title='logistic regression') +
+  theme(plot.title = element_text(hjust=0.25, size=15, face='bold'))+
+  geom_line(data=testpred,aes(x=launch_temp,y=prediction),color="pink",size=1,linetype = "dashed")
+```
+
+# SGD Classifier
+
+We now turn to the alternative technique for performing logistic regression. We can employ a stochastic gradient descent classifier to perform logistic regression. This has a benefit over the standard logistic regression estimator. This technique employs stochastic gradient descent, which can be [*efficient*]{.ul} in finding the minimum of the cost function, especially with large and complex data sets. Stochastic gradient descent is based on standard gradient descent that was demonstrated graphically earlier, but is less prone to being trapped in local minima (or valleys).
+
+```{r sgd}
+
+#install.packages("sgd")
+library(sgd)
+
+sgdmodel<-sgd(formula=factor(thermal_distress) ~ launch_temp,
+              data=logisticTrain,
+              model="glm",
+              model.control=list(family="binomial"),
+              sgd.control=list(method="sgd")
+              )
+
+coef(sgdmodel)
+
+summary(sgdmodel)
+
+#fitted(sgdmodel)
+#plot(sgdmodel)
+#print(sgdmodel)
+
+NASA_Pred_sgd<-as.data.frame(predict(sgdmodel,as.matrix(logisticTest$launch_temp),type = "response"))
+
+knitr::kable(NASA_Pred_sgd)
+
+testpredsgd<-cbind(NASA_Pred_sgd$V1 ,logisticTest)
+
+testpredsgd<-testpredsgd%>%
+  rename(NASA_Pred_sgd="NASA_Pred_sgd$V1")
+
+plot(pROC::roc(testpredsgd$thermal_distress,testpredsgd$NASA_Pred_sgd))
+
+title(paste("AUC ",round(pROC::roc(testpredsgd$thermal_distress,testpredsgd$NASA_Pred_sgd)$auc,3)))
+
+```
+
+# LR: Tips Data
+
+While the O-ring data was informative, it was small in both number of features and instances. As a result, we will now transition to the *tips* data. With this data set, we will first demonstrate logistic regression using only numeric features before including categorical features as well.
+
+```{r lrtip}
+
+
+library(curl)
+
+load(curl("https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.rda"))
+
+#view the whole dataset
+knitr::kable(tips)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+```
+
+## Numeric 
+
+To perform regression on the numeric features, we need both the numerical features and a target feature. For this example, we will attempt to predict if a patron is a smoker or not based solely on the three numerical features.
+
+First, we separate the data into training and testing sets.
+
+```{r lrtips2}
+
+#set the seed :)
+set.seed(1)
+#get our samples
+
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(tips$tip, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+#head(trainIndex)
+
+#grab the data
+tipsTrain <- tips[ trainIndex,]
+tipsTest  <- tips[-trainIndex,]
+```
+
+Run the model
+
+```{r lrtips3 }
+
+
+lrtips <- train(
+  form = smoker~total_bill+tip+size,
+  data = tipsTrain,
+  trControl = trainControl(method = "cv", number = 10),
+  method = "glm",
+  family = "binomial"
+)
+
+lrtips
+
+summary(lrtips)
+
+lrtips_Pred<-predict(lrtips,tipsTest,type="prob")
+
+
+lrtipstestpred<-cbind(lrtips_Pred,tipsTest)
+
+lrtipstestpred<-lrtipstestpred%>%
+  rename(lrtips_Pred="Yes")
+
+plot(pROC::roc(lrtipstestpred$smoker,lrtipstestpred$lrtips_Pred))
+
+title(paste("AUC ",round(pROC::roc(lrtipstestpred$smoker,lrtipstestpred$lrtips_Pred)$auc,3)))
+
+lrtipstestpred<-lrtipstestpred%>%
+  mutate(prediction=if_else(lrtips_Pred>.5,1,0),
+         target=if_else(smoker=="Yes",1,0))
+
+#confusionMatrix(factor(as.character(lrtipstestpred$prediction)),factor(as.character(lrtipstestpred$target)),positive = "1")
+```
+
+```{r, echo=FALSE}
+
+
+binary_visualiseR2 <- function(train_labels,truth_labels, class_label1="Class Negative",
+                              class_label2="Class Positive", quadrant_col1='#3F97D0',
+                              quadrant_col2='#F7AD50', custom_title="Confusion matrix",
+                              info_box_title="Confusion matrix statistics",
+                              text_col="black", round_dig=2, cm_stat_size=1.4, cm_stat_lbl_size=1.5){
+
+  cm <- caret::confusionMatrix(train_labels, truth_labels, positive="1")
+  #Define globals
+  layout(matrix(c(1,1,2)))
+  plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
+  #n is specified in plot to indicate no plotting
+  title(custom_title, cex.main=2)
+  # Create the matrix visualisation using custom rectangles and text items on the chart
+  rect(150, 430, 240, 370, col=quadrant_col1)
+  text(195, 435, class_label1, cex=1.2)
+  rect(250, 430, 340, 370, col=quadrant_col2)
+  text(295, 435, class_label2, cex=1.2)
+  text(125, 370, 'Predicted', cex=1.3, srt=90, font=2)
+  text(245, 450, 'Actual', cex=1.3, font=2)
+  rect(150, 305, 240, 365, col=quadrant_col1)
+  rect(250, 305, 340, 365, col=quadrant_col2)
+  text(140, 400, class_label1, cex=1.2, srt=90)
+  text(140, 335, class_label2, cex=1.2, srt=90)
+
+  #Add the results of the confusion matrix - as these will be saved to cm$table
+  result <- as.numeric(cm$table)
+  text(195, 400, result[1], cex=1.6, font=2, col=text_col)
+  text(195, 335, result[2], cex=1.6, font=2, col=text_col)
+  text(295, 400, result[3], cex=1.6, font=2, col=text_col)
+  text(295, 335, result[4], cex=1.6, font=2, col=text_col)
+
+  #Add in other confusion matrix statistics
+  plot(c(100, 0), c(100, 0), type = "n", xlab="", ylab="", main = info_box_title, xaxt='n', yaxt='n')
+  text(10, 85, names(cm$byClass[1]), cex=cm_stat_lbl_size, font=2)
+  text(10, 70, round(as.numeric(cm$byClass[1]), round_dig), cex=cm_stat_size)
+  text(30, 85, names(cm$byClass[2]), cex=cm_stat_lbl_size, font=2)
+  text(30, 70, round(as.numeric(cm$byClass[2]), round_dig), cex=cm_stat_size)
+  text(50, 85, names(cm$byClass[5]), cex=cm_stat_lbl_size, font=2)
+  text(50, 70, round(as.numeric(cm$byClass[5]), round_dig), cex=cm_stat_size)
+  text(65, 85, names(cm$byClass[6]), cex=cm_stat_lbl_size, font=2)
+  text(65, 70, round(as.numeric(cm$byClass[6]), round_dig), cex=cm_stat_size)
+  text(86, 85, names(cm$byClass['Balanced Accuracy']), cex=1.6, font=2)
+  text(86, 70, round(as.numeric(cm$byClass['Balanced Accuracy']), round_dig), cex=cm_stat_size)
+
+  # add in the accuracy information
+  text(30, 35, names(cm$overall[1]), cex=cm_stat_lbl_size, font=2)
+  text(30, 20, round(as.numeric(cm$overall[1]), round_dig), cex=cm_stat_size)
+  text(70, 35, names(cm$overall[2]), cex=cm_stat_lbl_size, font=2)
+  text(70, 20, round(as.numeric(cm$overall[2]), round_dig), cex=cm_stat_size)
+}
+```
+
+```{r lrtips4 ,echo=FALSE,fig.width=7, fig.height=7}
+
+binary_visualiseR2(train_labels = factor(as.character(lrtipstestpred$prediction)),
+                                   truth_labels= factor(as.character(lrtipstestpred$target)),
+                                   class_label1 = "Yes", 
+                                   class_label2 = "No",
+                                   quadrant_col1 = "#5D1725", 
+                                   quadrant_col2 = "#777777", 
+                                   custom_title = "Logistic Tips Confusion Matrix", 
+                                   text_col= "black")
+```
+
+In this simple example, our model provides a reasonable performance, except for the excess *false positives* where we over predict smokers to be non-smokers. While there are several techniques we could explore to improve the performance of this simple model, the easiest will be to include additional features in our model. This will require including categorical features in our model, which is discussed in the next section.
+
+## Categorical and Numeric
+
+Admittedly, our attempt to predict whether a patron is a smoker or not, based solely on the data in the *tips* data set, is ambitious. Even if the model fails to perform sufficiently well, we may gain insight into our data and the relationship between the features. As a result, we now transition to include categorical features in the model.
+
+### Run Model
+
+```{r lrtipsall}
+
+lrtips <- train(
+  form = smoker~total_bill+tip+size+factor(sex)+factor(day)+factor(time),
+  data = tipsTrain,
+  trControl = trainControl(method = "none"),
+  method = "glm",
+  family = "binomial"
+)
+
+lrtips
+
+summary(lrtips)
+
+lrtips_Pred<-predict(lrtips,tipsTest,type="prob")
+
+
+lrtipstestpred<-cbind(lrtips_Pred,tipsTest)
+
+lrtipstestpred<-lrtipstestpred%>%
+  rename(lrtips_Pred="Yes")
+
+plot(pROC::roc(lrtipstestpred$smoker,lrtipstestpred$lrtips_Pred))
+
+title(paste("AUC ",round(pROC::roc(lrtipstestpred$smoker,lrtipstestpred$lrtips_Pred)$auc,3)))
+
+lrtipstestpred<-lrtipstestpred%>%
+  mutate(prediction=if_else(lrtips_Pred>.5,1,0),
+         target=if_else(smoker=="Yes",1,0))
+```
+
+### Results
+
+```{r lrtipsall2 ,echo=FALSE,fig.width=7, fig.height=7}
+
+binary_visualiseR2(train_labels = factor(as.character(lrtipstestpred$prediction)),
+                                   truth_labels= factor(as.character(lrtipstestpred$target)),
+                                   class_label1 = "Yes", 
+                                   class_label2 = "No",
+                                   quadrant_col1 = "#5D1725", 
+                                   quadrant_col2 = "#777777", 
+                                   custom_title = "Logistic Tips Confusion Matrix", 
+                                   text_col= "black")
+```
+
+### Variable importance
+
+```{r lrtipsall3}
+
+V<-caret::varImp(lrtips)$importance%>%
+  arrange(desc(Overall))
+
+knitr::kable(V)
+
+ggplot2::ggplot(V, aes(x=reorder(rownames(V),Overall), y=Overall)) +
+geom_point( color="blue", size=4, alpha=0.6)+
+geom_segment( aes(x=rownames(V), xend=rownames(V), y=0, yend=Overall), 
+color='skyblue') +
+xlab('Variable')+
+ylab('Overall Importance')+
+theme_light() +
+coord_flip() 
+```
+
+### Regression Output
+
+```{r lrtipsall4,  echo=TRUE, results='asis'}
+
+stargazer::stargazer(glm(factor(smoker)~total_bill+tip+size+factor(sex)+factor(day)+factor(time),data=tipsTrain,family = "binomial"),
+                     title="Tips Logistic Regression",
+                     type = "html",
+                     float = TRUE,
+                     report = "vcs*",
+                     no.space = TRUE,
+                     header=FALSE,
+                     single.row = TRUE,
+                    #font.size = "small",
+                     intercept.bottom = F)
+```
+
+# 
+Exercise 2
+
+1.  Try predicting sex rather than the `smoker` feature by using all other features. Does the new model perform better or worse than the current model?
+2.  What was the most important variable in 1? Why do you think that is?
+
+## **Marginal Effects**
+
+One challenge when building a logistic model with multiple independent features is understanding the *true* effect of any one independent feature. To estimate these effects, one can compute the *marginal effects*, which quantifies the impact one feature has on the prediction while the other features are held constant. Formally this is done by taking the partial derivative of the model with respect to the feature of interest.
+
+## **Odds Ratio**
+
+While marginal effect works well for numeric features, we can't take the derivative of a categorical, or discrete feature. Thus, we can also compute the *odds ratio* to determine the association between the presence or absence of two features. To compute an odds ratio, we hold one categorical value fixed, which is the reference group. This reference category was determined earlier when we held one categorical option out of the fit. Thus, when we calculate an odds ratio for the female instances, it is done with respect to the `sex=male` reference group.
+
+We can use the odds ratio to determine the association, for example, between the `day` feature and the `time` feature, in order to determine if there is a relationship between these two features and the likelihood a patron is a smoker. The value of the odds ratio indicates how much more likely a patron is to be a smoker. We can also compute confidence intervals around these values to quantify the degrees of uncertainty associated with this ratio.
+
+```{r marg1, eval=FALSE}
+
+install.packages("mfx")
+```
+
+```{r marg2}
+#standard logistic regression
+regular_logit<-glm(factor(smoker)~total_bill+tip+size+factor(sex)+factor(day)+factor(time),data=tipsTrain,family = "binomial")
+summary(regular_logit)
+#partial effects at the mean
+Partial_atmean_logit<-mfx::logitmfx(factor(smoker)~total_bill+tip+size+factor(sex)+factor(day)+factor(time),data=tipsTrain,atmean = TRUE)
+Partial_atmean_logit
+#average partial effects
+Avg_Partial_logit<-mfx::logitmfx(factor(smoker)~total_bill+tip+size+factor(sex)+factor(day)+factor(time),data=tipsTrain,atmean = FALSE)
+Avg_Partial_logit
+#odds Ratio
+OR_logit<-mfx::logitor(factor(smoker)~total_bill+tip+size+factor(sex)+factor(day)+factor(time),data=tipsTrain)
+OR_logit
+```
+
+```{r marg3,eval=FALSE}
+
+install.packages("huxtable")
+
+```
+
+```{r marg4, results='asis'}
+
+OR_logit2<-OR_logit
+class(OR_logit2)<-class(Partial_atmean_logit)
+OR_logit2$mfxest<-OR_logit2$oddsratio
+
+  fits <- list("Regular"=regular_logit, "Odds Ratio"=OR_logit2, 
+             "Partial at the mean"=Partial_atmean_logit, "Avg Partial"=Avg_Partial_logit)
+
+huxtable::huxreg(fits,
+      # statistics = c(N = "nobs", R2 = "r.squared"),
+       note = "Note.This is cool.")%>%
+  huxtable::as_flextable() 
+```
+
+fin

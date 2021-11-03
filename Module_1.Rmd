@@ -1861,7 +1861,7 @@ ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGr
 
 ```
 
-### Decsion surface with k=2
+### Decision surface with k=2
 
 ```{r decision2k, echo=FALSE}
 library(caret)
@@ -1903,7 +1903,7 @@ ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGr
 
 ```
 
-### Decsion surface with k=3
+### Decision surface with k=3
 
 ```{r decision3k, echo=FALSE}
 library(caret)
@@ -1945,7 +1945,7 @@ ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGr
 
 ```
 
-### Decsion surface with k=4
+### Decision surface with k=4
 
 ```{r decision4k, echo=FALSE}
 library(caret)
@@ -1986,6 +1986,7 @@ ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=knnPredGr
   scale_color_hue(labels=c('setosa', 'versicolor', 'virginica'))
 
 ```
+
 #### **Neighbors**
 
 As the number of neighbors increases, we tend to average over the distribution of training data, which makes the decision surface cleaner with smaller variations. Depending on the data being analyzed, this can be either a good or bad result.
