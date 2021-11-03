@@ -155,7 +155,7 @@ Its logical form goes as:
 
     -   Prof. Hunt: Masks are ineffective.
 
-    -   ignorant peson: You are an accounting professor, not a doctor.
+    -   ignorant person: You are an accounting professor, not a doctor.
 
 #### Circumstantial
 
