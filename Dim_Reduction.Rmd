@@ -1,0 +1,258 @@
+---
+title: "Dimensionality Reduction"
+description: |
+  Do you have to many inputs/variables?
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+# **Dimensionality Reduction** {#dimensionality-reduction}
+
+When confronted with a large, multi-dimensional data set, one approach to simplify any subsequent analysis is to reduce the number of dimensions (or features) that must be processed. In some cases, features can be removed from an analysis based on business logic, or the features that contain the most information can be quantified somehow. More generally, however, we can employ [dimensional reduction](https://en.wikipedia.org/wiki/Dimensionality_reduction), a machine learning technique that quantifies relationships between the original dimensions (or features, attributes, or columns of a DataFrame) to identify new dimensions that better capture the inherent relationships within the data.
+
+The standard technique to perform this is known as [principal component analysis](https://en.wikipedia.org/wiki/Principal_component_analysis), or PCA. Mathematically, we can derive PCA by using linear algebra to solve a set of linear equations. This process effectively rotates the data into a new set of dimensions, and by ranking the importance of the new dimensions, we can optimally select fewer dimensions for use in other machine learning algorithms.
+
+The *PCA* estimator requires one tunable hyper-parameter that specifies the target number of dimensions. This value can be arbitrarily selected, perhaps based on prior information, or it can be iteratively determined. After the model is created, we fit the model to the data and next create our new, rotated data set. This is demonstrated in the next code cell.
+
+```{r,echo=TRUE}
+
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=2)
+
+caret.pca
+
+caret.pca$
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+
+#using stats
+stat.pca <- prcomp(dat[,-5],
+                 center = TRUE,
+                 scale. = TRUE) 
+
+# plot method
+plot(stat.pca, type = "l")
+
+summary(stat.pca)
+```
+
+Below is a graphical representation[^1]
+
+[^1]: <https://www.r-bloggers.com/2013/11/computing-and-visualizing-pca-in-r/>
+
+```{r,echo=FALSE,eval=FALSE}
+library(devtools)
+install_github("vqv/ggbiplot")
+```
+
+```{r,echo=FALSE}
+
+library(ggbiplot)
+g <- ggbiplot(stat.pca, obs.scale = 1, var.scale = 1, 
+              groups = dat$Species, ellipse = TRUE, 
+              circle = TRUE)
+g <- g + scale_color_discrete(name = '')
+g <- g + theme(legend.direction = 'horizontal', 
+               legend.position = 'top')
+print(g)
+
+```
+
+At the end of the previous code cell, we measure the amount of the original variance (or spread) in the original data that is captured by each new dimension. As this example shows, these two new dimensions capture almost 96% of the variance in the original data. This means that any analysis that uses only these two new dimensions will closely represent the analysis if performed on the entire data.
+
+### 
+
+```{r detach1,echo=FALSE}
+#need to detach some ggbiplot and plyr becuase it 
+#causes problems later
+detach(package:ggbiplot)
+detach(package:plyr)
+
+```
+
+### **Clustering** {#clustering}
+
+The last machine learning technique we will explore in this notebook is [cluster finding](https://en.wikipedia.org/wiki/Cluster_analysis). In this introductory notebook, we will demonstrate one of the simplest clustering techniques, spatial clustering, which seeks to first find NN clusters in a data set and to subsequently identify to which cluster each instance (or data point) belongs. The specific algorithm we employ below is the [k-means algorithm](https://en.wikipedia.org/wiki/K-means_clustering), which is one of the simplest to understand. In this algorithm, we start with a guess for the number of clusters (again this can be based on prior information or iteratively quantified). We randomly place cluster centers in the data and determine how well the data *cluster* to these cluster centers. This information is used to pick new cluster centers, and the process continues until a solution converges (or we reach a predefined number of iterations).
+
+```{r,echo=TRUE}
+
+Clusters<-kmeans(trainTransformed[,-5],centers=3)
+
+Clusters
+
+```
+
+The above list is an output of the `kmeans()` function. Let's see some of the important ones closely:
+
+-   `cluster`: a vector of integers (from 1:k) indicating the cluster to which each point is allocated.
+
+-   `centers`: a matrix of cluster centers.
+
+-   `withinss`: vector of within-cluster sum of squares, one component per cluster.
+
+-   `tot.withinss`: total within-cluster sum of squares. That is, `sum(withinss)`.
+
+-   `size`: the number of points in each cluster.
+
+```{r}
+library(tidyverse)
+
+Clusterdata<-trainTransformed
+Clusterdata$Cluster<-as.factor(Clusters$cluster)
+
+#view the whole dataset
+knitr::kable(Clusterdata)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+```
+
+```{r}
+
+#Remember me
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Cluster))+geom_point(alpha=0.5)
+
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Cluster))+geom_point(alpha=0.5)+facet_wrap(~Species)
+
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species))+geom_point(alpha=0.5) + 
+   geom_point(data=as.data.frame(Clusters$centers), aes(color="Cluster center"), size=5) + theme(legend.title = element_blank())+ggtitle("Iris Cluster Demonstration")
+```
+
+## Exercise 1
+
+Using the code above, answer the following question.
+
+1.  Change the `pcaComp` hyper-parameter in the PCA code example to three (and four) in the [Dimensionality Reduction](#dimensionality-reduction) section. What are the new explained variances?
+
+<details>
+
+<summary>
+
+#### Answer
+
+</summary>
+
+<p>
+
+::: panelset
+::: panel
+[Explanation]{.panel-name} For the first code chunk: First let me apologize for not doing this initially. I did not have it added in because you have to do the calculations by hand, but here they are...This is using 2 principal components and then calculating the proportion of variance explained by each component. I use an apply function and do it the long way. This sets us up to try the of number of components
+
+For the second code chunk: Change the number of components to 3.
+
+For the third code chunk: Change the number of components to 4.
+:::
+
+::: panel
+[Code]{.panel-name}
+
+**First Code Chunk**
+
+```{r 1.1.5_PCA2,echo=TRUE,warning=FALSE,message=FALSE}
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=2)
+
+caret.pca
+
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+#apply runs a loop for you
+#dat2 is the data
+#the 2 tells it to run the loop over the columns (1 is rows)
+#sd is the function for standard deviation
+#^2 squares it so we can find variance
+#sum adds them to get total variance
+Components2<-apply(dat2,2,sd)^2/sum((apply(dat2,2,sd))^2)
+
+Components2
+
+#doing the above by hand
+sd(dat2$PC1)^2/(sd(dat2$PC1)^2+sd(dat2$PC2)^2)
+
+sd(dat2$PC2)^2/(sd(dat2$PC1)^2+sd(dat2$PC2)^2)
+
+
+```
+
+**Second Code Chunk**
+
+```{r 1.1.5_PCA3,echo=TRUE,warning=FALSE,message=FALSE}
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=3)
+
+caret.pca
+
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+#apply runs a loop for you
+#dat2 is the data
+#the 2 tells it to run the loop over the columns (1 is rows)
+#sd is the function for standard deviation
+#^2 squares it so we can find variance
+#sum adds them to get total variance
+Components3<-apply(dat2,2,sd)^2/sum((apply(dat2,2,sd))^2)
+
+Components3
+
+```
+
+**Third Code Chunk**
+
+```{r 1.1.5_PCA4,echo=TRUE,warning=FALSE,message=FALSE}
+library(caret)
+#store our data in another object
+dat <- iris
+#take the 4 continuous variables and perform PCA
+caret.pca <- preProcess(dat[,-5], method="pca",pcaComp=4)
+
+caret.pca
+
+#use that data to form our new inputs
+dat2 <- predict(caret.pca, dat[,-5])
+
+#apply runs a loop for you
+#dat2 is the data
+#the 2 tells it to run the loop over the columns (1 is rows)
+#sd is the function for standard deviation
+#^2 squares it so we can find variance
+#sum adds them to get total variance
+Components4<-apply(dat2,2,sd)^2/sum((apply(dat2,2,sd))^2)
+
+Components4
+
+```
+:::
+
+::: panel
+[Answer]{.panel-name}
+
+By comparing the variances we see that as the number of components increase each individual component's explained variance drops.
+
+```{r 1.1.5_Answer,echo=TRUE,warning=FALSE,message=FALSE}
+Components2
+Components3
+Components4
+
+```
+:::
+:::
+
+</p>
+
+</details>
+
+2.  Change the \`centers\` hyper-parameter in the cluster finding code example to two (and four) in the \[Clustering\](#clustering) section. Where are the new cluster centers? Does this look better or worse?
+3.  What does the \[set.seed\](<https://r-coder.com/set-seed-r/)> function in R do? Why use it? Should we have used it above?

@@ -1,0 +1,591 @@
+---
+title: "Regression"
+description: |
+  What is regression?
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+# Regression {#regression2}
+
+## **Introduction to Linear Regression**
+
+This lesson builds on the ordinary linear regression concept, introduced in business statistics, to discuss linear regression as a machine learning task. Regression, or the creation of a predictive model from data, is one of the key machine learning tasks. By using linear regression, which can often be solved analytically, we will introduce the concept of minimizing a cost function to determine the optimal model parameters in a straight-forward manner.
+
+### **Objectives**
+
+By the end of this lesson, you will be able to
+
+-   explain the role of the loss function in machine learning,
+-   articulate how to compute a regression on multiple variables,
+-   explain the different statistical measures that quantify the quality of a regression,
+-   utilize categorical variables in a machine learning model, and
+-   compute a linear regression model
+
+You were introduced to the concept of linear regression by learning about simple linear regression. This initial approach treated linear regression as a statistical technique where the relation between independent variables (or features) and a dependent variable (or target) was determined by a mathematical relation. While powerful, the previous approach treated linear regression as a distinct, statistical approach to relating independent variables with a dependent variable. In this lesson, we instead treat linear regression as a machine learning task. As a result, we will use regression to *fit a model to data*. The model generated in this fashion can be explored in greater detail to either understand why the provided data follow the generated model (i.e., gain insight into the data), or the model can be used to generate new dependent values from future or unseen data (i.e., make predictions from the model).
+
+We will use the *tips* data set. After loading this data, we display several rows, and next compute a simple linear regression to predict the `tip` feature from the `total_bill` feature.
+
+For this section we need to load libraries:
+
+```{r setup1, echo=TRUE}
+library(tidyverse)
+library(caret)
+
+```
+
+```{r load data, echo=TRUE}
+
+#load data. 
+#curl package lets us download data from a website with the proper location
+#check the packages tab and see if you have curl
+#try following
+  #?curl
+
+library(curl)
+
+load(curl("https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.rda"))
+
+```
+
+```{r look, echo=TRUE}
+
+head(tips,5)
+
+#view the whole dataset
+knitr::kable(tips)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+```
+
+Perform simple linear regression
+
+```{r OLS1, echo=TRUE}
+
+OLS1<-lm(formula=tip~total_bill,data=tips)
+#general output
+OLS1
+#more common output
+summary(OLS1)
+#correlation or R-squared...
+cor(tips$total_bill,tips$tip)^2
+```
+
+### **Formalism**
+
+Formally, this simple linear model related the independent variables $x_i$ to the dependent variables $y_i$ in our data set via two parameters: an intercept, and a slope. Mathematically, we express this relation in the following form:
+
+$$
+f(x_i) = \beta * x_i + \alpha + \epsilon_i
+$$
+
+where $\epsilon_i$ accounts for the difference between the model and the data for each data point $(x_i,y_i)$. If we have a perfect model, these errors, $\epsilon_i$, are all zero, and $y_i = f(x_i)$. In real life, however, the error terms rarely vanish because even if the original relationship is perfect noise creeps into the measurement process.
+
+As a result, in this simple example we wish to determine the model parameters: $\beta_i$, and $\alpha_i$ that minimize the values of $\epsilon_i$. We could perform this process in an iterative manner, trying different values for the model parameters and measuring the error function. This approach is often used in machine learning, where we define a **cost function** that we seek to minimize by selecting the best model parameters.
+
+In the case of a simple linear model, we have several potential cost (or loss) functions that we could seek to minimize, but we will use the common *l2-norm*: $\epsilon_i^2 = \left( \ y_i - f(x_i) \ \right)^2$, where $f(x_i)$ is defined by our model parameters. We demonstrate this approach visually in the following code block, where we minimize the sum of the *l2-norm* model residuals, which is done by finding the best model parameters: $\hat{\beta}$, and $\hat{\alpha}$.
+
+<details>
+
+<summary>
+
+***Formulas*** 😢
+
+</summary>
+
+<p>
+
+![](images/beta%20formula.png){width="100%"}
+
+</p>
+
+</details>
+
+```{r Anscombe, echo=TRUE}
+
+#Get some data
+AnsDat<-anscombe%>%
+  select(y1,x1)
+
+#extract x and y columns
+Y<-AnsDat$y1
+X<-AnsDat$x1
+
+#find the number of data points
+n<-nrow(AnsDat)
+
+#determine mean values
+mean_x<-mean(X,na.rm = TRUE)
+mean_y<-mean(Y,na.rm = TRUE)
+
+#determine best fit model parameters (from simple linear regression)
+beta = sum((X - mean_x) * (Y - mean_y)) / sum((X - mean_x)**2)
+beta
+
+alpha = mean_y - beta * mean_x
+alpha
+
+#lets double check
+summary(lm(formula=Y~X,data=AnsDat))
+```
+
+Plots
+
+```{r plots1,echo=TRUE}
+
+library(ggplot2)
+
+#create regression plot
+ggplot(AnsDat,aes(x1, y1)) +
+  geom_point() +
+  geom_smooth(method='lm', se=FALSE) +
+  geom_segment(aes(x=X, xend=X, y=Y, yend=lm(Y~X)$fitted.values, color="error"))+
+  theme_minimal() +
+  labs(x='X Values', y='Y Values', title='Linear Regression Plot') +
+  theme(plot.title = element_text(hjust=0.5, size=20, face='bold')) + 
+  theme(legend.title = element_blank())
+
+
+```
+
+### **Cost Function**
+
+This simple example demonstrates a fundamental concept in machine learning, namely the minimization of a cost (or loss) function, which quantifies how well a model represents a data set. For a given data set, the cost function is completely specified by the model parameters, thus a more complex model has a more complex cost function, which can become difficult to minimize. To clarify this point, we now turn to the exploration of the shape of cost functions.
+
+For simplicity, we start with a one-dimensional cost function, a linear model with no intercept: $f(x_i) = \beta x_i$. In the following code cell, we compute the cost function for a given data set as a function of the unknown parameter $\beta$. In this case, the minimum is easy to visualize, given the steepness of the cost function around the minimum.
+
+```{r cost function, echo=TRUE}
+
+#define our betas
+betas<-seq(-4,4,length.out=100)
+
+#define our cost function
+l2n = sapply(as.matrix(betas), function(m) log(sqrt(sum((as.matrix(tips$tip) - m*as.matrix(tips$total_bill))^2))))  # The L2-norm
+
+```
+
+```{r cost plot, echo=TRUE}
+
+library(ggplot2)
+costplot<-as.data.frame(cbind(betas,l2n))
+#create regression plot
+ggplot(costplot,aes(betas, l2n)) +
+  geom_point(color="blue") + geom_line()+
+  geom_vline(xintercept=0, color="red")
+```
+
+In general, however, we face two challenges:
+
+1.  the cost function will likely be more complex, and
+
+2.  our data will be higher dimensional.
+
+In general, we must employ a (potentially) complex mathematical technique to find the (hopefully) global minimum of the cost function. We can increase the complexity of our *cost* function analysis by extending the original model to include both a slope and an intercept. We now must find the minimum of this two dimensional model, given our observed data. We do this in the following code cell where we generate a grid of values in our two parameters, and compute the cost function for these different parameter combinations.
+
+To display the data which generates a sampling grid across potential values for the slope $\beta$ and intercept $\alpha$ in our model. We once again *vectorize* our cost function and broadcast it across the sampling grid. We accumulate the cost at each grid point and generate a two-dimensional image of the values of the cost function across our sampling grid. To make the image appear cleaner, we perform *Gaussian* interpolation between sample points.
+
+As the following two-dimensional image displays, our cost function is not aligned with either parameter, but is steeper in the slope parameter and less steep in the intercept parameter. Thus, we would expect that small changes in the slope will quickly increase our cost (which we saw in the previous one-dimensional example), while small changes in the intercept will produce smaller changes in our cost function (note that the range for intercepts is much larger than the range for the slope parameters).
+
+```{r cost2,echo=TRUE}
+
+#define our betas
+betas<-seq(-4,4,length.out=100)
+alphas<-seq(-40,40,length.out=100)
+## Generate a grid of X- and Y- values on which to predict
+grid <-expand.grid(betas,alphas)
+#define our cost function
+l2n2 = mapply( function(m,b) log(sqrt(sum((as.matrix(tips$tip) - m*as.matrix(tips$total_bill) - b)^2))),as.matrix(grid$Var1),as.matrix(grid$Var2))  # The L2-norm
+
+```
+
+```{r cost2 plot, echo=TRUE}
+
+library(ggplot2)
+
+ggplot(grid, aes(Var1, Var2)) +
+  geom_raster(aes(fill=l2n2),show.legend = FALSE) +
+  geom_point(color="deepskyblue3",aes(OLS1$coefficients[[2]],OLS1$coefficients[[1]]))+
+  theme_minimal() +
+  labs(x=expression(beta), y=expression(alpha), title=expression(paste("Cost function for"," ",y==beta*x+alpha))) +
+  theme(plot.title = element_text(hjust=0.5, size=20, face='bold')) + 
+  theme(legend.title = element_blank())
+
+```
+
+As we move to higher dimensional data sets or more complex cost functions, the challenge of finding the global minimum becomes increasingly difficult. As a result, many mathematical techniques have been developed to find the global minimum of a (potentially) complex function. The standard approach is [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent), where we use the fact that the first derivative (or gradient) measures the slope of a function at a given point. We can use the slope to infer which direction is *downhill* and thus travel (hopefully) towards the minimum.
+
+A major challenge with this approach is the potential to become stuck in a local and not global minima. Thus, modifications are often added to reduce the likelihood of becoming stuck in a local minimum. One popular example of this approach is known as [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent). This algorithm employs standard gradient descent, but adds an occasional random jump in the parameter space to reduce the chances of being stuck in a local *valley*. Another, very different, approach to this problem is the use of [genetic algorithms](https://en.wikipedia.org/wiki/Genetic_algorithm), which employ techniques from evolutionary biology to minimize the cost function.
+
+For a mental picture of this process, imagine hiking in the mountains and flip the challenge to finding the highest peak, so we will use gradient ascent. Gradient ascent is similar to finding the local mountain peak and climbing it. This local peak might look like it is the largest, but a random jump away from the local peak might enable one to view much larger peaks beyond, which can subsequently be climbed with a new gradient ascent.
+
+Whenever you perform machine learning in the future, you should keep in mind that the model that you generate for a given data set has generally resulted from the minimization of a cost function. Thus, there remains the possibility that with more effort, more data, or a better cost minimization strategy, a new, and better model may potentially exist.
+
+```{r rmse, echo=FALSE}
+
+#what is a function?
+rmse = function(actual, predicted) {
+  sqrt(mean((actual - predicted) ^ 2))
+}
+
+```
+
+```{r samples, echo=TRUE}
+#set the seed :)
+set.seed(1)
+#get our samples
+
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(tips$tip, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+#head(trainIndex)
+
+#grab the data
+tipsTrain <- tips[ trainIndex,]
+tipsTest  <- tips[-trainIndex,]
+```
+
+## **Linear Regression**
+
+In the following code cells, we use the `lm` estimator to fit our sample data, plot the results, and finally display the fit coefficients.
+
+The first code cell defines a function that will make two plots. The top plot is a comparison between a single independent variable (Total Bill) and the dependent variable (Tip). This plot differentiates the training data, the testing data, and the linear model. The bottom plot displays the model residuals (dependent variable - model result) as a function of the independent variable. The primary benefit of this plot is the ability to identify any structure in the residuals, which can indicate a bad model. For example, if the residual plot shows a linear relationship, that indicates the original model incorrectly related the independent and dependent variables.
+
+In the following code cells, we first compute a linear fit with no intercept, after which we compute a linear fit with both a slope and an intercept. The fit results are displayed as well as the regression and residual plots.
+
+The code below computes a regression with no intercept.
+
+```{r model noint, echo=TRUE}
+
+#fit simple linear regression model
+model_noint <- lm(tip ~ 0+total_bill , data = tipsTrain)
+
+noint_results<-predict(model_noint,tipsTest)
+###compute fit
+summary(model_noint)
+
+knitr::kable(caret::RMSE(noint_results,tipsTest$tip),col.names = "RMSE")
+
+
+```
+
+Below is the regression plot for the model with no intercept.
+
+```{r regplot1, echo=TRUE}
+
+tipsTest$Sample<-"Testing"
+tipsTrain$Sample<-"Training"
+
+Combined_Tips<-rbind(tipsTest,tipsTrain)
+#create regression plot with customized style
+ggplot(Combined_Tips,aes(x=total_bill, y=tip,color=Sample)) +
+  geom_point(alpha=.5) +
+  theme_minimal() +
+  labs(x='X Values', y='Y Values', title='Linear Regression Plot') +
+  theme(plot.title = element_text(hjust=0.5, size=20, face='bold')) +
+  geom_abline(aes(slope=model_noint$coefficients[[1]],intercept=0),color="red")
+```
+
+Below is a residual (error) plot.
+
+```{r residplot1, echo=TRUE}
+library(tidyverse)
+#create residuals
+testwithpred<-as.data.frame(cbind(noint_results,tipsTest))
+#create residuals
+testwithpred<-testwithpred%>%
+  rename(prediction=noint_results)%>%
+  mutate(error=tip-prediction)
+
+#create regression plot with customized style
+ggplot(testwithpred,aes(x=total_bill, y=error)) +
+  geom_point(alpha=.5,color="deepskyblue") +
+  theme_minimal() +
+  labs(x='Total Bill', y='Error', title='Regression Error Plot') +
+  theme(plot.title = element_text(hjust=0.25, size=20, face='bold')) +
+  geom_hline(yintercept=0,color="red",linetype="dashed")
+
+```
+
+[Link to some good examples of interpreting residual plots 🏫](https://www.qualtrics.com/support/stats-iq/analyses/regression-guides/interpreting-residual-plots-improve-regression/)
+
+Model with an intercept
+
+```{r model int,echo=TRUE}
+
+#fit simple linear regression model
+model_int <- lm(tip ~ total_bill , data = tipsTrain)
+
+int_results<-predict(model_int,tipsTest)
+###compute fit
+summary(model_int)
+
+knitr::kable(caret::RMSE(int_results,tipsTest$tip),col.names = "RMSE")
+
+```
+
+Below is a model with an intercept
+
+```{r regplot2, echo=TRUE}
+
+#create regression plot with customized style
+ggplot(Combined_Tips,aes(x=total_bill, y=tip,color=Sample)) +
+  geom_point(alpha=.5) +
+  theme_minimal() +
+  labs(x='X Values', y='Y Values', title='Linear Regression Plot') +
+  theme(plot.title = element_text(hjust=0.5, size=20, face='bold')) +
+  geom_abline(aes(slope=model_int$coefficients[[2]],intercept=model_int$coefficients[[1]]),color="red")
+```
+
+Residual Plot
+
+```{r residplot2, echo=TRUE}
+#create residuals
+testwithpred2<-as.data.frame(cbind(int_results,tipsTest))
+#create residuals
+testwithpred2<-testwithpred2%>%
+  rename(prediction=int_results)%>%
+  mutate(error=tip-prediction)
+
+#create regression plot with customized style
+ggplot(testwithpred2,aes(x=total_bill, y=error)) +
+  geom_point(alpha=.5,color="deepskyblue") +
+  theme_minimal() +
+  labs(x='Total Bill', y='Error', title='Regression Error Plot') +
+  theme(plot.title = element_text(hjust=0.25, size=20, face='bold')) +
+  geom_hline(yintercept=0,color="red",linetype="dashed")
+```
+
+## **Multivariate Regression**
+
+Often, using more data will result in more accurate models, since finer details can be captured. For example, if we see structure in a residual plot, the easiest solution is often to add additional independent variables to our model, which results in a multivariate linear regression model. The only major change required to our previous model building code is the expansion of our equation in the `lm()` function to include the additional independent variables.
+
+To demonstrate building a multi-variate regression model, the following code uses both the `total_bill` and `size` features from the *tips* data set to use as independent variables. The `tip` feature is used as the dependent variable.
+
+The following code generates a multi-variate linear model, displays the model parameters, and displays the regression and residual plots. To make the regression plot, we must use only one feature (in this case the `total_bill`). As a result, when we display the generated model, we get a series of lines that are the projections of the multi-variate model on this two-dimensional figure.
+
+```{r multireg1,echo=TRUE}
+
+#fit simple linear regression model
+model_multi <- lm(tip ~ total_bill+size , data = tipsTrain)
+
+multi_results<-predict(model_multi,tipsTest)
+###compute fit
+summary(model_multi)
+
+knitr::kable(caret::RMSE(multi_results,tipsTest$tip),col.names = "RMSE")
+```
+
+```{r regplot3, echo=TRUE}
+
+
+library(plotly)
+
+scatter.plot<-plot_ly(Combined_Tips, x = ~total_bill, y = ~size, z = ~tip, color = ~Sample, colors = c('lightblue', 'violet'))%>% 
+  add_markers(size=6)%>% 
+  layout(scene = list(
+          xaxis = list(title = 'Total Bill'),
+          yaxis = list(title = 'Size'),
+          zaxis = list(title = 'Tip')))
+
+#scatter.plot
+
+library(reshape2)
+#Graph Resolution (more important for more complex shapes)
+graph_reso <- 0.05
+
+#Setup Axis
+axis_x <- seq(min(tipsTest$total_bill), max(tipsTest$total_bill), by = graph_reso)
+axis_y <- seq(min(tipsTest$size), max(tipsTest$size), by = graph_reso)
+
+#Sample points
+lm_surface <- expand.grid(total_bill = axis_x,size = axis_y,KEEP.OUT.ATTRS = F)
+lm_surface$tips <- predict(model_multi, newdata = lm_surface)
+lm_surface <- acast(lm_surface, size ~ total_bill, value.var = "tips")
+
+scatter.plot<- add_trace(p = scatter.plot,
+                       z = lm_surface,
+                       x = axis_x,
+                       y = axis_y,
+                       type = "surface",colorscale = list(c(0, 1), c("wheat", "royalblue")))%>%
+                layout(legend = list(x = -.1, y = 1), title="Regression Plot")
+
+scatter.plot
+```
+
+```{r resid3d, echo=TRUE}
+
+#create residuals
+testwithpred3<-as.data.frame(cbind(multi_results,tipsTest))
+#create residuals
+testwithpred3<-testwithpred3%>%
+  rename(prediction=multi_results)%>%
+  mutate(error=tip-prediction)
+
+
+library(plotly)
+
+scatter.plot<-plot_ly(testwithpred3, x = ~total_bill, y = ~size, z = ~error)%>% 
+  add_markers(size=6)%>% 
+  layout(scene = list(
+          xaxis = list(title = 'Total Bill'),
+          yaxis = list(title = 'Size'),
+          zaxis = list(title = 'Error')))
+
+#scatter.plot
+
+library(reshape2)
+#Graph Resolution (more important for more complex shapes)
+graph_reso <- 0.05
+
+#Setup Axis
+axis_x <- seq(min(tipsTest$total_bill), max(tipsTest$total_bill), by = graph_reso)
+axis_y <- seq(min(tipsTest$size), max(tipsTest$size), by = graph_reso)
+
+#Sample points
+lm_surface <- expand.grid(total_bill = axis_x,size = axis_y,KEEP.OUT.ATTRS = F)
+lm_surface$error <-rep(0,nrow(lm_surface))
+lm_surface <- acast(lm_surface, size ~ total_bill, value.var = "error")
+
+scatter.plot<- add_trace(p = scatter.plot,
+                       z = lm_surface,
+                       x = axis_x,
+                       y = axis_y,
+                       type = "surface",
+                       colorscale = list(c(0,1), c("red","red")))%>%
+                       layout(showlegend=FALSE, title= "Error Plot")
+
+hide_colorbar(scatter.plot)
+```
+
+## Exercise 1
+
+1.  Run a simple regression to predict `total_bill` with `tip`. What is the RSquared? What is the RMSE?
+2.  Plot the regression and the residuals from number 1.
+3.  Run a multivariate regression to predict `total_bill` with `tip` and `size`. What is the RSquared? What is the RMSE?
+4.  Try to make a 3D plot...but do not spend more than 10-15 minutes on this one.
+
+### **Categorical Variables**
+
+Many data sets contain features that are non-numerical. For example, the *tips* data set contains a `day` feature that can take one of four values: `Thur`, `Fri`, `Sat`, and `Sun`. This data set also contains a `sex` feature that can be `Female` or `Male`, and a `smoker` feature that can be `No` or `Yes`. Each of these features are [categorical features](https://en.wikipedia.org/wiki/Categorical_variable), in that they can only take on one of a limited number of possible values. In general, the possible states are fixed, such as the `sex`, `smoker`, and `day` features discussed previously.
+
+Categorical features can take several forms. For example, a categorical feature, such as `sex` or `smoker` that can take on one of two values is known as a binary feature. Furthermore, categorical features can also be categorized into nominal and ordinal features (note that other classes are also possible, but beyond the scope of this class).
+
+A [nominal feature](https://en.wikipedia.org/wiki/Nominal_category) either is in a category or it isn't, and there are no relations between the different categories. For example, the `sex` category is nominal since there is no numerical relation or ordering among the possible values. On the other hand, an [ordinal feature](https://en.wikipedia.org/wiki/Ordinal_data) is a categorical feature where the possible values have an intrinsic relationship. For example, if we encode the results of a race as *first*, *second*, and *third*, these values have a relationship, in that *first* comes before the other two, and the difference between *first* and *second* is the same as between *second* and *third*. In our *tips* example, we could treat the `day` features in this manner, since the days often are treated as having an ordinal relationship.
+
+```{r dummies, echo=TRUE}
+
+df = data.frame(Color = c("Red", "Blue", "Green", "Blue", "Blue", "Red"))
+
+knitr::kable(df)
+
+```
+
+This encoding is fine if the data are ordinal, but in this case, our colors are likely nominal and there is no numerical relationship between the different features. Thus, we need to perform an additional transformation to convert our data into a numerical format that a machine learning model can effectively process. To do this, a commonly used approach known as *One Hot Encoding* is used. This approach generates a new feature for each possible value in our category. Thus, for our four colors, we need four features. These features will be binary, in that a value of zero indicates that the feature is not present for the specific instance, and a value of one indicates it is present. Furthermore, only one set of these new features can be present (or on) for a specific instance.
+
+```{r dummy2, echo=TRUE}
+
+library(varhandle)
+dumvars<-as.data.frame(to.dummy(df$Color,"dum"))
+
+knitr::kable(dumvars)
+```
+
+## **Linear Regression with Categorical Variables**
+
+We fit the model, display the fit coefficients, compute the model performance, and finally display the regression model plot and the residual model plot. In this case, our new model performs slightly worse than the original single variable linear regression model. This suggests that the day of the week is not an important variable in the underlying relationship between `total_bill` and `tip`. By evaluating other feature combinations, you may be able to find a better predicting model.
+
+```{r dumreg, echo=TRUE}
+
+dumvars_Train<-as.data.frame(to.dummy(tipsTrain$day,"dum"))
+
+dumvars_Train<-cbind(dumvars_Train,tipsTrain)
+
+#fit simple linear regression model
+
+model_dum1 <- lm(tip ~total_bill+ dum.Sat+dum.Sun+dum.Thur+dum.Fri , data = dumvars_Train)
+
+dumvars_Test<-as.data.frame(to.dummy(tipsTest$day,"dum"))
+
+dumvars_Test<-cbind(dumvars_Test,tipsTest)
+
+dum1_results<-predict(model_dum1,dumvars_Test)
+###compute fit
+summary(model_dum1)
+
+knitr::kable(caret::RMSE(dum1_results,tipsTest$tip),col.names = "RMSE")
+
+#fit simple linear regression model
+model_dum2 <- lm(tip ~ total_bill+factor(day) , data = tipsTrain)
+
+dum2_results<-predict(model_dum2,tipsTest)
+###compute fit
+summary(model_dum2)
+
+
+knitr::kable(caret::RMSE(dum2_results,tipsTest$tip),col.names = "RMSE")
+
+```
+
+```{r fancytable, echo=TRUE, results='asis'}
+stargazer::stargazer(model_dum2,title="Fancy Reg Table",
+          type = "html",
+          float = TRUE,
+          report = "vcs*",
+          no.space = TRUE,
+          header=FALSE,
+          single.row = TRUE,
+          #font.size = "small",
+          intercept.bottom = F)
+```
+
+Regression Plot
+
+```{r regplot4, echo=TRUE}
+
+#create regression plot with customized style
+ggplot(Combined_Tips,aes(x=total_bill, y=tip,color=Sample)) +
+  geom_point(alpha=.5) +
+  theme_minimal() +
+  labs(x='total bill', y='tip', title='Linear Regression Plot') +
+  theme(plot.title = element_text(hjust=0.5, size=20, face='bold')) +
+  geom_abline(aes(slope=model_dum2$coefficients[[2]],
+                  intercept=model_int$coefficients[[1]]),color="red")+
+    geom_abline(aes(slope=model_dum2$coefficients[[2]],
+                  intercept=model_int$coefficients[[1]]+model_dum2$coefficients[[3]]),color="red")+
+  geom_abline(aes(slope=model_dum2$coefficients[[2]],
+                  intercept=model_int$coefficients[[1]]+model_dum2$coefficients[[4]]),color="red")+
+  geom_abline(aes(slope=model_dum2$coefficients[[2]],
+                  intercept=model_int$coefficients[[1]]+model_dum2$coefficients[[5]]),color="red")
+  
+```
+
+Residual Plot
+
+```{r resid4, echo=TRUE}
+
+#create residuals
+testwithpred4<-as.data.frame(cbind(dum2_results,tipsTest))
+#create residuals
+testwithpred4<-testwithpred4%>%
+  rename(prediction=dum2_results)%>%
+  mutate(error=tip-prediction)
+
+#create regression plot with customized style
+ggplot(testwithpred4,aes(x=total_bill, y=error)) +
+  geom_point(alpha=.5,color="deepskyblue") +
+  theme_minimal() +
+  labs(x='Total Bill', y='Error', title='Regression Error Plot') +
+  theme(plot.title = element_text(hjust=0.25, size=20, face='bold')) +
+  geom_hline(yintercept=0,color="red",linetype="dashed")
+```
+
+## [Interpreting the coefficients?](https://www.statology.org/how-to-interpret-regression-coefficients/)
+
+## Exercise 2
+
+1.  We used multi-variate linear regression to predict the `tip` feature from the `total_bill` and categorical `day` features. Repeat this process, but use the `total_bill`, `size`, `sex`, and `time` features. Has the prediction performance improved, i.e., what is the RSquared and RMSE?
+2.  Interpret 2 of the coefficients.

@@ -1,7 +1,7 @@
 name: "ACC8143"
-title: "ACC8143"
+title: "Accounting Data Analytics"
 description: |
-  ACC8143
+  Accounting Data Analytics
 output_dir: "docs"
 navbar:
   logo:
@@ -12,12 +12,28 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
+    - text: "Logic"
+      href: Logic.html
     - text: "Modules"
       menu:
-        - text: "Logic"
-          href: Logic.html
-        - text: "Module 1"
-          href: Module_1.html
+        - text: "RMarkdown"
+          href: RMarkdown.html
+        - text: "Data Wrangling"
+          href: Wrangling.html
+        - text: "Introduction"
+          href: Introduction.html
+        - text: "Hands On"
+          href: Hands_on.html
+        - text: "Introduction to ML"
+          href: Intro_to_ML.html
+        - text: "Rsquared is Bad"
+          href: Rsquared_Bad.html
+        - text: "Dimensionality Reduction"
+          href: Dim_Reduction.html
+        - text: "Regression"
+          href: Regression.html
+        - text: "K-Nearest Neighbor"
+          href: KNN.html
         - text: "Logistic Regression"
           href: Logistic_Regression.html
 output: distill::distill_article
