@@ -137,7 +137,7 @@ install.packages("tidyverse")
 library(tidyverse)
 ```
 
-We can use the data from Module 1.
+We can use the data from RMarkdown Module.
 
 Remember dbname="**LOCATION OF YOUR DATABASE**"
 
@@ -174,7 +174,7 @@ FROM Invoice
 
 [Resource for working with databases in R.](https://www.r-bloggers.com/2019/08/a-comprehensive-introduction-to-working-with-databases-using-r/)
 
-Lets also import our data used in Module 2. I almost always use the import wizard.
+Lets also import our data. I almost always use the import wizard.
 
 ![](images/import_wizard_data.gif){width="100%"}
 
@@ -195,7 +195,7 @@ Session_2_data_file_2_reference_data <- read_excel("data/Session-2-data-file-2-r
 
 ## Basic Syntax
 
-Lets start with storing our imported data from Module 2 in names we like. This could have been done in the import wizard, but lets do it now.
+Lets start with storing our imported data in names we like. This could have been done in the import wizard, but lets do it now.
 
 ```{r,   echo=TRUE}
 Payroll<-Session_2_data_file_1_payroll_data
@@ -209,7 +209,7 @@ rm(Session_2_data_file_1_payroll_data)
 rm(Session_2_data_file_2_reference_data)
 ```
 
-At this point you should have a database connection "db" in your environment and 4 datasets: Customer, Invoice, Payroll, and Reference. These are the datasets used in Module 1 and Module 2. Be sure and import the original data because we are going to learn how to fix the same errors that we fixed in Module 2.
+At this point you should have a database connection "db" in your environment and 4 datasets: Customer, Invoice, Payroll, and Reference. We are going to learn how to fix the same errors that are present in the data.
 
 ![](images/basic_wrang_prereq_data.png){width="50%"}
 
@@ -388,7 +388,7 @@ Let's start with a hypothetical example. Say you would like to perform a hypothe
 
 4.  Use the output of `g(f(x))` as an input to a function `h()`
 
-One way to achieve this sequence of operations is by using nesting parentheses as follows...This is how **Excel** works. We saw this multiple times in Module 2.
+One way to achieve this sequence of operations is by using nesting parentheses as follows...This is how **Excel** works.
 
     h(g(f(x)))
 
@@ -455,7 +455,7 @@ functions include:
 
 6.  `arrange()` its rows. Sorting rows.
 
-7.  `join()` it with another data frame by matching along a "key" variable. In other words, merge these two data frames together. This is similar to what we saw in Module 1.
+7.  `join()` it with another data frame by matching along a "key" variable. In other words, merge these two data frames together. 
 
 ### filter
 

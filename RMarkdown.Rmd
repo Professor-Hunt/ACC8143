@@ -45,7 +45,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
     -   Browse to your desktop folder
 
-    -   Name the directory: ACC3053
+    -   Name the directory: ACC8143
 
 ![](images/create_project.gif){width="100%"}
 
@@ -295,7 +295,7 @@ library(DBI)
 db = dbConnect(RSQLite::SQLite(), dbname = "data/03-Data-file-classroom-exercise-Chinook_Sqlite.sqlite")
 ```
 
-Next start your chunk with the declaration of the language. Below is the answer to the first question from the first exercise in module 1.
+Next start your chunk with the declaration of the language.
 
 **CODE**
 
@@ -561,4 +561,4 @@ To learn which arguments a format takes, read the format's help page in R, e.g.Â
 
 # Assignment
 
-Turn in an RMD file and a PDF of the questions and answers from Module 1. You have an example of how to connect to your database and you already have your sql code. Copy and paste the questions and add the code chunk answers. Be sure and show the code and the results.
+Turn in an RMD file and a html file of your resume.
