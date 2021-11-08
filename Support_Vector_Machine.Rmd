@@ -1,0 +1,474 @@
+---
+title: "Support Vector Machines"
+description: |
+  Introduction to Support Vector Machines
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+# Support Vector Machine
+
+In this module, we introduce the [Support Vector Machine (SVM) algorithm](https://en.wikipedia.org/wiki/Support_vector_machine), a powerful, but simple supervised learning approach to predicting data. For classification tasks, the SVM algorithm attempts to divide data in the feature space into distinct categories. By default, this division is performed by constructing hyperplanes that optimally divide the data. For regression, the hyperplanes are constructed to map the distribution of data. In both cases, these hyperplanes map linear structures in a non-probabilistic manner. By employing a *kernel trick*, however, we can transform non-linear data sets into linear ones, thus enabling SVM to be applied to non-linear problems.
+
+SVMs are powerful algorithms that have gained widespread popularity. This is due partly to the fact that they are effective in high dimensional feature spaces, including those problems where the number of features is similar to or slightly exceeds the number of instances. They can also be memory efficient since only the support vectors are needed to compute the hyperplanes. Finally, by using different kernels, SVM can be applied to a wide range of learning tasks. On the other hand, these models are black boxes, and it can be difficult to explain how they operate, especially on new instances. They do not, by default, provide probability estimates, since the hyperplane is constructed to cleanly divide the training data.
+
+In this module, we first explore the basic formalism of the SVM algorithm, including the construction of hyperplanes and the kernel trick, which enables SVM to be applied to non-linear problems. Next, we explore the application of SVM to classification problems, which is known as support vector classification, or SVC. To introduce this topic, we will once again use the Iris data to construct an SVC estimator, explore the resulting performance and decision surface, before looking at the effect of different hyperparameter values. Next, we will switch to a more complex data set, the adult data demonstrated in the Introduction to Decision Tree module, with which we will explore unbalanced classes and more advanced classification performance metrics such as the ROC, AUC, and Lift curve. Finally, we will apply SVM to regression problems, which is known as support vector regression. For this we will use the automobile miles per gallon regression task first presented in the Introduction to Decision Tree module.
+
+## **Formalism**
+
+As was the case with the decision tree, one of the simplest machine learning algorithms to understand and employ is the [support vector machine](https://en.wikipedia.org/wiki/Support_vector_machine). For classification tasks, this algorithm simply divides the data with hyperplanes into the resulting classes, while for regression, the hyperplanes form a predictive model of the underlying data. These hyperplanes, by default, produce a linear classifier (or regressor) since they are restricted to be linear in the features. However, unlike a decision tree, SVM produces a black box model; we can't examine the model, especially in higher dimensions, to understand why specific predictions are made. In order to construct the optimal set of hyperplanes, SVM assumes the features are normalized and can be compared equally. Thus, for proper use of an SVM on a data set, we must normalize the features.
+
+Given a set of data with $n$ features, we can construct many different hyperplanes that divide the data. The SVM algorithm selects the optimal hyperplane by finding the one that produces the largest separation, which is known as the *margin*, between the data. The hyperplane that accomplishes this goal is known as the maximum-margin hyperplane. For high dimensional data, a set of hyperplanes is constructed, which accomplishes this same task. In cases where the data cannot be cleanly separated, many SVM implementations map the data set into a higher dimensional space by using a kernel function, where the data are linearly separated and construct a set of optimal hyperplanes in this space. This process can also be used to transform a non-linear feature space into a linear (or approximately linear) space where traditional SVM can be applied.
+
+In the rest of this section, we demonstrate the construction of hyperplanes by using the Iris data set. To simplify the visualization of these data and the resulting hyperplanes, we use only two dimensions. Since SVM, by default, provides a linear classification, these hyperplanes will generate linear divisions between classes. After this, we demonstrate how a kernel can be employed to transform a non-linear problem into a linear classification task.
+
+## **Hyperplanes**
+
+To demonstrate how hyperplanes can divide data, we will use the standard Iris classification data set. In the following two Code cells, we first use our helper functions to load the Iris data, subdivide into training and testing, and normalize the data by using the training features. Next, we select only two dimensions: Sepal Width and Petal Width, to use in our subsequent analysis to enable easier visualization of the training data, test data, and hyperplanes.
+
+The second Code cell uses the training data to generate an SVC (don't worry about the details of doing this right now, they are introduced in the next section). Next, we make a scatter plot of the training data, colored by their label, and display test data with a different symbol (see the plot legend for full details). Next, we generate a grid of points through this space and apply the predetermined SVC to generate decisions over this grid (note, this is similar to how we construct decisions surfaces for classification tasks). Finally, we plot two of the three computed hyperplanes (the algorithm generates a separate hyperplane to divide between each set of classes, we have three types of Iris, so we have three sets of hyperplanes) and the support vectors used to compute these hyperplanes from the training data.
+
+The hyperplanes shown in the plot are denoted by the solid gray line. We also plot the confidence interval (or upper and lower one-sigma standard deviations) for these hyperplanes, the upper boundary as a blue dashed line, and the lower boundary as a red dashed line. The confidence interval in this case provides an estimate for the uncertainty in the location of the true hyperplane given these training data.
+
+The support are those training data that are used to finalize the selection of the best hyperplane. The training data that anchor the support vectors are enclosed in a large yellow circle. The vector extends from these points to the hyperplane (forming a right angle to the hyperplane). The margin for each support vector is the distance from the support to the hyperplane (or the length of the support vector). It is the combinations of these distances that we seek to minimize when we compute the best hyperplane.
+
+```{r svm1}
+
+library(caret)
+library(tidyverse)
+#set the seed :)
+set.seed(1)
+#get our samples
+#using the iris data
+#lets split the data 60/40
+
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+#head(trainIndex)
+
+#grab the data
+SVMTrain <- iris[ trainIndex,]
+SVMTest  <- iris[-trainIndex,]
+
+
+iris_SVM <- train(
+  form = factor(Species) ~ .,
+  data = SVMTrain,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "svmLinear",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+iris_SVM
+
+summary(iris_SVM)
+
+svm_Pred<-predict(iris_SVM,SVMTest,type="prob")
+
+knitr::kable(svm_Pred)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+
+svmtestpred<-cbind(svm_Pred,SVMTest)
+
+svmtestpred<-svmtestpred%>%
+  mutate(prediction=if_else(setosa>versicolor & setosa>virginica,"setosa",
+                            if_else(versicolor>setosa & versicolor>virginica, "versicolor",
+                                    if_else(virginica>setosa & virginica>versicolor,"virginica", "PROBLEM"))))
+
+table(svmtestpred$prediction)
+
+confusionMatrix(factor(svmtestpred$prediction),factor(svmtestpred$Species))
+```
+
+```{r svmplot1}
+
+supportvectors<-SVMTrain[iris_SVM$finalModel@SVindex,]
+
+ggplot(data=SVMTest, mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species))+
+  geom_point(alpha=0.5)+
+  geom_point(data=svmtestpred, mapping = aes(x=Sepal.Width,y=Petal.Width, color=prediction),shape=6,size=3)+
+    geom_point(data=supportvectors, mapping = aes(x=Sepal.Width,y=Petal.Width),shape=4,size=4)+
+  theme(legend.title = element_blank())+ggtitle("SVM Demonstration")
+
+```
+
+```{r svmplot2}
+
+svmfit = e1071::svm(Species~., data = SVMTrain, kernel = "linear", cost = 1, scale = TRUE)
+
+# Plot Results
+plot(svmfit, SVMTrain, Petal.Width ~ Sepal.Length,
+     slice = list(Sepal.Width = 3, Petal.Length = 4))
+```
+
+```{r svmplot3, echo=FALSE}
+
+set.seed(10111)
+x = matrix(rnorm(40), 20, 2)
+y = rep(c(-1, 1), c(10, 10))
+x[y == 1,] = x[y == 1,] + 1
+plot(x, col = y + 3, pch = 19)
+
+library(e1071)
+
+dat = data.frame(x, y = as.factor(y))
+svmfit = svm(y ~ ., data = dat, kernel = "linear", cost = 10, scale = FALSE)
+print(svmfit)
+
+plot(svmfit, dat)
+
+make.grid = function(x, n = 75) {
+  grange = apply(x, 2, range)
+  x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+  x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+  expand.grid(X1 = x1, X2 = x2)
+}
+
+xgrid = make.grid(x)
+xgrid[1:10,]
+
+ygrid = predict(svmfit, xgrid)
+plot(xgrid, col = c("red","blue")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(x, col = y + 3, pch = 19)
+points(x[svmfit$index,], pch = 5, cex = 2)
+
+beta = drop(t(svmfit$coefs)%*%x[svmfit$index,])
+beta0 = svmfit$rho
+
+plot(xgrid, col = c("red", "blue")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(x, col = y + 3, pch = 19)
+points(x[svmfit$index,], pch = 5, cex = 2)
+abline(beta0 / beta[2], -beta[1] / beta[2])
+abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+
+
+```
+
+```{r svmplot4}
+
+# construct larger random data set
+x <- matrix(rnorm(200*2), ncol = 2)
+x[1:100,] <- x[1:100,] + 2.5
+x[101:150,] <- x[101:150,] - 2.5
+y <- c(rep(1,150), rep(2,50))
+dat <- data.frame(x=x,y=as.factor(y))
+
+# Plot data
+ggplot(data = dat, aes(x = x.2, y = x.1, color = y, shape = y)) + 
+  geom_point(size = 2) +
+  scale_color_manual(values=c("#000000", "#FF0000")) +
+  theme(legend.position = "none")
+
+library(e1071)
+
+# set pseudorandom number generator
+set.seed(123)
+# sample training data and fit model
+train <- base::sample(200,100, replace = FALSE)
+svmfit <- svm(y~., data = dat[train,],  kernel = "linear", cost = 10, scale = FALSE)
+# plot classifier
+plot(svmfit, dat)
+```
+
+\
+
+## **Non-Linear Kernels**
+
+In many real-world cases, the data of interest are non-linear. In these cases, we can still successfully employ SVM by transforming the data into a space where the data are linearly separated. This process is known as the *kernel trick*, since we employ a kernel function to perform the mapping.
+
+```{r svmplot5}
+
+svmfit <- svm(y~., data = dat[train,], kernel = "radial", gamma = 1, cost = 1)
+# plot classifier
+plot(svmfit, dat)
+```
+
+[Options for SVM](https://topepo.github.io/caret/available-models.html)
+
+# Exercise 1
+
+Use the first code chunk with the iris data.
+
+1.  Change the training to testing split size, for example change from a 60%:40% to a 75%:25%, and to a 50%:50%.
+
+2.  Change the Kernel...use svmPoly for the method. `method = "svmLinear",` to `method = "svmPoly",`
+
+## **SVM: Hyperparameters**[^1]
+
+[^1]: <https://uc-r.github.io/svm>
+
+Perhaps the most important hyperparameter for SVC is the `kernel` hyperparameter, which specifies the type of transformation that should be applied to the training data to determine the optimal set of hyperplanes. In the previous example, we computed and displayed the decision surface for a linear kernel. n the following Code chunks, we compute and display decision surfaces for SVCs that employ different kernel functions: `linear`, `polynomial`, `radial`, and `sigmoid`. By doing this, the resulting figures demonstrate how these different kernels affect the classification.
+
+Note how the resulting decisions surfaces are no longer dominated by the linear divisions. Each of the last three decision surfaces have curved hyperplanes in the original space, since they transform the original data by using non-linear functions. Radial peforms the best.
+
+#### Linear
+
+```{r svmsetup2, echo=FALSE}
+
+# construct larger random data set
+x <- matrix(rnorm(200*2), ncol = 2)
+x[1:100,] <- x[1:100,] + 2.5
+x[101:150,] <- x[101:150,] - 2.5
+y <- c(rep(1,150), rep(2,50))
+dat <- data.frame(x=x,y=as.factor(y))
+
+# Plot data
+ggplot(data = dat, aes(x = x.2, y = x.1, color = y, shape = y)) + 
+  geom_point(size = 2) +
+  scale_color_manual(values=c("#000000", "#FF0000")) +
+  theme(legend.position = "none")
+
+library(e1071)
+
+# set pseudorandom number generator
+set.seed(123)
+# sample training data and fit model
+train <- base::sample(200,100, replace = FALSE)
+```
+
+```{r linear}
+
+svmfit <- svm(y~., data = dat[train,],  kernel = "linear")
+# plot classifier
+plot(svmfit, dat)
+```
+
+#### Radial
+
+```{r radial}
+
+svmfit <- svm(y~., data = dat[train,], kernel = "radial")
+# plot classifier
+plot(svmfit, dat)
+```
+
+#### Sigmoid
+
+```{r sigmoid}
+
+svmfit <- svm(y~., data = dat[train,], kernel = "sigmoid")
+# plot classifier
+plot(svmfit, dat)
+```
+
+#### 
+Polynomial
+
+```{r polynomial}
+
+svmfit <- svm(y~., data = dat[train,], kernel = "polynomial")
+# plot classifier
+plot(svmfit, dat)
+```
+
+# Exercise 2
+
+1.  Look back at the SVM's run for the iris data. What where the hyperparameters chose for the Linear kernel, Radial kernel, and the Polynomial kernel? What are each of these hyperparameters?
+
+## **Classification: Adult Data**
+
+We now transition to a more complex data set, the adult data from the UCI machine learning repository. These data are fully documented online at the UCI website.
+
+```{r adult1}
+# install.packages("devtools")
+# devtools::install_github("tyluRp/ucimlr")
+
+adult<-ucimlr::adult
+
+
+knitr::kable(head(adult,100))%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+
+```
+
+With the data now loaded into a DataFrame, we can move on to creating our training and testing data sets, and employing support vector classification.
+
+```{r splitdata}
+set.seed(1)
+#lets split the data 60/40
+#obtain stratified sample
+adult<-na.omit(adult)
+
+strat_sample <- adult %>%
+                  group_by(income) %>%
+                  sample_n(size=1000)
+
+
+
+adult2<-strat_sample%>%
+  mutate(income2=if_else(income==">50K","high","low"))
+
+trainIndex <- createDataPartition(adult2$income2, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+#head(trainIndex)
+
+#grab the data
+SVMTrain <- adult2[ trainIndex,]
+SVMTest  <- adult2[-trainIndex,]
+
+adult_SVM <- train(
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  data = SVMTrain,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "svmLinear",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+adult_SVM
+
+summary(adult_SVM)
+
+svm_Pred<-predict(adult_SVM,SVMTest,type="prob")
+
+knitr::kable(svm_Pred)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+
+svmtestpred<-cbind(svm_Pred,SVMTest)
+
+svmtestpred<-svmtestpred%>%
+  mutate(prediction=if_else(high>=.5,"high","low"))
+
+confusionMatrix(factor(svmtestpred$prediction),factor(svmtestpred$income2))
+
+
+```
+
+## **Support Vector Classification: Unbalanced Classes**
+
+So far, we have dealt with classification tasks where we have sufficient examples of all classes in our training data set. Sometimes, however, we are given data sets that are unbalanced, where one or more classes are underrepresented in the training data. In general, this can become very problematic, and can lead to [subtle biases](https://www.usatoday.com/story/tech/2015/07/01/google-apologizes-after-photos-identify-black-people-as-gorillas/29567465/) that might be difficult to find until it is too late.
+
+A classic example where unbalanced classes can arise is in fraud detection. For a company to remain in business, fraud should be a rare event, ideally well below one percent. Imagine you have been given a set of transactions, and your task is to predict fraud. In this case you might have 9,900 negative examples, and only 100 positive examples. If we simply want to achieve the highest performance model, we can always predict **no fraud** and our model will be accurate 99% of the time! Clearly this is not appropriate.
+
+This naive approach, known as the zero model, is to always predict the class with the most training labels. While uninformative as a model, it can provide a useful baseline for performance. .
+
+```{r unbalanced}
+
+Original <- train(
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  data = SVMTrain,
+  #add roc for AUC
+  metric = "ROC",
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE,
+                           summaryFunction = twoClassSummary),
+  method = "svmRadial",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+
+down_inside<-train(
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  data = SVMTrain,
+  #add roc for AUC
+  metric = "ROC",
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE,
+                           summaryFunction = twoClassSummary,
+                           sampling = "down"),
+  method = "svmRadial",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+up_inside<-train(
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  data = SVMTrain,
+  #add roc for AUC
+  metric = "ROC",
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE,
+                           summaryFunction = twoClassSummary,
+                           sampling = "up"),
+  method = "svmRadial",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+smote_inside<-train(
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  data = SVMTrain,
+  #add roc for AUC
+  metric = "ROC",
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE,
+                           summaryFunction = twoClassSummary,
+                           sampling = "smote"),
+  method = "svmRadial",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+inside_models <- list(original = Original,
+                      down = down_inside,
+                      up = up_inside,
+                      SMOTE = smote_inside)
+
+inside_resampling <- resamples(inside_models)
+
+summary(inside_resampling, metric = "ROC")
+
+
+test_roc <- function(model, data) {
+  library(pROC)
+  roc_obj <- roc(data$income2, 
+                 predict(model, data, type = "prob")[, "high"],
+                 levels = c("low", "high"))
+  ci(roc_obj)
+  }
+
+inside_test <- lapply(inside_models, test_roc, data = SVMTest)
+inside_test <- lapply(inside_test, as.vector)
+inside_test <- do.call("rbind", inside_test)
+colnames(inside_test) <- c("lower", "ROC", "upper")
+inside_test <- as.data.frame(inside_test)
+
+knitr::kable(inside_test)
+
+
+```
+
+## 
+**The ROC Curve and AUC**
+
+While the standard performance metrics are useful for a standard classification task, many algorithms now generate a probabilistic classification. As a result, we need a method to not only compare different estimators, but determine the optimal threshold for an estimator. To support this decision, we employ the [receiver operating characteristic (ROC) curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic). Originally developed during World War II to predict the performance of an individual using a radar system, the ROC curve displays the relationship between the number of false positives (along the x-axis) and true positives (along the y-axis) as a function of probability threshold.
+
+The ROC curve starts at the lower left, where nothing has been classified. From here the estimator is used to determine the true and false positives for very high probability thresholds. At this point, the curve should shoot upward from the lower left, wince we expect a good classifier (and what other type of classifier would we build) performs well at high threshold. In general, as the probability threshold is lowered, we will begin to predict more false positives, and thus the curve will shift to the right.
+
+To generate a ROC curve, we need to create arrays of false and true positives at different probability thresholds. Given an ROC curve, another performance metric that can be measured is the *area under the curve* or AUC. In an ideal case this metric has the value of one, or perfect classification, and a random classification has the value of 0.5. This metric can provide a useful comparison between different estimators on the same data.
+
+```{r roc1}
+origroc<-pROC::roc(SVMTest$income2, 
+                 predict(Original, SVMTest, type = "prob")[, "high"],
+                 levels = c("low", "high"))
+
+downroc<-pROC::roc(SVMTest$income2, 
+                 predict(down_inside, SVMTest, type = "prob")[, "high"],
+                 levels = c("low", "high"))
+
+uproc<-pROC::roc(SVMTest$income2, 
+                 predict(up_inside, SVMTest, type = "prob")[, "high"],
+                 levels = c("low", "high"))
+
+smoteroc<-pROC::roc(SVMTest$income2, 
+                 predict(smote_inside, SVMTest, type = "prob")[, "high"],
+                 levels = c("low", "high"))
+
+
+
+pROC::ggroc(list(origroc,downroc,uproc,smoteroc))
+```
+
+fin

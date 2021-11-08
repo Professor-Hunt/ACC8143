@@ -36,5 +36,7 @@ navbar:
           href: KNN.html
         - text: "Logistic Regression"
           href: Logistic_Regression.html
+        - text: "Support Vector Machines"
+          href: Support_Vector_Machine.html
 output: distill::distill_article
 theme: "theme.css"

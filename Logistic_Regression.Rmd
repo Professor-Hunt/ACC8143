@@ -146,15 +146,13 @@ So we can state our objective to minimize $\theta_1$ or $\min\limits_{\theta_1}J
 
 We define the cost function $J(\theta_1)$ using calculus as $J(\theta)=2.4(x−2)$
 
-$$
-\begin{multline}
+\$\$ \begin{multline}
 \text{repeat until convergence} \{\\
  
 \theta_1:=\theta_1 - \alpha\frac{d}{d\theta_1}J(\theta_1)\\
  
 \}
-\end{multline}
-$$
+\end{multline} \$\$
 
 -   where $α$ is the learning rate governing the size of the step take with each iteration.
 
@@ -527,7 +525,7 @@ knitr::kable(tips)%>%
   kableExtra::scroll_box(width = "100%",height="300px")
 ```
 
-## Numeric 
+## Numeric
 
 To perform regression on the numeric features, we need both the numerical features and a target feature. For this example, we will attempt to predict if a patron is a smoker or not based solely on the three numerical features.
 
@@ -743,6 +741,7 @@ stargazer::stargazer(glm(factor(smoker)~total_bill+tip+size+factor(sex)+factor(d
 ```
 
 # 
+
 Exercise 2
 
 1.  Try predicting sex rather than the `smoker` feature by using all other features. Does the new model perform better or worse than the current model?
