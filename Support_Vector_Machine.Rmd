@@ -196,9 +196,9 @@ plot(svmfit, dat)
 
 Use the first code chunk with the iris data.
 
-1.  Change the training to testing split size, for example change from a 60%:40% to a 75%:25%, and to a 50%:50%.
+1.  Change the training to testing split size, for example change from a 60%:40% to a 75%:25%, and to a 50%:50%. Compare the results to the 60/40.
 
-2.  Change the Kernel...use svmPoly for the method. `method = "svmLinear",` to `method = "svmPoly",`
+2.  Change the Kernel...use svmPoly for the method. `method = "svmLinear",` to `method = "svmPoly",` compare the linear results with the polynomial results.
 
 ## **SVM: Hyperparameters**[^1]
 
@@ -258,8 +258,7 @@ svmfit <- svm(y~., data = dat[train,], kernel = "sigmoid")
 plot(svmfit, dat)
 ```
 
-#### 
-Polynomial
+#### Polynomial
 
 ```{r polynomial}
 
@@ -441,6 +440,7 @@ knitr::kable(inside_test)
 ```
 
 ## 
+
 **The ROC Curve and AUC**
 
 While the standard performance metrics are useful for a standard classification task, many algorithms now generate a probabilistic classification. As a result, we need a method to not only compare different estimators, but determine the optimal threshold for an estimator. To support this decision, we employ the [receiver operating characteristic (ROC) curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic). Originally developed during World War II to predict the performance of an individual using a radar system, the ROC curve displays the relationship between the number of false positives (along the x-axis) and true positives (along the y-axis) as a function of probability threshold.
