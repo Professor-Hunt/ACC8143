@@ -2410,6 +2410,7 @@ Modules
 <a href="Regression.html">Regression</a>
 <a href="KNN.html">K-Nearest Neighbor</a>
 <a href="Logistic_Regression.html">Logistic Regression</a>
+<a href="Support_Vector_Machine.html">Support Vector Machines</a>
 </div>
 </div>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
@@ -2513,30 +2514,30 @@ Cumulative Proportion  0.7296 0.9581 0.99482 1.00000</code></pre>
 <span class='va'>Clusters</span>
 </code></pre>
 </div>
-<pre><code>K-means clustering with 3 clusters of sizes 27, 30, 33
+<pre><code>K-means clustering with 3 clusters of sizes 33, 27, 30
 
 Cluster means:
   Sepal.Length Sepal.Width Petal.Length Petal.Width
-1  1.102692510   0.2104376    0.9418147   0.9686138
-2 -0.999513945   0.8435187   -1.3090764  -1.2529505
-3  0.006446078  -0.9390114    0.4194938   0.3465436
+1  0.006446078  -0.9390114    0.4194938   0.3465436
+2  1.102692510   0.2104376    0.9418147   0.9686138
+3 -0.999513945   0.8435187   -1.3090764  -1.2529505
 
 Clustering vector:
   1   2   3   5   6   9  10  12  14  15  16  17  20  21  24  28  29 
-  2   2   2   2   2   2   2   2   2   2   2   2   2   2   2   2   2 
+  3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3 
  31  32  36  37  39  40  41  43  44  46  47  48  50  51  52  54  55 
-  2   2   2   2   2   2   2   2   2   2   2   2   2   1   1   3   3 
+  3   3   3   3   3   3   3   3   3   3   3   3   3   2   2   1   1 
  57  58  60  64  66  67  70  71  72  74  76  79  80  82  84  86  87 
-  1   3   3   3   1   3   3   1   3   3   1   3   3   3   3   1   1 
+  2   1   1   1   2   1   1   2   1   1   2   1   1   1   1   2   2 
  88  91  92  93  94  96  97  98 100 101 102 104 106 107 108 109 110 
-  3   3   3   3   3   3   3   3   3   1   3   1   1   3   1   3   1 
+  1   1   1   1   1   1   1   1   1   2   1   2   2   1   2   1   2 
 112 113 114 115 116 117 120 125 126 127 128 129 131 132 135 136 137 
-  3   1   3   3   1   1   3   1   1   3   1   1   1   1   3   1   1 
+  1   2   1   1   2   2   1   2   2   1   2   2   2   2   1   2   2 
 138 141 142 147 150 
-  1   1   1   3   3 
+  2   2   2   1   1 
 
 Within cluster sum of squares by cluster:
-[1] 27.88364 27.08905 29.02773
+[1] 29.02773 27.88364 27.08905
  (between_SS / total_SS =  76.4 %)
 
 Available components:
@@ -2613,7 +2614,7 @@ Cluster
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2636,7 +2637,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2659,7 +2660,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2682,7 +2683,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2705,7 +2706,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2728,7 +2729,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2751,7 +2752,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2774,7 +2775,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2797,7 +2798,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2820,7 +2821,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2843,7 +2844,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2866,7 +2867,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2889,7 +2890,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2912,7 +2913,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2935,7 +2936,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2958,7 +2959,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -2981,7 +2982,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3004,7 +3005,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3027,7 +3028,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3050,7 +3051,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3073,7 +3074,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3096,7 +3097,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3119,7 +3120,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3142,7 +3143,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3165,7 +3166,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3188,7 +3189,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3211,7 +3212,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3234,7 +3235,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3257,7 +3258,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3280,7 +3281,7 @@ setosa
 setosa
 </td>
 <td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3303,7 +3304,7 @@ setosa
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3326,7 +3327,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3349,7 +3350,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3372,7 +3373,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3395,7 +3396,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3418,7 +3419,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3441,7 +3442,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3464,7 +3465,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3487,7 +3488,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3510,7 +3511,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3533,7 +3534,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3556,7 +3557,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3579,7 +3580,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3602,7 +3603,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3625,7 +3626,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3648,7 +3649,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3671,7 +3672,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3694,7 +3695,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3717,7 +3718,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3740,7 +3741,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3763,7 +3764,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -3786,7 +3787,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3809,7 +3810,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3832,7 +3833,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3855,7 +3856,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3878,7 +3879,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3901,7 +3902,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3924,7 +3925,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3947,7 +3948,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3970,7 +3971,7 @@ versicolor
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3993,7 +3994,7 @@ versicolor
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4016,7 +4017,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4039,7 +4040,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4062,7 +4063,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4085,7 +4086,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4108,7 +4109,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4131,7 +4132,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4154,7 +4155,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4177,7 +4178,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4200,7 +4201,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4223,7 +4224,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4246,7 +4247,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4269,7 +4270,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4292,7 +4293,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4315,7 +4316,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4338,7 +4339,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4361,7 +4362,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4384,7 +4385,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4407,7 +4408,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4430,7 +4431,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4453,7 +4454,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4476,7 +4477,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4499,7 +4500,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4522,7 +4523,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4545,7 +4546,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4568,7 +4569,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4591,7 +4592,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4614,7 +4615,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -4637,7 +4638,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4660,7 +4661,7 @@ virginica
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 </tbody>

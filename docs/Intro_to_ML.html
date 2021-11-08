@@ -2412,6 +2412,7 @@ Modules
 <a href="Regression.html">Regression</a>
 <a href="KNN.html">K-Nearest Neighbor</a>
 <a href="Logistic_Regression.html">Logistic Regression</a>
+<a href="Support_Vector_Machine.html">Support Vector Machines</a>
 </div>
 </div>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
@@ -2494,12 +2495,12 @@ Modules
 </code></pre>
 </div>
 <pre><code>     Resample1
-[1,]         2
+[1,]         1
 [2,]         3
 [3,]         4
 [4,]         5
-[5,]         6
-[6,]         9</code></pre>
+[5,]         7
+[6,]         8</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#grab the data</span>
 <span class='va'>irisTrain</span> <span class='op'>&lt;-</span> <span class='va'>iris</span><span class='op'>[</span> <span class='va'>trainIndex</span>,<span class='op'>]</span>
@@ -2541,32 +2542,32 @@ Modules
 </code></pre>
 </div>
 <pre><code>             vars  n mean   sd median trimmed  mad   min  max range
-Sepal.Length    1 90    0 1.00  -0.03   -0.02 1.14 -1.82 2.41  4.23
-Sepal.Width     2 90    0 1.00  -0.18   -0.06 0.74 -1.92 3.30  5.22
-Petal.Length    3 90    0 1.00   0.34    0.01 0.98 -1.59 1.70  3.29
-Petal.Width     4 90    0 1.00   0.12   -0.01 1.38 -1.47 1.72  3.19
+Sepal.Length    1 90    0 1.00  -0.06   -0.03 1.07 -1.85 2.46  4.31
+Sepal.Width     2 90    0 1.00  -0.17   -0.01 1.07 -2.58 2.73  5.31
+Petal.Length    3 90    0 1.00   0.34    0.00 0.98 -1.53 1.80  3.32
+Petal.Width     4 90    0 1.00   0.11   -0.02 1.32 -1.42 1.64  3.05
 Species*        5 90    2 0.82   2.00    2.00 1.48  1.00 3.00  2.00
               skew kurtosis   se
-Sepal.Length  0.15    -0.61 0.11
-Sepal.Width   0.66     0.57 0.11
-Petal.Length -0.33    -1.47 0.11
-Petal.Width  -0.18    -1.39 0.11
+Sepal.Length  0.22    -0.61 0.11
+Sepal.Width   0.15     0.06 0.11
+Petal.Length -0.32    -1.43 0.11
+Petal.Width  -0.11    -1.37 0.11
 Species*      0.00    -1.53 0.09</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>psych</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/psych/man/describe.html'>describe</a></span><span class='op'>(</span><span class='va'>testTransformed</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>             vars  n mean   sd median trimmed  mad   min  max range
-Sepal.Length    1 60    0 1.00  -0.14   -0.07 1.23 -1.75 2.25  3.99
-Sepal.Width     2 60    0 1.00  -0.07    0.00 1.07 -2.13 2.40  4.54
-Petal.Length    3 60    0 1.00   0.32   -0.01 1.01 -1.46 1.72  3.18
-Petal.Width     4 60    0 1.00   0.15   -0.03 1.51 -1.39 1.68  3.06
+Sepal.Length    1 60    0 1.00  -0.05   -0.06 1.26 -1.62 2.26  3.88
+Sepal.Width     2 60    0 1.00  -0.08   -0.05 0.79 -1.78 2.90  4.68
+Petal.Length    3 60    0 1.00   0.30    0.00 1.06 -1.52 1.63  3.15
+Petal.Width     4 60    0 1.00   0.17   -0.02 1.32 -1.47 1.54  3.01
 Species*        5 60    2 0.82   2.00    2.00 1.48  1.00 3.00  2.00
               skew kurtosis   se
-Sepal.Length  0.43    -0.80 0.13
-Sepal.Width   0.05    -0.49 0.13
-Petal.Length -0.18    -1.41 0.13
-Petal.Width   0.01    -1.36 0.13
+Sepal.Length  0.44    -0.68 0.13
+Sepal.Width   0.49     0.10 0.13
+Petal.Length -0.19    -1.45 0.13
+Petal.Width  -0.10    -1.42 0.13
 Species*      0.00    -1.55 0.11</code></pre>
 </div>
 <p>With our data properly divided into training and testing samples, and the features appropriately scaled, we now change to the application of machine learning algorithms</p>
@@ -2596,7 +2597,7 @@ Summary of sample sizes: 90, 90, 90, 90, 90, 90, ...
 Resampling results:
 
   Accuracy   Kappa    
-  0.9221613  0.8817841
+  0.9271848  0.8892137
 
 Tuning parameter &#39;k&#39; was held constant at a value of 5</code></pre>
 </div>
@@ -2614,31 +2615,31 @@ Tuning parameter &#39;k&#39; was held constant at a value of 5</code></pre>
             Reference
 Prediction   setosa versicolor virginica
   setosa         20          0         0
-  versicolor      0         20         3
-  virginica       0          0        17
+  versicolor      0         19         1
+  virginica       0          1        19
 
 Overall Statistics
                                           
-               Accuracy : 0.95            
-                 95% CI : (0.8608, 0.9896)
+               Accuracy : 0.9667          
+                 95% CI : (0.8847, 0.9959)
     No Information Rate : 0.3333          
     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
                                           
-                  Kappa : 0.925           
+                  Kappa : 0.95            
                                           
  Mcnemar&#39;s Test P-Value : NA              
 
 Statistics by Class:
 
                      Class: setosa Class: versicolor Class: virginica
-Sensitivity                 1.0000            1.0000           0.8500
-Specificity                 1.0000            0.9250           1.0000
-Pos Pred Value              1.0000            0.8696           1.0000
-Neg Pred Value              1.0000            1.0000           0.9302
+Sensitivity                 1.0000            0.9500           0.9500
+Specificity                 1.0000            0.9750           0.9750
+Pos Pred Value              1.0000            0.9500           0.9500
+Neg Pred Value              1.0000            0.9750           0.9750
 Prevalence                  0.3333            0.3333           0.3333
-Detection Rate              0.3333            0.3333           0.2833
-Detection Prevalence        0.3333            0.3833           0.2833
-Balanced Accuracy           1.0000            0.9625           0.9250</code></pre>
+Detection Rate              0.3333            0.3167           0.3167
+Detection Prevalence        0.3333            0.3333           0.3333
+Balanced Accuracy           1.0000            0.9625           0.9625</code></pre>
 </div>
 <h3 id="regression"><strong>Regression</strong></h3>
 <p>The second machine learning application we will demonstrate is regression. To demonstrate regression, we will introduce the <a href="https://en.wikipedia.org/wiki/Decision_tree_learning">Decision Tree</a>. A decision tree simply asks a set of questions of the data, and based on the answers, constructs a model representation. The tree (or model) is constructed by recursively splitting a data set into new groupings based on a statistical measure of the data along each different dimension (popular measures include the Gini coefficient or the entropy).</p>
@@ -2664,13 +2665,13 @@ Resampling: Bootstrapped (25 reps)
 Summary of sample sizes: 90, 90, 90, 90, 90, 90, ... 
 Resampling results across tuning parameters:
 
-  cp           RMSE       Rsquared   MAE      
-  0.008210417  0.3109380  0.9033131  0.2375918
-  0.118370647  0.4178189  0.8191503  0.3290981
-  0.810013543  0.6195095  0.7740997  0.5138180
+  cp          RMSE       Rsquared   MAE      
+  0.01358968  0.2912198  0.9192337  0.2190053
+  0.14072451  0.4036414  0.8405401  0.3131695
+  0.79305182  0.8043429  0.7774058  0.6777393
 
 RMSE was used to select the optimal model using the smallest value.
-The final value used for the model was cp = 0.008210417.</code></pre>
+The final value used for the model was cp = 0.01358968.</code></pre>
 </div>
 <p>Install another package</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2707,20 +2708,20 @@ The final value used for the model was cp = 0.008210417.</code></pre>
 <span class='va'>rsq</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.9094004</code></pre>
+<pre><code>[1] 0.8915503</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#another</span>
 <span class='va'>regss</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='op'>(</span><span class='va'>preds</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>preds</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>^</span> <span class='fl'>2</span><span class='op'>)</span> <span class='co'>## regression sum of squares</span>
 <span class='va'>regss</span> <span class='op'>/</span> <span class='va'>tss</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.8773856</code></pre>
+<pre><code>[1] 0.9597373</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#another</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>preds</span>,<span class='va'>actual</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.9120027</code></pre>
+<pre><code>[1] 0.8929912</code></pre>
 </div>
 <h2 id="exercise-1">Exercise 1</h2>
 <p>Using the code above, answer the following questions.</p>
@@ -2778,6 +2779,11 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 3
 </td>
 </tr>
@@ -2788,22 +2794,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-5
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-6
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-7
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12
 </td>
 </tr>
 <tr>
@@ -2849,11 +2845,6 @@ Resample1
 <tr>
 <td style="text-align:right;">
 24
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-25
 </td>
 </tr>
 <tr>
@@ -2923,12 +2914,17 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+39
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 40
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-41
+42
 </td>
 </tr>
 <tr>
@@ -2938,7 +2934,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-44
+45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+46
 </td>
 </tr>
 <tr>
@@ -2978,7 +2979,7 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-55
+56
 </td>
 </tr>
 <tr>
@@ -2993,7 +2994,7 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-61
+59
 </td>
 </tr>
 <tr>
@@ -3028,7 +3029,17 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+68
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 69
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+70
 </td>
 </tr>
 <tr>
@@ -3048,11 +3059,6 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-74
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 75
 </td>
 </tr>
@@ -3064,6 +3070,11 @@ Resample1
 <tr>
 <td style="text-align:right;">
 77
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+78
 </td>
 </tr>
 <tr>
@@ -3098,27 +3109,17 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-86
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 87
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
+89
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 90
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-91
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-92
 </td>
 </tr>
 <tr>
@@ -3133,17 +3134,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-95
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 96
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-98
+97
 </td>
 </tr>
 <tr>
@@ -3153,12 +3149,17 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+100
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 101
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-104
+103
 </td>
 </tr>
 <tr>
@@ -3183,6 +3184,11 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+109
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 110
 </td>
 </tr>
@@ -3203,7 +3209,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-114
+115
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+116
 </td>
 </tr>
 <tr>
@@ -3218,11 +3229,6 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-119
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 120
 </td>
 </tr>
@@ -3233,22 +3239,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+122
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 123
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-124
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-125
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-126
 </td>
 </tr>
 <tr>
@@ -3258,12 +3254,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-130
+128
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-131
+130
 </td>
 </tr>
 <tr>
@@ -3273,7 +3269,7 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-133
+134
 </td>
 </tr>
 <tr>
@@ -3303,12 +3299,12 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
-140
+141
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-141
+142
 </td>
 </tr>
 <tr>
@@ -3318,17 +3314,22 @@ Resample1
 </tr>
 <tr>
 <td style="text-align:right;">
+144
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 145
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-146
+147
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-147
+148
 </td>
 </tr>
 <tr>
@@ -3416,7 +3417,7 @@ Summary of sample sizes: 114, 114, 114, 114, 114, 114, ...
 Resampling results:
 
   Accuracy   Kappa    
-  0.9278047  0.8905967
+  0.9224274  0.8822742
 
 Tuning parameter &#39;k&#39; was held constant at a value of 5</code></pre>
 </div>
@@ -3434,32 +3435,32 @@ Tuning parameter &#39;k&#39; was held constant at a value of 5</code></pre>
 
             Reference
 Prediction   setosa versicolor virginica
-  setosa         11          0         0
-  versicolor      1         11         1
-  virginica       0          1        11
+  setosa         12          0         0
+  versicolor      0         12         0
+  virginica       0          0        12
 
 Overall Statistics
-                                          
-               Accuracy : 0.9167          
-                 95% CI : (0.7753, 0.9825)
-    No Information Rate : 0.3333          
-    P-Value [Acc &gt; NIR] : 3.978e-13       
-                                          
-                  Kappa : 0.875           
-                                          
- Mcnemar&#39;s Test P-Value : NA              
+                                     
+               Accuracy : 1          
+                 95% CI : (0.9026, 1)
+    No Information Rate : 0.3333     
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+                                     
+                  Kappa : 1          
+                                     
+ Mcnemar&#39;s Test P-Value : NA         
 
 Statistics by Class:
 
                      Class: setosa Class: versicolor Class: virginica
-Sensitivity                 0.9167            0.9167           0.9167
-Specificity                 1.0000            0.9167           0.9583
-Pos Pred Value              1.0000            0.8462           0.9167
-Neg Pred Value              0.9600            0.9565           0.9583
+Sensitivity                 1.0000            1.0000           1.0000
+Specificity                 1.0000            1.0000           1.0000
+Pos Pred Value              1.0000            1.0000           1.0000
+Neg Pred Value              1.0000            1.0000           1.0000
 Prevalence                  0.3333            0.3333           0.3333
-Detection Rate              0.3056            0.3056           0.3056
-Detection Prevalence        0.3056            0.3611           0.3333
-Balanced Accuracy           0.9583            0.9167           0.9375</code></pre>
+Detection Rate              0.3333            0.3333           0.3333
+Detection Prevalence        0.3333            0.3333           0.3333
+Balanced Accuracy           1.0000            1.0000           1.0000</code></pre>
 </div>
 </div>
 <div class="panel">
@@ -3475,32 +3476,32 @@ Balanced Accuracy           0.9583            0.9167           0.9375</code></pr
 
             Reference
 Prediction   setosa versicolor virginica
-  setosa         11          0         0
-  versicolor      1         11         1
-  virginica       0          1        11
+  setosa         12          0         0
+  versicolor      0         12         0
+  virginica       0          0        12
 
 Overall Statistics
-                                          
-               Accuracy : 0.9167          
-                 95% CI : (0.7753, 0.9825)
-    No Information Rate : 0.3333          
-    P-Value [Acc &gt; NIR] : 3.978e-13       
-                                          
-                  Kappa : 0.875           
-                                          
- Mcnemar&#39;s Test P-Value : NA              
+                                     
+               Accuracy : 1          
+                 95% CI : (0.9026, 1)
+    No Information Rate : 0.3333     
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+                                     
+                  Kappa : 1          
+                                     
+ Mcnemar&#39;s Test P-Value : NA         
 
 Statistics by Class:
 
                      Class: setosa Class: versicolor Class: virginica
-Sensitivity                 0.9167            0.9167           0.9167
-Specificity                 1.0000            0.9167           0.9583
-Pos Pred Value              1.0000            0.8462           0.9167
-Neg Pred Value              0.9600            0.9565           0.9583
+Sensitivity                 1.0000            1.0000           1.0000
+Specificity                 1.0000            1.0000           1.0000
+Pos Pred Value              1.0000            1.0000           1.0000
+Neg Pred Value              1.0000            1.0000           1.0000
 Prevalence                  0.3333            0.3333           0.3333
-Detection Rate              0.3056            0.3056           0.3056
-Detection Prevalence        0.3056            0.3611           0.3333
-Balanced Accuracy           0.9583            0.9167           0.9375</code></pre>
+Detection Rate              0.3333            0.3333           0.3333
+Detection Prevalence        0.3333            0.3333           0.3333
+Balanced Accuracy           1.0000            1.0000           1.0000</code></pre>
 </div>
 </div>
 </div>
