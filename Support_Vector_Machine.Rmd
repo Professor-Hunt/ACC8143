@@ -26,13 +26,13 @@ In the rest of this section, we demonstrate the construction of hyperplanes by u
 
 ## **Hyperplanes**
 
-To demonstrate how hyperplanes can divide data, we will use the standard Iris classification data set. In the following two Code cells, we first use our helper functions to load the Iris data, subdivide into training and testing, and normalize the data by using the training features. Next, we select only two dimensions: Sepal Width and Petal Width, to use in our subsequent analysis to enable easier visualization of the training data, test data, and hyperplanes.
+To demonstrate how hyperplanes can divide data, we will use the standard Iris classification data set. We first use our helper functions to load the Iris data and subdivide into training and testing. We normalize the data by using the training function. Next, we select only two dimensions: Sepal Width and Petal Width, to use in our subsequent analysis to enable easier visualization of the training data, test data, and hyperplanes.
 
-The second Code cell uses the training data to generate an SVC (don't worry about the details of doing this right now, they are introduced in the next section). Next, we make a scatter plot of the training data, colored by their label, and display test data with a different symbol (see the plot legend for full details). Next, we generate a grid of points through this space and apply the predetermined SVC to generate decisions over this grid (note, this is similar to how we construct decisions surfaces for classification tasks). Finally, we plot two of the three computed hyperplanes (the algorithm generates a separate hyperplane to divide between each set of classes, we have three types of Iris, so we have three sets of hyperplanes) and the support vectors used to compute these hyperplanes from the training data.
+There Code chunk uses the training data to generate an SVC (don't worry about the details of doing this right now, they are introduced in the next section). Next, we make a scatter plot of the training data, colored by their label, and display test data with a different symbol. Next, we generate a grid of points through this space and apply the predetermined SVC to generate decisions over this grid (note, this is similar to how we construct decisions surfaces for classification tasks). Finally, the algorithm generates a separate hyperplane to divide between each set of classes. The support vectors used to compute these hyperplanes from the training data.
 
 The hyperplanes shown in the plot are denoted by the solid gray line. We also plot the confidence interval (or upper and lower one-sigma standard deviations) for these hyperplanes, the upper boundary as a blue dashed line, and the lower boundary as a red dashed line. The confidence interval in this case provides an estimate for the uncertainty in the location of the true hyperplane given these training data.
 
-The support are those training data that are used to finalize the selection of the best hyperplane. The training data that anchor the support vectors are enclosed in a large yellow circle. The vector extends from these points to the hyperplane (forming a right angle to the hyperplane). The margin for each support vector is the distance from the support to the hyperplane (or the length of the support vector). It is the combinations of these distances that we seek to minimize when we compute the best hyperplane.
+The support are those training data that are used to finalize the selection of the best hyperplane. The training data that anchor the support vectors are enclosed in diamonds. The vector extends from these points to the hyperplane (forming a right angle to the hyperplane). The margin for each support vector is the distance from the support to the hyperplane (or the length of the support vector). It is the combinations of these distances that we seek to minimize when we compute the best hyperplane.
 
 ```{r svm1}
 
@@ -271,7 +271,7 @@ plot(svmfit, dat)
 
 1.  Look back at the SVM's run for the iris data. What where the hyperparameters chose for the Linear kernel, Radial kernel, and the Polynomial kernel? What are each of these hyperparameters?
 
-## **Classification: Adult Data**
+## **Classification: Adult Data** {#classification-adult-data}
 
 We now transition to a more complex data set, the adult data from the UCI machine learning repository. These data are fully documented online at the UCI website.
 
@@ -355,7 +355,8 @@ This naive approach, known as the zero model, is to always predict the class wit
 ```{r unbalanced}
 
 Original <- train(
-  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+
+    capital_gain+capital_loss+hours_per_week,
   data = SVMTrain,
   #add roc for AUC
   metric = "ROC",
@@ -369,7 +370,8 @@ Original <- train(
 
 
 down_inside<-train(
-  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+
+    capital_gain+capital_loss+hours_per_week,
   data = SVMTrain,
   #add roc for AUC
   metric = "ROC",
@@ -383,7 +385,8 @@ down_inside<-train(
   tuneLength = 10)
 
 up_inside<-train(
-  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+
+    capital_gain+capital_loss+hours_per_week,
   data = SVMTrain,
   #add roc for AUC
   metric = "ROC",
@@ -397,7 +400,8 @@ up_inside<-train(
   tuneLength = 10)
 
 smote_inside<-train(
-  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+capital_gain+capital_loss+hours_per_week,
+  form = factor(income2) ~ age+fnlwgt+education_num+factor(occupation)+factor(race)+factor(sex)+
+    capital_gain+capital_loss+hours_per_week,
   data = SVMTrain,
   #add roc for AUC
   metric = "ROC",
@@ -441,7 +445,7 @@ knitr::kable(inside_test)
 
 ## 
 
-**The ROC Curve and AUC**
+### **The ROC Curve and AUC**
 
 While the standard performance metrics are useful for a standard classification task, many algorithms now generate a probabilistic classification. As a result, we need a method to not only compare different estimators, but determine the optimal threshold for an estimator. To support this decision, we employ the [receiver operating characteristic (ROC) curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic). Originally developed during World War II to predict the performance of an individual using a radar system, the ROC curve displays the relationship between the number of false positives (along the x-axis) and true positives (along the y-axis) as a function of probability threshold.
 
@@ -470,5 +474,101 @@ smoteroc<-pROC::roc(SVMTest$income2,
 
 pROC::ggroc(list(origroc,downroc,uproc,smoteroc))
 ```
+
+When interpreting a ROC curve, the goal is to approximate as closely as possible to the perfect classifier, which reaches 100% true positive at zero false positive. On the other hand, an estimator should perform better than the baseline, which is essentially a random guess.
+
+### **The Gain and Lift Charts**
+
+#### Gain
+
+While the ROC curve provides a lot of detail into the performance of an estimator, and allows the performance of different estimators to be compared, we will sometimes want a different performance metric. For example, we may not have a sufficient budget to target all customers on which we have data. Thus, we can build a classifier to estimate which of our customers makes more than fifty thousand dollars a year. However, even this subset might be too large. What we really want is a way to select those instances from our classified data that we believe have the highest likelihood of being in our target category. Two charts that are useful to accomplish this goal are the *gain chart* and the related [*lift chart*](https://en.wikipedia.org/wiki/Lift_(data_mining)).
+
+A classic example of where a lift chart is often used is in marketing. If we have a limited budget, we want to optimally target customers who will respond positively to ads or a marketing campaign. As a result, we would build a model and compute lift chart. This chart can be used to infer a cutoff point in the sample, above which we have the highest likelihood of a positive response. This will allow us to target customers optimally given a limited budget.
+
+An alternative example is preventing customer churn, which is where customers migrate from one company to another. We can use a classifier to predict how likely a customer is to churn. With a lift chart, we can identify those customers most likely to churn and focus our limited retention budget on keeping them with our company.
+
+```{r gain}
+
+pred<-ROCR::prediction(svmtestpred$high ,factor(svmtestpred$income2))
+
+gain <- ROCR::performance(pred, "tpr", "rpp")
+
+plot(gain, main = "Gain Chart")
+```
+
+#### Lift
+
+In the following Code chunk, we first compute the lift curve for our three different classification estimators. In this case, the lift is simply the gain for the estimator divided by the baseline response. To [interpret the lift curve](http://blog.datalifebalance.com/lift-charts-a-data-scientists-secret-weapon/), recall that the value of the lift curve at any point indicates the relative improvement of our model over random.
+
+From this curve, we can see that our default logistic regression and support vector classification algorithms both perform very well. But more importantly, if this classification was being used to target customers, we can optimize our results and use less money by targeting those customers who fall to the left in this chart. In some cases, you may see these curves converted into a profit curve, where the value of the prediction is included. In this example, we might assume a cost per targeted ad to convert the lift curve into a cost curve, which would allow us to determine how many (and who) of the individuals we should target given a budget. However, these types of curves are generally domain specific, so we do not present them in this notebook.
+
+```{r lift}
+
+
+pred<-ROCR::prediction(svmtestpred$high ,factor(svmtestpred$income2))
+
+perf <- ROCR::performance(pred,"lift","rpp")
+
+plot(perf, main="Lift curve", colorize=T) 
+```
+
+[Another explanation](https://www.statistics.com/word-of-the-week-roc-lift-and-gains-curves/)
+
+Don't be afraid to search for better explanations.
+
+## **Support Vector Machine: Regression**
+
+To this point, we have only applied the support vector machine algorithm to classification tasks. This algorithm can also be applied to regression tasks by using hyperplanes to model the data distribution. Basically, this algorithm works on regression problems by mapping the training data into a high dimensional space, which might involve a non-linear kernel, and performing something akin to linear regression on the data in this higher dimensional space. Recall that for best performance, SVMs require the data be normalized prior to use.
+
+```{r svmreg}
+
+library(caret)
+library(tidyverse)
+#set the seed :)
+set.seed(1)
+#get our samples
+#using the iris data
+#lets split the data 60/40
+
+trainIndex <- createDataPartition(iris$Sepal.Width, p = .6, list = FALSE, times = 1)
+
+#look at the first few
+#head(trainIndex)
+
+#grab the data
+SVMTrain <- iris[ trainIndex,]
+SVMTest  <- iris[-trainIndex,]
+
+
+iris_SVM <- train(
+  form = Sepal.Width ~ Sepal.Length+Petal.Width+Petal.Length,
+  data = SVMTrain,
+  trControl = trainControl(method = "cv", number = 10),
+  method = "svmRadial",
+  preProcess = c("center", "scale"),
+  tuneLength = 10)
+
+iris_SVM
+
+summary(iris_SVM)
+
+svm_Pred<-predict(iris_SVM,SVMTest)
+
+knitr::kable(svm_Pred)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+
+svmtestpred<-cbind(svm_Pred,SVMTest)
+#root mean squared error
+RMSE(svmtestpred$svm_Pred,svmtestpred$Sepal.Width)
+#best measure ever...RSquared 
+cor(svmtestpred$svm_Pred,svmtestpred$Sepal.Width)^2
+```
+
+👆😆
+
+# Exercise 3
+
+1.  Run a regression using the adult data from the [Classification: Adult Data](#classification-adult-data) section. Note: be sure to sample the data, i.e. use adult2.
 
 fin

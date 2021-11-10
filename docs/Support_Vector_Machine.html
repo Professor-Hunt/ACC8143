@@ -2448,8 +2448,14 @@ Modules
 <ul>
 <li><a href="#classification-adult-data"><strong>Classification: Adult Data</strong></a></li>
 <li><a href="#support-vector-classification-unbalanced-classes"><strong>Support Vector Classification: Unbalanced Classes</strong></a></li>
-<li><a href="#section"></a></li>
+<li><a href="#section"></a>
+<ul>
+<li><a href="#the-roc-curve-and-auc"><strong>The ROC Curve and AUC</strong></a></li>
+<li><a href="#the-gain-and-lift-charts"><strong>The Gain and Lift Charts</strong></a></li>
 </ul></li>
+<li><a href="#support-vector-machine-regression"><strong>Support Vector Machine: Regression</strong></a></li>
+</ul></li>
+<li><a href="#exercise-3">Exercise 3</a></li>
 </ul>
 </nav>
 </div>
@@ -2462,10 +2468,10 @@ Modules
 <p>Given a set of data with <span class="math inline">\(n\)</span> features, we can construct many different hyperplanes that divide the data. The SVM algorithm selects the optimal hyperplane by finding the one that produces the largest separation, which is known as the <em>margin</em>, between the data. The hyperplane that accomplishes this goal is known as the maximum-margin hyperplane. For high dimensional data, a set of hyperplanes is constructed, which accomplishes this same task. In cases where the data cannot be cleanly separated, many SVM implementations map the data set into a higher dimensional space by using a kernel function, where the data are linearly separated and construct a set of optimal hyperplanes in this space. This process can also be used to transform a non-linear feature space into a linear (or approximately linear) space where traditional SVM can be applied.</p>
 <p>In the rest of this section, we demonstrate the construction of hyperplanes by using the Iris data set. To simplify the visualization of these data and the resulting hyperplanes, we use only two dimensions. Since SVM, by default, provides a linear classification, these hyperplanes will generate linear divisions between classes. After this, we demonstrate how a kernel can be employed to transform a non-linear problem into a linear classification task.</p>
 <h2 id="hyperplanes"><strong>Hyperplanes</strong></h2>
-<p>To demonstrate how hyperplanes can divide data, we will use the standard Iris classification data set. In the following two Code cells, we first use our helper functions to load the Iris data, subdivide into training and testing, and normalize the data by using the training features. Next, we select only two dimensions: Sepal Width and Petal Width, to use in our subsequent analysis to enable easier visualization of the training data, test data, and hyperplanes.</p>
-<p>The second Code cell uses the training data to generate an SVC (don’t worry about the details of doing this right now, they are introduced in the next section). Next, we make a scatter plot of the training data, colored by their label, and display test data with a different symbol (see the plot legend for full details). Next, we generate a grid of points through this space and apply the predetermined SVC to generate decisions over this grid (note, this is similar to how we construct decisions surfaces for classification tasks). Finally, we plot two of the three computed hyperplanes (the algorithm generates a separate hyperplane to divide between each set of classes, we have three types of Iris, so we have three sets of hyperplanes) and the support vectors used to compute these hyperplanes from the training data.</p>
+<p>To demonstrate how hyperplanes can divide data, we will use the standard Iris classification data set. We first use our helper functions to load the Iris data and subdivide into training and testing. We normalize the data by using the training function. Next, we select only two dimensions: Sepal Width and Petal Width, to use in our subsequent analysis to enable easier visualization of the training data, test data, and hyperplanes.</p>
+<p>There Code chunk uses the training data to generate an SVC (don’t worry about the details of doing this right now, they are introduced in the next section). Next, we make a scatter plot of the training data, colored by their label, and display test data with a different symbol. Next, we generate a grid of points through this space and apply the predetermined SVC to generate decisions over this grid (note, this is similar to how we construct decisions surfaces for classification tasks). Finally, the algorithm generates a separate hyperplane to divide between each set of classes. The support vectors used to compute these hyperplanes from the training data.</p>
 <p>The hyperplanes shown in the plot are denoted by the solid gray line. We also plot the confidence interval (or upper and lower one-sigma standard deviations) for these hyperplanes, the upper boundary as a blue dashed line, and the lower boundary as a red dashed line. The confidence interval in this case provides an estimate for the uncertainty in the location of the true hyperplane given these training data.</p>
-<p>The support are those training data that are used to finalize the selection of the best hyperplane. The training data that anchor the support vectors are enclosed in a large yellow circle. The vector extends from these points to the hyperplane (forming a right angle to the hyperplane). The margin for each support vector is the distance from the support to the hyperplane (or the length of the support vector). It is the combinations of these distances that we seek to minimize when we compute the best hyperplane.</p>
+<p>The support are those training data that are used to finalize the selection of the best hyperplane. The training data that anchor the support vectors are enclosed in diamonds. The vector extends from these points to the hyperplane (forming a right angle to the hyperplane). The margin for each support vector is the distance from the support to the hyperplane (or the length of the support vector). It is the combinations of these distances that we seek to minimize when we compute the best hyperplane.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/topepo/caret/'>caret</a></span><span class='op'>)</span>
@@ -14708,7 +14714,8 @@ Prediction high low
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>Original</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/train.html'>train</a></span><span class='op'>(</span>
-  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
+  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span>
+    <span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
   data <span class='op'>=</span> <span class='va'>SVMTrain</span>,
   <span class='co'>#add roc for AUC</span>
   metric <span class='op'>=</span> <span class='st'>"ROC"</span>,
@@ -14722,7 +14729,8 @@ Prediction high low
 
 
 <span class='va'>down_inside</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/caret/man/train.html'>train</a></span><span class='op'>(</span>
-  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
+  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span>
+    <span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
   data <span class='op'>=</span> <span class='va'>SVMTrain</span>,
   <span class='co'>#add roc for AUC</span>
   metric <span class='op'>=</span> <span class='st'>"ROC"</span>,
@@ -14736,7 +14744,8 @@ Prediction high low
   tuneLength <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
 
 <span class='va'>up_inside</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/caret/man/train.html'>train</a></span><span class='op'>(</span>
-  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
+  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span>
+    <span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
   data <span class='op'>=</span> <span class='va'>SVMTrain</span>,
   <span class='co'>#add roc for AUC</span>
   metric <span class='op'>=</span> <span class='st'>"ROC"</span>,
@@ -14750,7 +14759,8 @@ Prediction high low
   tuneLength <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
 
 <span class='va'>smote_inside</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/caret/man/train.html'>train</a></span><span class='op'>(</span>
-  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span><span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
+  form <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>income2</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span><span class='op'>+</span><span class='va'>fnlwgt</span><span class='op'>+</span><span class='va'>education_num</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>occupation</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>race</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>sex</span><span class='op'>)</span><span class='op'>+</span>
+    <span class='va'>capital_gain</span><span class='op'>+</span><span class='va'>capital_loss</span><span class='op'>+</span><span class='va'>hours_per_week</span>,
   data <span class='op'>=</span> <span class='va'>SVMTrain</span>,
   <span class='co'>#add roc for AUC</span>
   metric <span class='op'>=</span> <span class='st'>"ROC"</span>,
@@ -14886,7 +14896,7 @@ SMOTE
 </table>
 </div>
 <h2 id="section"></h2>
-<p><strong>The ROC Curve and AUC</strong></p>
+<h3 id="the-roc-curve-and-auc"><strong>The ROC Curve and AUC</strong></h3>
 <p>While the standard performance metrics are useful for a standard classification task, many algorithms now generate a probabilistic classification. As a result, we need a method to not only compare different estimators, but determine the optimal threshold for an estimator. To support this decision, we employ the <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">receiver operating characteristic (ROC) curve</a>. Originally developed during World War II to predict the performance of an individual using a radar system, the ROC curve displays the relationship between the number of false positives (along the x-axis) and true positives (along the y-axis) as a function of probability threshold.</p>
 <p>The ROC curve starts at the lower left, where nothing has been classified. From here the estimator is used to determine the true and false positives for very high probability thresholds. At this point, the curve should shoot upward from the lower left, wince we expect a good classifier (and what other type of classifier would we build) performs well at high threshold. In general, as the probability threshold is lowered, we will begin to predict more false positives, and thus the curve will shift to the right.</p>
 <p>To generate a ROC curve, we need to create arrays of false and true positives at different probability thresholds. Given an ROC curve, another performance metric that can be measured is the <em>area under the curve</em> or AUC. In an ideal case this metric has the value of one, or perfect classification, and a random classification has the value of 0.5. This metric can provide a useful comparison between different estimators on the same data.</p>
@@ -14915,8 +14925,435 @@ SMOTE
 </div>
 <p><img src="Support_Vector_Machine_files/figure-html5/roc1-1.png" width="624" /></p>
 </div>
+<p>When interpreting a ROC curve, the goal is to approximate as closely as possible to the perfect classifier, which reaches 100% true positive at zero false positive. On the other hand, an estimator should perform better than the baseline, which is essentially a random guess.</p>
+<h3 id="the-gain-and-lift-charts"><strong>The Gain and Lift Charts</strong></h3>
+<h4 id="gain">Gain</h4>
+<p>While the ROC curve provides a lot of detail into the performance of an estimator, and allows the performance of different estimators to be compared, we will sometimes want a different performance metric. For example, we may not have a sufficient budget to target all customers on which we have data. Thus, we can build a classifier to estimate which of our customers makes more than fifty thousand dollars a year. However, even this subset might be too large. What we really want is a way to select those instances from our classified data that we believe have the highest likelihood of being in our target category. Two charts that are useful to accomplish this goal are the <em>gain chart</em> and the related <a href="https://en.wikipedia.org/wiki/Lift_(data_mining)"><em>lift chart</em></a>.</p>
+<p>A classic example of where a lift chart is often used is in marketing. If we have a limited budget, we want to optimally target customers who will respond positively to ads or a marketing campaign. As a result, we would build a model and compute lift chart. This chart can be used to infer a cutoff point in the sample, above which we have the highest likelihood of a positive response. This will allow us to target customers optimally given a limited budget.</p>
+<p>An alternative example is preventing customer churn, which is where customers migrate from one company to another. We can use a classifier to predict how likely a customer is to churn. With a lift chart, we can identify those customers most likely to churn and focus our limited retention budget on keeping them with our company.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred</span><span class='op'>&lt;-</span><span class='fu'>ROCR</span><span class='fu'>::</span><span class='fu'><a href='http://ipa-tys.github.io/ROCR/reference/prediction.html'>prediction</a></span><span class='op'>(</span><span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>high</span> ,<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>income2</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>gain</span> <span class='op'>&lt;-</span> <span class='fu'>ROCR</span><span class='fu'>::</span><span class='fu'><a href='http://ipa-tys.github.io/ROCR/reference/performance.html'>performance</a></span><span class='op'>(</span><span class='va'>pred</span>, <span class='st'>"tpr"</span>, <span class='st'>"rpp"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/pkg/pROC/man/plot.roc.html'>plot</a></span><span class='op'>(</span><span class='va'>gain</span>, main <span class='op'>=</span> <span class='st'>"Gain Chart"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="Support_Vector_Machine_files/figure-html5/gain-1.png" width="624" /></p>
+</div>
+<h4 id="lift">Lift</h4>
+<p>In the following Code chunk, we first compute the lift curve for our three different classification estimators. In this case, the lift is simply the gain for the estimator divided by the baseline response. To <a href="http://blog.datalifebalance.com/lift-charts-a-data-scientists-secret-weapon/">interpret the lift curve</a>, recall that the value of the lift curve at any point indicates the relative improvement of our model over random.</p>
+<p>From this curve, we can see that our default logistic regression and support vector classification algorithms both perform very well. But more importantly, if this classification was being used to target customers, we can optimize our results and use less money by targeting those customers who fall to the left in this chart. In some cases, you may see these curves converted into a profit curve, where the value of the prediction is included. In this example, we might assume a cost per targeted ad to convert the lift curve into a cost curve, which would allow us to determine how many (and who) of the individuals we should target given a budget. However, these types of curves are generally domain specific, so we do not present them in this notebook.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred</span><span class='op'>&lt;-</span><span class='fu'>ROCR</span><span class='fu'>::</span><span class='fu'><a href='http://ipa-tys.github.io/ROCR/reference/prediction.html'>prediction</a></span><span class='op'>(</span><span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>high</span> ,<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>income2</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>perf</span> <span class='op'>&lt;-</span> <span class='fu'>ROCR</span><span class='fu'>::</span><span class='fu'><a href='http://ipa-tys.github.io/ROCR/reference/performance.html'>performance</a></span><span class='op'>(</span><span class='va'>pred</span>,<span class='st'>"lift"</span>,<span class='st'>"rpp"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/pkg/pROC/man/plot.roc.html'>plot</a></span><span class='op'>(</span><span class='va'>perf</span>, main<span class='op'>=</span><span class='st'>"Lift curve"</span>, colorize<span class='op'>=</span><span class='cn'>T</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<p><img src="Support_Vector_Machine_files/figure-html5/lift-1.png" width="624" /></p>
+</div>
+<p><a href="https://www.statistics.com/word-of-the-week-roc-lift-and-gains-curves/">Another explanation</a></p>
+<p>Don’t be afraid to search for better explanations.</p>
+<h2 id="support-vector-machine-regression"><strong>Support Vector Machine: Regression</strong></h2>
+<p>To this point, we have only applied the support vector machine algorithm to classification tasks. This algorithm can also be applied to regression tasks by using hyperplanes to model the data distribution. Basically, this algorithm works on regression problems by mapping the training data into a high dimensional space, which might involve a non-linear kernel, and performing something akin to linear regression on the data in this higher dimensional space. Recall that for best performance, SVMs require the data be normalized prior to use.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/topepo/caret/'>caret</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span>
+<span class='co'>#set the seed :)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='co'>#get our samples</span>
+<span class='co'>#using the iris data</span>
+<span class='co'>#lets split the data 60/40</span>
+
+<span class='va'>trainIndex</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/createDataPartition.html'>createDataPartition</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>$</span><span class='va'>Sepal.Width</span>, p <span class='op'>=</span> <span class='fl'>.6</span>, list <span class='op'>=</span> <span class='cn'>FALSE</span>, times <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+
+<span class='co'>#look at the first few</span>
+<span class='co'>#head(trainIndex)</span>
+
+<span class='co'>#grab the data</span>
+<span class='va'>SVMTrain</span> <span class='op'>&lt;-</span> <span class='va'>iris</span><span class='op'>[</span> <span class='va'>trainIndex</span>,<span class='op'>]</span>
+<span class='va'>SVMTest</span>  <span class='op'>&lt;-</span> <span class='va'>iris</span><span class='op'>[</span><span class='op'>-</span><span class='va'>trainIndex</span>,<span class='op'>]</span>
+
+
+<span class='va'>iris_SVM</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/train.html'>train</a></span><span class='op'>(</span>
+  form <span class='op'>=</span> <span class='va'>Sepal.Width</span> <span class='op'>~</span> <span class='va'>Sepal.Length</span><span class='op'>+</span><span class='va'>Petal.Width</span><span class='op'>+</span><span class='va'>Petal.Length</span>,
+  data <span class='op'>=</span> <span class='va'>SVMTrain</span>,
+  trControl <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/trainControl.html'>trainControl</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='st'>"cv"</span>, number <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='st'>"svmRadial"</span>,
+  preProcess <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"center"</span>, <span class='st'>"scale"</span><span class='op'>)</span>,
+  tuneLength <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+
+<span class='va'>iris_SVM</span>
+</code></pre>
+</div>
+<pre><code>Support Vector Machines with Radial Basis Function Kernel 
+
+92 samples
+ 3 predictor
+
+Pre-processing: centered (3), scaled (3) 
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 82, 83, 83, 82, 82, 82, ... 
+Resampling results across tuning parameters:
+
+  C       RMSE       Rsquared   MAE      
+    0.25  0.3045308  0.5760268  0.2312821
+    0.50  0.2983330  0.5812156  0.2241842
+    1.00  0.2958941  0.5832409  0.2237046
+    2.00  0.2938179  0.5827772  0.2223655
+    4.00  0.3009134  0.5676933  0.2288198
+    8.00  0.3209230  0.5319581  0.2499194
+   16.00  0.3372921  0.5113972  0.2638796
+   32.00  0.3485226  0.4911218  0.2784212
+   64.00  0.3810849  0.4388651  0.2993569
+  128.00  0.4045562  0.3974911  0.3097310
+
+Tuning parameter &#39;sigma&#39; was held constant at a value of 1.966425
+RMSE was used to select the optimal model using the smallest value.
+The final values used for the model were sigma = 1.966425 and C = 2.</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>iris_SVM</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Length  Class   Mode 
+     1   ksvm     S4 </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>svm_Pred</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>iris_SVM</span>,<span class='va'>SVMTest</span><span class='op'>)</span>
+
+<span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='va'>svm_Pred</span><span class='op'>)</span><span class='op'>%&gt;%</span>
+  <span class='fu'>kableExtra</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/kableExtra/man/kable_styling.html'>kable_styling</a></span><span class='op'>(</span><span class='st'>"striped"</span><span class='op'>)</span><span class='op'>%&gt;%</span>
+  <span class='fu'>kableExtra</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/kableExtra/man/scroll_box.html'>scroll_box</a></span><span class='op'>(</span>width <span class='op'>=</span> <span class='st'>"100%"</span>,height<span class='op'>=</span><span class='st'>"300px"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3.322331
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.099127
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.391576
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.651888
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.049898
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.419540
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.365906
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.280495
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.038826
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.746301
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.620086
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.484209
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.446001
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.201112
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.691927
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.482859
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.506821
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.091146
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.599222
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.921077
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.074149
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.772444
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.640705
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.020858
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.535498
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.804590
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.012512
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.029405
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.631514
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.437158
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.709163
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.979379
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.723458
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.636843
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.722852
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.746948
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.799339
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.832003
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.445453
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.783559
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.068987
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.889967
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.078554
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.986732
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.865496
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.981215
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.954453
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.868738
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.983954
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.190911
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.084567
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.903104
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.010603
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.162211
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.182064
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3.256616
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.924487
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2.936688
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>svmtestpred</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>svm_Pred</span>,<span class='va'>SVMTest</span><span class='op'>)</span>
+<span class='co'>#root mean squared error</span>
+<span class='fu'><a href='https://rdrr.io/pkg/caret/man/postResample.html'>RMSE</a></span><span class='op'>(</span><span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>svm_Pred</span>,<span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>Sepal.Width</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 0.2791149</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#best measure ever...RSquared </span>
+<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>svm_Pred</span>,<span class='va'>svmtestpred</span><span class='op'>$</span><span class='va'>Sepal.Width</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span>
+</code></pre>
+</div>
+<pre><code>[1] 0.5812884</code></pre>
+</div>
+<p>👆😆</p>
+<h1 id="exercise-3">Exercise 3</h1>
+<ol type="1">
+<li>Run a regression using the adult data from the <a href="#classification-adult-data">Classification: Adult Data</a> section. Note: be sure to sample the data, i.e. use adult2.</li>
+</ol>
 <p>fin</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
