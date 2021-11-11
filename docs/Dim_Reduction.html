@@ -2356,6 +2356,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
   <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+  <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+  <script src="site_libs/panelset-0.2.6/panelset.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2437,7 +2439,10 @@ Modules
 <ul>
 <li><a href="#dimensionality-reduction"><strong>Dimensionality Reduction</strong></a>
 <ul>
+<li><a href="#pca">PCA</a>
+<ul>
 <li><a href="#section"></a></li>
+</ul></li>
 <li><a href="#clustering"><strong>Clustering</strong></a></li>
 <li><a href="#exercise-1">Exercise 1</a></li>
 </ul></li>
@@ -2446,6 +2451,7 @@ Modules
 </div>
 <h1 id="dimensionality-reduction"><strong>Dimensionality Reduction</strong></h1>
 <p>When confronted with a large, multi-dimensional data set, one approach to simplify any subsequent analysis is to reduce the number of dimensions (or features) that must be processed. In some cases, features can be removed from an analysis based on business logic, or the features that contain the most information can be quantified somehow. More generally, however, we can employ <a href="https://en.wikipedia.org/wiki/Dimensionality_reduction">dimensional reduction</a>, a machine learning technique that quantifies relationships between the original dimensions (or features, attributes, or columns of a DataFrame) to identify new dimensions that better capture the inherent relationships within the data.</p>
+<h2 id="pca">PCA</h2>
 <p>The standard technique to perform this is known as <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal component analysis</a>, or PCA. Mathematically, we can derive PCA by using linear algebra to solve a set of linear equations. This process effectively rotates the data into a new set of dimensions, and by ranking the importance of the new dimensions, we can optimally select fewer dimensions for use in other machine learning algorithms.</p>
 <p>The <em>PCA</em> estimator requires one tunable hyper-parameter that specifies the target number of dimensions. This value can be arbitrarily selected, perhaps based on prior information, or it can be iteratively determined. After the model is created, we fit the model to the data and next create our new, rotated data set. This is demonstrated in the next code cell.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2506,40 +2512,56 @@ Cumulative Proportion  0.7296 0.9581 0.99482 1.00000</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<h3 id="clustering"><strong>Clustering</strong></h3>
+<h2 id="clustering"><strong>Clustering</strong></h2>
 <p>The last machine learning technique we will explore in this notebook is <a href="https://en.wikipedia.org/wiki/Cluster_analysis">cluster finding</a>. In this introductory notebook, we will demonstrate one of the simplest clustering techniques, spatial clustering, which seeks to first find NN clusters in a data set and to subsequently identify to which cluster each instance (or data point) belongs. The specific algorithm we employ below is the <a href="https://en.wikipedia.org/wiki/K-means_clustering">k-means algorithm</a>, which is one of the simplest to understand. In this algorithm, we start with a guess for the number of clusters (again this can be based on prior information or iteratively quantified). We randomly place cluster centers in the data and determine how well the data <em>cluster</em> to these cluster centers. This information is used to pick new cluster centers, and the process continues until a solution converges (or we reach a predefined number of iterations).</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>Clusters</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/kmeans.html'>kmeans</a></span><span class='op'>(</span><span class='va'>trainTransformed</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>5</span><span class='op'>]</span>,centers<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#lets split the data 60/40</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/topepo/caret/'>caret</a></span><span class='op'>)</span>
+<span class='va'>trainIndex</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/createDataPartition.html'>createDataPartition</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>$</span><span class='va'>Species</span>, p <span class='op'>=</span> <span class='fl'>.6</span>, list <span class='op'>=</span> <span class='cn'>FALSE</span>, times <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+
+<span class='co'>#grab the data</span>
+<span class='va'>irisTrain</span> <span class='op'>&lt;-</span> <span class='va'>iris</span><span class='op'>[</span> <span class='va'>trainIndex</span>,<span class='op'>]</span>
+<span class='va'>irisTest</span>  <span class='op'>&lt;-</span> <span class='va'>iris</span><span class='op'>[</span><span class='op'>-</span><span class='va'>trainIndex</span>,<span class='op'>]</span>
+
+<span class='co'>#normalize variables</span>
+<span class='va'>preProcValues</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/preProcess.html'>preProcess</a></span><span class='op'>(</span><span class='va'>irisTrain</span>, method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"center"</span>, <span class='st'>"scale"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>trainTransformed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>preProcValues</span>, <span class='va'>irisTrain</span><span class='op'>)</span>
+
+<span class='va'>preProcValues</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/caret/man/preProcess.html'>preProcess</a></span><span class='op'>(</span><span class='va'>irisTest</span>, method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"center"</span>, <span class='st'>"scale"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>testTransformed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>preProcValues</span>, <span class='va'>irisTest</span><span class='op'>)</span>
+
+<span class='co'>#cluster</span>
+<span class='va'>Clusters</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/stats/kmeans.html'>kmeans</a></span><span class='op'>(</span><span class='va'>trainTransformed</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>5</span><span class='op'>]</span>,centers<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>
 
 <span class='va'>Clusters</span>
 </code></pre>
 </div>
-<pre><code>K-means clustering with 3 clusters of sizes 30, 27, 33
+<pre><code>K-means clustering with 3 clusters of sizes 30, 30, 30
 
 Cluster means:
   Sepal.Length Sepal.Width Petal.Length Petal.Width
-1 -0.999513945   0.8435187   -1.3090764  -1.2529505
-2  1.102692510   0.2104376    0.9418147   0.9686138
-3  0.006446078  -0.9390114    0.4194938   0.3465436
+1    0.0149133 -0.94435708    0.3870270   0.2764877
+2    1.0479981  0.05599961    0.9239108   0.9749831
+3   -1.0629114  0.88835747   -1.3109378  -1.2514708
 
 Clustering vector:
-  1   2   3   5   6   9  10  12  14  15  16  17  20  21  24  28  29 
-  1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1 
- 31  32  36  37  39  40  41  43  44  46  47  48  50  51  52  54  55 
-  1   1   1   1   1   1   1   1   1   1   1   1   1   2   2   3   3 
- 57  58  60  64  66  67  70  71  72  74  76  79  80  82  84  86  87 
-  2   3   3   3   2   3   3   2   3   3   2   3   3   3   3   2   2 
- 88  91  92  93  94  96  97  98 100 101 102 104 106 107 108 109 110 
-  3   3   3   3   3   3   3   3   3   2   3   2   2   3   2   3   2 
-112 113 114 115 116 117 120 125 126 127 128 129 131 132 135 136 137 
-  3   2   3   3   2   2   3   2   2   3   2   2   2   2   3   2   2 
-138 141 142 147 150 
-  2   2   2   3   3 
+  1   2   4   5   6   7   8  13  14  16  17  20  21  22  24  27  29 
+  3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3 
+ 32  33  34  36  38  39  40  41  43  46  47  48  49  52  53  55  56 
+  3   3   3   3   3   3   3   3   3   3   3   3   3   2   2   1   1 
+ 57  59  62  64  66  67  68  70  71  72  75  76  77  78  80  82  83 
+  2   1   1   1   2   1   1   1   2   1   1   2   2   2   1   1   1 
+ 84  87  88  89  90  91  94  95 100 101 102 104 105 108 109 113 114 
+  1   2   1   1   1   1   1   1   1   2   1   2   2   2   1   2   1 
+116 118 119 120 121 122 125 128 129 130 132 134 135 136 137 138 144 
+  2   2   2   1   2   1   2   2   2   2   2   1   1   2   2   2   2 
+145 146 147 148 150 
+  2   2   1   2   1 
 
 Within cluster sum of squares by cluster:
-[1] 27.08905 27.88364 29.02773
- (between_SS / total_SS =  76.4 %)
+[1] 21.38071 30.77904 27.01213
+ (between_SS / total_SS =  77.8 %)
 
 Available components:
 
@@ -2600,22 +2622,22 @@ Cluster
 1
 </td>
 <td style="text-align:right;">
--0.8972444
+-0.9571625
 </td>
 <td style="text-align:right;">
-1.0504195
+0.9265390
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2623,45 +2645,45 @@ setosa
 2
 </td>
 <td style="text-align:right;">
--1.1426912
+-1.2011983
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-3
+4
 </td>
 <td style="text-align:right;">
--1.3881381
+-1.5672520
 </td>
 <td style="text-align:right;">
-0.3342244
+0.0101817
 </td>
 <td style="text-align:right;">
--1.3844551
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2669,22 +2691,22 @@ setosa
 5
 </td>
 <td style="text-align:right;">
--1.0199678
+-1.0791804
 </td>
 <td style="text-align:right;">
-1.2891512
+1.1556283
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2692,91 +2714,91 @@ setosa
 6
 </td>
 <td style="text-align:right;">
--0.5290742
+-0.5911089
 </td>
 <td style="text-align:right;">
-2.0053463
+1.8428963
 </td>
 <td style="text-align:right;">
--1.1583190
+-1.1678926
 </td>
 <td style="text-align:right;">
--1.0581454
+-1.0550190
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-9
+7
 </td>
 <td style="text-align:right;">
--1.7563083
+-1.5672520
 </td>
 <td style="text-align:right;">
--0.3819707
+0.6974497
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.1859869
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-10
+8
 </td>
 <td style="text-align:right;">
--1.1426912
+-1.0791804
 </td>
 <td style="text-align:right;">
-0.0954927
+0.6974497
 </td>
 <td style="text-align:right;">
--1.2713870
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.4566103
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-12
+13
 </td>
 <td style="text-align:right;">
--1.2654147
+-1.3232162
 </td>
 <td style="text-align:right;">
-0.8116878
+-0.2189076
 </td>
 <td style="text-align:right;">
--1.2148530
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.4479227
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2784,45 +2806,22 @@ setosa
 14
 </td>
 <td style="text-align:right;">
--1.8790317
+-1.9333057
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
--1.4975231
+-1.5022839
 </td>
 <td style="text-align:right;">
--1.4566103
+-1.4479227
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:right;">
--0.0381806
-</td>
-<td style="text-align:right;">
-2.2440780
-</td>
-<td style="text-align:right;">
--1.4409891
-</td>
-<td style="text-align:right;">
--1.3237887
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2830,22 +2829,22 @@ setosa
 16
 </td>
 <td style="text-align:right;">
--0.1609040
+-0.2250552
 </td>
 <td style="text-align:right;">
-3.1990049
+2.9883429
 </td>
 <td style="text-align:right;">
--1.2713870
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.0581454
+-1.0550190
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2853,22 +2852,22 @@ setosa
 17
 </td>
 <td style="text-align:right;">
--0.5290742
+-0.5911089
 </td>
 <td style="text-align:right;">
-2.0053463
+1.8428963
 </td>
 <td style="text-align:right;">
--1.3844551
+-1.3908201
 </td>
 <td style="text-align:right;">
--1.0581454
+-1.0550190
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2876,22 +2875,22 @@ setosa
 20
 </td>
 <td style="text-align:right;">
--0.8972444
+-0.9571625
 </td>
 <td style="text-align:right;">
-1.7666146
+1.6138070
 </td>
 <td style="text-align:right;">
--1.2713870
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.1909671
+-1.1859869
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2899,22 +2898,45 @@ setosa
 21
 </td>
 <td style="text-align:right;">
--0.5290742
+-0.5911089
 </td>
 <td style="text-align:right;">
-0.8116878
+0.6974497
 </td>
 <td style="text-align:right;">
--1.1583190
+-1.1678926
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:right;">
+-0.9571625
+</td>
+<td style="text-align:right;">
+1.3847177
+</td>
+<td style="text-align:right;">
+-1.2793564
+</td>
+<td style="text-align:right;">
+-1.0550190
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
 </td>
 </tr>
 <tr>
@@ -2922,45 +2944,45 @@ setosa
 24
 </td>
 <td style="text-align:right;">
--0.8972444
+-0.9571625
 </td>
 <td style="text-align:right;">
-0.5729561
+0.4683604
 </td>
 <td style="text-align:right;">
--1.1583190
+-1.1678926
 </td>
 <td style="text-align:right;">
--0.9253238
+-0.9240511
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-28
+27
 </td>
 <td style="text-align:right;">
--0.7745210
+-1.0791804
 </td>
 <td style="text-align:right;">
-1.0504195
+0.6974497
 </td>
 <td style="text-align:right;">
--1.2713870
+-1.2236245
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.0550190
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -2968,45 +2990,22 @@ setosa
 29
 </td>
 <td style="text-align:right;">
--0.7745210
+-0.8351447
 </td>
 <td style="text-align:right;">
-0.8116878
+0.6974497
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-31
-</td>
-<td style="text-align:right;">
--1.2654147
-</td>
-<td style="text-align:right;">
-0.0954927
-</td>
-<td style="text-align:right;">
--1.2148530
-</td>
-<td style="text-align:right;">
--1.3237887
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3014,22 +3013,68 @@ setosa
 32
 </td>
 <td style="text-align:right;">
--0.5290742
+-0.5911089
 </td>
 <td style="text-align:right;">
-0.8116878
+0.6974497
 </td>
 <td style="text-align:right;">
--1.2713870
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.0581454
+-1.0550190
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:right;">
+-0.8351447
+</td>
+<td style="text-align:right;">
+2.3010749
+</td>
+<td style="text-align:right;">
+-1.2793564
+</td>
+<td style="text-align:right;">
+-1.4479227
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+34
+</td>
+<td style="text-align:right;">
+-0.4690910
+</td>
+<td style="text-align:right;">
+2.5301643
+</td>
+<td style="text-align:right;">
+-1.3350882
+</td>
+<td style="text-align:right;">
+-1.3169548
+</td>
+<td style="text-align:left;">
+setosa
+</td>
+<td style="text-align:left;">
+3
 </td>
 </tr>
 <tr>
@@ -3037,45 +3082,45 @@ setosa
 36
 </td>
 <td style="text-align:right;">
--1.0199678
+-1.0791804
 </td>
 <td style="text-align:right;">
-0.3342244
+0.2392711
 </td>
 <td style="text-align:right;">
--1.4409891
+-1.4465520
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-37
+38
 </td>
 <td style="text-align:right;">
--0.4063508
+-1.2011983
 </td>
 <td style="text-align:right;">
-1.0504195
+1.1556283
 </td>
 <td style="text-align:right;">
--1.3844551
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.4479227
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3083,22 +3128,22 @@ setosa
 39
 </td>
 <td style="text-align:right;">
--1.7563083
+-1.8112878
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
--1.3844551
+-1.3908201
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3106,22 +3151,22 @@ setosa
 40
 </td>
 <td style="text-align:right;">
--0.8972444
+-0.9571625
 </td>
 <td style="text-align:right;">
-0.8116878
+0.6974497
 </td>
 <td style="text-align:right;">
--1.2713870
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3129,22 +3174,22 @@ setosa
 41
 </td>
 <td style="text-align:right;">
--1.0199678
+-1.0791804
 </td>
 <td style="text-align:right;">
-1.0504195
+0.9265390
 </td>
 <td style="text-align:right;">
--1.3844551
+-1.3908201
 </td>
 <td style="text-align:right;">
--1.1909671
+-1.1859869
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3152,45 +3197,22 @@ setosa
 43
 </td>
 <td style="text-align:right;">
--1.7563083
+-1.8112878
 </td>
 <td style="text-align:right;">
-0.3342244
+0.2392711
 </td>
 <td style="text-align:right;">
--1.3844551
+-1.3908201
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-44
-</td>
-<td style="text-align:right;">
--1.0199678
-</td>
-<td style="text-align:right;">
-1.0504195
-</td>
-<td style="text-align:right;">
--1.2148530
-</td>
-<td style="text-align:right;">
--0.7925022
-</td>
-<td style="text-align:left;">
-setosa
-</td>
-<td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3198,22 +3220,22 @@ setosa
 46
 </td>
 <td style="text-align:right;">
--1.2654147
+-1.3232162
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.1909671
+-1.1859869
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3221,22 +3243,22 @@ setosa
 47
 </td>
 <td style="text-align:right;">
--0.8972444
+-0.9571625
 </td>
 <td style="text-align:right;">
-1.7666146
+1.6138070
 </td>
 <td style="text-align:right;">
--1.2148530
+-1.2236245
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
@@ -3244,68 +3266,45 @@ setosa
 48
 </td>
 <td style="text-align:right;">
--1.5108615
+-1.5672520
 </td>
 <td style="text-align:right;">
-0.3342244
+0.2392711
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.3350882
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
+3
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-50
+49
 </td>
 <td style="text-align:right;">
--1.0199678
+-0.7131268
 </td>
 <td style="text-align:right;">
-0.5729561
+1.3847177
 </td>
 <td style="text-align:right;">
--1.3279210
+-1.2793564
 </td>
 <td style="text-align:right;">
--1.3237887
+-1.3169548
 </td>
 <td style="text-align:left;">
 setosa
 </td>
 <td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-51
-</td>
-<td style="text-align:right;">
-1.4345002
-</td>
-<td style="text-align:right;">
-0.3342244
-</td>
-<td style="text-align:right;">
-0.5377012
-</td>
-<td style="text-align:right;">
-0.2700706
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-2
+3
 </td>
 </tr>
 <tr>
@@ -3313,16 +3312,16 @@ versicolor
 52
 </td>
 <td style="text-align:right;">
-0.6981598
+0.6290700
 </td>
 <td style="text-align:right;">
-0.3342244
+0.2392711
 </td>
 <td style="text-align:right;">
-0.4246332
+0.3926002
 </td>
 <td style="text-align:right;">
-0.4028922
+0.3856276
 </td>
 <td style="text-align:left;">
 versicolor
@@ -3333,25 +3332,25 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-54
+53
 </td>
 <td style="text-align:right;">
--0.4063508
+1.2391594
 </td>
 <td style="text-align:right;">
--1.8143610
+0.0101817
 </td>
 <td style="text-align:right;">
-0.1419632
+0.6155277
 </td>
 <td style="text-align:right;">
-0.1372490
+0.3856276
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+2
 </td>
 </tr>
 <tr>
@@ -3359,22 +3358,45 @@ versicolor
 55
 </td>
 <td style="text-align:right;">
-0.8208832
+0.7510879
 </td>
 <td style="text-align:right;">
--0.6207024
+-0.6770862
 </td>
 <td style="text-align:right;">
-0.4811672
+0.4483320
 </td>
 <td style="text-align:right;">
-0.4028922
+0.3856276
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+56
+</td>
+<td style="text-align:right;">
+-0.2250552
+</td>
+<td style="text-align:right;">
+-0.6770862
+</td>
+<td style="text-align:right;">
+0.3926002
+</td>
+<td style="text-align:right;">
+0.1236919
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
 </td>
 </tr>
 <tr>
@@ -3382,16 +3404,16 @@ versicolor
 57
 </td>
 <td style="text-align:right;">
-0.5754364
+0.5070521
 </td>
 <td style="text-align:right;">
-0.5729561
+0.4683604
 </td>
 <td style="text-align:right;">
-0.5377012
+0.5040639
 </td>
 <td style="text-align:right;">
-0.5357138
+0.5165955
 </td>
 <td style="text-align:left;">
 versicolor
@@ -3402,48 +3424,48 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-58
+59
 </td>
 <td style="text-align:right;">
--1.1426912
+0.8731058
 </td>
 <td style="text-align:right;">
--1.5756293
+-0.4479969
 </td>
 <td style="text-align:right;">
--0.2537749
+0.4483320
 </td>
 <td style="text-align:right;">
--0.2612158
+0.1236919
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-60
+62
 </td>
 <td style="text-align:right;">
--0.7745210
+0.0189806
 </td>
 <td style="text-align:right;">
--0.8594341
+-0.2189076
 </td>
 <td style="text-align:right;">
-0.0854292
+0.2254045
 </td>
 <td style="text-align:right;">
-0.2700706
+0.3856276
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3451,22 +3473,22 @@ versicolor
 64
 </td>
 <td style="text-align:right;">
-0.3299896
+0.2630163
 </td>
 <td style="text-align:right;">
--0.3819707
+-0.4479969
 </td>
 <td style="text-align:right;">
-0.5377012
+0.5040639
 </td>
 <td style="text-align:right;">
-0.2700706
+0.2546598
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3474,16 +3496,16 @@ versicolor
 66
 </td>
 <td style="text-align:right;">
-1.0663300
+0.9951237
 </td>
 <td style="text-align:right;">
-0.0954927
+0.0101817
 </td>
 <td style="text-align:right;">
-0.3680992
+0.3368683
 </td>
 <td style="text-align:right;">
-0.2700706
+0.2546598
 </td>
 <td style="text-align:left;">
 versicolor
@@ -3497,22 +3519,45 @@ versicolor
 67
 </td>
 <td style="text-align:right;">
--0.2836274
+-0.3470731
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-0.4246332
+0.3926002
 </td>
 <td style="text-align:right;">
-0.4028922
+0.3856276
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+68
+</td>
+<td style="text-align:right;">
+-0.1030373
+</td>
+<td style="text-align:right;">
+-0.9061755
+</td>
+<td style="text-align:right;">
+0.1696726
+</td>
+<td style="text-align:right;">
+-0.2692118
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
 </td>
 </tr>
 <tr>
@@ -3520,22 +3565,22 @@ versicolor
 70
 </td>
 <td style="text-align:right;">
--0.2836274
+-0.3470731
 </td>
 <td style="text-align:right;">
--1.3368976
+-1.3643542
 </td>
 <td style="text-align:right;">
-0.0854292
+0.0582089
 </td>
 <td style="text-align:right;">
--0.1283942
+-0.1382439
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3543,16 +3588,16 @@ versicolor
 71
 </td>
 <td style="text-align:right;">
-0.0845428
+0.0189806
 </td>
 <td style="text-align:right;">
-0.3342244
+0.2392711
 </td>
 <td style="text-align:right;">
-0.5942352
+0.5597958
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 versicolor
@@ -3566,45 +3611,45 @@ versicolor
 72
 </td>
 <td style="text-align:right;">
-0.3299896
+0.2630163
 </td>
 <td style="text-align:right;">
--0.6207024
+-0.6770862
 </td>
 <td style="text-align:right;">
-0.1419632
+0.1139407
 </td>
 <td style="text-align:right;">
-0.1372490
+0.1236919
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-74
+75
 </td>
 <td style="text-align:right;">
-0.3299896
+0.6290700
 </td>
 <td style="text-align:right;">
--0.6207024
+-0.4479969
 </td>
 <td style="text-align:right;">
-0.5377012
+0.2811364
 </td>
 <td style="text-align:right;">
-0.0044274
+0.1236919
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3612,16 +3657,16 @@ versicolor
 76
 </td>
 <td style="text-align:right;">
-0.9436066
+0.8731058
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-0.3680992
+0.3368683
 </td>
 <td style="text-align:right;">
-0.2700706
+0.2546598
 </td>
 <td style="text-align:left;">
 versicolor
@@ -3632,25 +3677,48 @@ versicolor
 </tr>
 <tr>
 <td style="text-align:left;">
-79
+77
 </td>
 <td style="text-align:right;">
-0.2072662
+1.1171416
 </td>
 <td style="text-align:right;">
--0.3819707
+-0.6770862
 </td>
 <td style="text-align:right;">
-0.4246332
+0.5597958
 </td>
 <td style="text-align:right;">
-0.4028922
+0.2546598
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+78
+</td>
+<td style="text-align:right;">
+0.9951237
+</td>
+<td style="text-align:right;">
+-0.2189076
+</td>
+<td style="text-align:right;">
+0.6712596
+</td>
+<td style="text-align:right;">
+0.6475634
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+2
 </td>
 </tr>
 <tr>
@@ -3658,22 +3726,22 @@ versicolor
 80
 </td>
 <td style="text-align:right;">
--0.1609040
+-0.2250552
 </td>
 <td style="text-align:right;">
--1.0981659
+-1.1352649
 </td>
 <td style="text-align:right;">
--0.1407069
+-0.1647187
 </td>
 <td style="text-align:right;">
--0.2612158
+-0.2692118
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3681,22 +3749,45 @@ versicolor
 82
 </td>
 <td style="text-align:right;">
--0.4063508
+-0.4690910
 </td>
 <td style="text-align:right;">
--1.5756293
+-1.5934435
 </td>
 <td style="text-align:right;">
--0.0276388
+-0.0532549
 </td>
 <td style="text-align:right;">
--0.2612158
+-0.2692118
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+83
+</td>
+<td style="text-align:right;">
+-0.1030373
+</td>
+<td style="text-align:right;">
+-0.9061755
+</td>
+<td style="text-align:right;">
+0.0582089
+</td>
+<td style="text-align:right;">
+-0.0072760
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
 </td>
 </tr>
 <tr>
@@ -3704,45 +3795,22 @@ versicolor
 84
 </td>
 <td style="text-align:right;">
-0.2072662
+0.1409984
 </td>
 <td style="text-align:right;">
--0.8594341
+-0.9061755
 </td>
 <td style="text-align:right;">
-0.7638373
+0.7269915
 </td>
 <td style="text-align:right;">
-0.5357138
+0.5165955
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-86
-</td>
-<td style="text-align:right;">
-0.2072662
-</td>
-<td style="text-align:right;">
-0.8116878
-</td>
-<td style="text-align:right;">
-0.4246332
-</td>
-<td style="text-align:right;">
-0.5357138
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-2
+1
 </td>
 </tr>
 <tr>
@@ -3750,16 +3818,16 @@ versicolor
 87
 </td>
 <td style="text-align:right;">
-1.0663300
+0.9951237
 </td>
 <td style="text-align:right;">
-0.0954927
+0.0101817
 </td>
 <td style="text-align:right;">
-0.5377012
+0.5040639
 </td>
 <td style="text-align:right;">
-0.4028922
+0.3856276
 </td>
 <td style="text-align:left;">
 versicolor
@@ -3773,22 +3841,68 @@ versicolor
 88
 </td>
 <td style="text-align:right;">
-0.5754364
+0.5070521
 </td>
 <td style="text-align:right;">
--1.8143610
+-1.8225328
 </td>
 <td style="text-align:right;">
-0.3680992
+0.3368683
 </td>
 <td style="text-align:right;">
-0.1372490
+0.1236919
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+89
+</td>
+<td style="text-align:right;">
+-0.3470731
+</td>
+<td style="text-align:right;">
+-0.2189076
+</td>
+<td style="text-align:right;">
+0.1696726
+</td>
+<td style="text-align:right;">
+0.1236919
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+90
+</td>
+<td style="text-align:right;">
+-0.4690910
+</td>
+<td style="text-align:right;">
+-1.3643542
+</td>
+<td style="text-align:right;">
+0.1139407
+</td>
+<td style="text-align:right;">
+0.1236919
+</td>
+<td style="text-align:left;">
+versicolor
+</td>
+<td style="text-align:left;">
+1
 </td>
 </tr>
 <tr>
@@ -3796,68 +3910,22 @@ versicolor
 91
 </td>
 <td style="text-align:right;">
--0.4063508
+-0.4690910
 </td>
 <td style="text-align:right;">
--1.0981659
+-1.1352649
 </td>
 <td style="text-align:right;">
-0.3680992
+0.3368683
 </td>
 <td style="text-align:right;">
-0.0044274
+-0.0072760
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-92
-</td>
-<td style="text-align:right;">
-0.3299896
-</td>
-<td style="text-align:right;">
--0.1432390
-</td>
-<td style="text-align:right;">
-0.4811672
-</td>
-<td style="text-align:right;">
-0.2700706
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-93
-</td>
-<td style="text-align:right;">
--0.0381806
-</td>
-<td style="text-align:right;">
--1.0981659
-</td>
-<td style="text-align:right;">
-0.1419632
-</td>
-<td style="text-align:right;">
-0.0044274
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3865,91 +3933,45 @@ versicolor
 94
 </td>
 <td style="text-align:right;">
--1.0199678
+-1.0791804
 </td>
 <td style="text-align:right;">
--1.8143610
+-1.8225328
 </td>
 <td style="text-align:right;">
--0.2537749
+-0.2761824
 </td>
 <td style="text-align:right;">
--0.2612158
+-0.2692118
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-96
+95
 </td>
 <td style="text-align:right;">
--0.1609040
+-0.3470731
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.9061755
 </td>
 <td style="text-align:right;">
-0.2550312
+0.2254045
 </td>
 <td style="text-align:right;">
-0.0044274
+0.1236919
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-97
-</td>
-<td style="text-align:right;">
--0.1609040
-</td>
-<td style="text-align:right;">
--0.3819707
-</td>
-<td style="text-align:right;">
-0.2550312
-</td>
-<td style="text-align:right;">
-0.1372490
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-98
-</td>
-<td style="text-align:right;">
-0.4527130
-</td>
-<td style="text-align:right;">
--0.3819707
-</td>
-<td style="text-align:right;">
-0.3115652
-</td>
-<td style="text-align:right;">
-0.1372490
-</td>
-<td style="text-align:left;">
-versicolor
-</td>
-<td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3957,22 +3979,22 @@ versicolor
 100
 </td>
 <td style="text-align:right;">
--0.1609040
+-0.2250552
 </td>
 <td style="text-align:right;">
--0.6207024
+-0.6770862
 </td>
 <td style="text-align:right;">
-0.1984972
+0.1696726
 </td>
 <td style="text-align:right;">
-0.1372490
+0.1236919
 </td>
 <td style="text-align:left;">
 versicolor
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -3980,16 +4002,16 @@ versicolor
 101
 </td>
 <td style="text-align:right;">
-0.5754364
+0.5070521
 </td>
 <td style="text-align:right;">
-0.5729561
+0.4683604
 </td>
 <td style="text-align:right;">
-1.2726434
+1.2285784
 </td>
 <td style="text-align:right;">
-1.7311082
+1.6953064
 </td>
 <td style="text-align:left;">
 virginica
@@ -4003,22 +4025,22 @@ virginica
 102
 </td>
 <td style="text-align:right;">
--0.0381806
+-0.1030373
 </td>
 <td style="text-align:right;">
--0.8594341
+-0.9061755
 </td>
 <td style="text-align:right;">
-0.7638373
+0.7269915
 </td>
 <td style="text-align:right;">
-0.9341786
+0.9094992
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4026,16 +4048,16 @@ virginica
 104
 </td>
 <td style="text-align:right;">
-0.5754364
+0.5070521
 </td>
 <td style="text-align:right;">
--0.3819707
+-0.4479969
 </td>
 <td style="text-align:right;">
-1.0465073
+1.0056509
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 virginica
@@ -4046,48 +4068,25 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-106
+105
 </td>
 <td style="text-align:right;">
-2.1708407
+0.7510879
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-1.6118474
+1.1171146
 </td>
 <td style="text-align:right;">
-1.1998218
+1.3024028
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
 2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-107
-</td>
-<td style="text-align:right;">
--1.1426912
-</td>
-<td style="text-align:right;">
--1.3368976
-</td>
-<td style="text-align:right;">
-0.4246332
-</td>
-<td style="text-align:right;">
-0.6685354
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-3
 </td>
 </tr>
 <tr>
@@ -4095,16 +4094,16 @@ virginica
 108
 </td>
 <td style="text-align:right;">
-1.8026704
+1.7272310
 </td>
 <td style="text-align:right;">
--0.3819707
+-0.4479969
 </td>
 <td style="text-align:right;">
-1.4422454
+1.3957741
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 virginica
@@ -4118,68 +4117,22 @@ virginica
 109
 </td>
 <td style="text-align:right;">
-1.0663300
+0.9951237
 </td>
 <td style="text-align:right;">
--1.3368976
+-1.3643542
 </td>
 <td style="text-align:right;">
-1.1595753
+1.1171146
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-110
-</td>
-<td style="text-align:right;">
-1.6799470
-</td>
-<td style="text-align:right;">
-1.2891512
-</td>
-<td style="text-align:right;">
-1.3291774
-</td>
-<td style="text-align:right;">
-1.7311082
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-112
-</td>
-<td style="text-align:right;">
-0.6981598
-</td>
-<td style="text-align:right;">
--0.8594341
-</td>
-<td style="text-align:right;">
-0.8769053
-</td>
-<td style="text-align:right;">
-0.9341786
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4187,16 +4140,16 @@ virginica
 113
 </td>
 <td style="text-align:right;">
-1.1890534
+1.1171416
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-0.9899733
+0.9499190
 </td>
 <td style="text-align:right;">
-1.1998218
+1.1714349
 </td>
 <td style="text-align:left;">
 virginica
@@ -4210,45 +4163,22 @@ virginica
 114
 </td>
 <td style="text-align:right;">
--0.1609040
+-0.2250552
 </td>
 <td style="text-align:right;">
--1.3368976
+-1.3643542
 </td>
 <td style="text-align:right;">
-0.7073033
+0.6712596
 </td>
 <td style="text-align:right;">
-1.0670002
+1.0404670
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-115
-</td>
-<td style="text-align:right;">
--0.0381806
-</td>
-<td style="text-align:right;">
--0.6207024
-</td>
-<td style="text-align:right;">
-0.7638373
-</td>
-<td style="text-align:right;">
-1.5982866
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-3
+1
 </td>
 </tr>
 <tr>
@@ -4256,16 +4186,16 @@ virginica
 116
 </td>
 <td style="text-align:right;">
-0.6981598
+0.6290700
 </td>
 <td style="text-align:right;">
-0.3342244
+0.2392711
 </td>
 <td style="text-align:right;">
-0.8769053
+0.8384552
 </td>
 <td style="text-align:right;">
-1.4654650
+1.4333707
 </td>
 <td style="text-align:left;">
 virginica
@@ -4276,19 +4206,42 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-117
+118
 </td>
 <td style="text-align:right;">
-0.8208832
+2.2153026
 </td>
 <td style="text-align:right;">
--0.1432390
+1.6138070
 </td>
 <td style="text-align:right;">
-0.9899733
+1.6187016
 </td>
 <td style="text-align:right;">
-0.8013570
+1.3024028
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+119
+</td>
+<td style="text-align:right;">
+2.2153026
+</td>
+<td style="text-align:right;">
+-1.1352649
+</td>
+<td style="text-align:right;">
+1.7301654
+</td>
+<td style="text-align:right;">
+1.4333707
 </td>
 <td style="text-align:left;">
 virginica
@@ -4302,22 +4255,68 @@ virginica
 120
 </td>
 <td style="text-align:right;">
-0.2072662
+0.1409984
 </td>
 <td style="text-align:right;">
--2.0530927
+-2.0516221
 </td>
 <td style="text-align:right;">
-0.7073033
+0.6712596
 </td>
 <td style="text-align:right;">
-0.4028922
+0.3856276
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+121
+</td>
+<td style="text-align:right;">
+1.2391594
+</td>
+<td style="text-align:right;">
+0.2392711
+</td>
+<td style="text-align:right;">
+1.0613828
+</td>
+<td style="text-align:right;">
+1.4333707
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+122
+</td>
+<td style="text-align:right;">
+-0.3470731
+</td>
+<td style="text-align:right;">
+-0.6770862
+</td>
+<td style="text-align:right;">
+0.6155277
+</td>
+<td style="text-align:right;">
+1.0404670
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+1
 </td>
 </tr>
 <tr>
@@ -4325,68 +4324,22 @@ virginica
 125
 </td>
 <td style="text-align:right;">
-1.0663300
+0.9951237
 </td>
 <td style="text-align:right;">
-0.5729561
+0.4683604
 </td>
 <td style="text-align:right;">
-1.1030413
+1.0613828
 </td>
 <td style="text-align:right;">
-1.1998218
+1.1714349
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
 2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-126
-</td>
-<td style="text-align:right;">
-1.6799470
-</td>
-<td style="text-align:right;">
-0.3342244
-</td>
-<td style="text-align:right;">
-1.2726434
-</td>
-<td style="text-align:right;">
-0.8013570
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-127
-</td>
-<td style="text-align:right;">
-0.4527130
-</td>
-<td style="text-align:right;">
--0.6207024
-</td>
-<td style="text-align:right;">
-0.5942352
-</td>
-<td style="text-align:right;">
-0.8013570
-</td>
-<td style="text-align:left;">
-virginica
-</td>
-<td style="text-align:left;">
-3
 </td>
 </tr>
 <tr>
@@ -4394,16 +4347,16 @@ virginica
 128
 </td>
 <td style="text-align:right;">
-0.3299896
+0.2630163
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-0.6507693
+0.6155277
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 virginica
@@ -4417,16 +4370,16 @@ virginica
 129
 </td>
 <td style="text-align:right;">
-0.6981598
+0.6290700
 </td>
 <td style="text-align:right;">
--0.6207024
+-0.6770862
 </td>
 <td style="text-align:right;">
-1.0465073
+1.0056509
 </td>
 <td style="text-align:right;">
-1.1998218
+1.1714349
 </td>
 <td style="text-align:left;">
 virginica
@@ -4437,19 +4390,19 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-131
+130
 </td>
 <td style="text-align:right;">
-1.9253938
+1.6052131
 </td>
 <td style="text-align:right;">
--0.6207024
+-0.2189076
 </td>
 <td style="text-align:right;">
-1.3291774
+1.1171146
 </td>
 <td style="text-align:right;">
-0.9341786
+0.5165955
 </td>
 <td style="text-align:left;">
 virginica
@@ -4463,16 +4416,16 @@ virginica
 132
 </td>
 <td style="text-align:right;">
-2.5390109
+2.4593383
 </td>
 <td style="text-align:right;">
-1.7666146
+1.6138070
 </td>
 <td style="text-align:right;">
-1.4987794
+1.4515059
 </td>
 <td style="text-align:right;">
-1.0670002
+1.0404670
 </td>
 <td style="text-align:left;">
 virginica
@@ -4483,25 +4436,48 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-135
+134
 </td>
 <td style="text-align:right;">
-0.3299896
+0.5070521
 </td>
 <td style="text-align:right;">
--1.0981659
+-0.6770862
 </td>
 <td style="text-align:right;">
-1.0465073
+0.7269915
 </td>
 <td style="text-align:right;">
-0.2700706
+0.3856276
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+135
+</td>
+<td style="text-align:right;">
+0.2630163
+</td>
+<td style="text-align:right;">
+-1.1352649
+</td>
+<td style="text-align:right;">
+1.0056509
+</td>
+<td style="text-align:right;">
+0.2546598
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+1
 </td>
 </tr>
 <tr>
@@ -4509,16 +4485,16 @@ virginica
 136
 </td>
 <td style="text-align:right;">
-2.2935641
+2.2153026
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-1.3291774
+1.2843103
 </td>
 <td style="text-align:right;">
-1.4654650
+1.4333707
 </td>
 <td style="text-align:left;">
 virginica
@@ -4532,16 +4508,16 @@ virginica
 137
 </td>
 <td style="text-align:right;">
-0.5754364
+0.5070521
 </td>
 <td style="text-align:right;">
-0.8116878
+0.6974497
 </td>
 <td style="text-align:right;">
-1.0465073
+1.0056509
 </td>
 <td style="text-align:right;">
-1.5982866
+1.5643385
 </td>
 <td style="text-align:left;">
 virginica
@@ -4555,16 +4531,16 @@ virginica
 138
 </td>
 <td style="text-align:right;">
-0.6981598
+0.6290700
 </td>
 <td style="text-align:right;">
-0.0954927
+0.0101817
 </td>
 <td style="text-align:right;">
-0.9899733
+0.9499190
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 virginica
@@ -4575,19 +4551,19 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-141
+144
 </td>
 <td style="text-align:right;">
-1.0663300
+1.1171416
 </td>
 <td style="text-align:right;">
-0.0954927
+0.2392711
 </td>
 <td style="text-align:right;">
-1.0465073
+1.1728465
 </td>
 <td style="text-align:right;">
-1.5982866
+1.4333707
 </td>
 <td style="text-align:left;">
 virginica
@@ -4598,19 +4574,42 @@ virginica
 </tr>
 <tr>
 <td style="text-align:left;">
-142
+145
 </td>
 <td style="text-align:right;">
-1.3117768
+0.9951237
 </td>
 <td style="text-align:right;">
-0.0954927
+0.4683604
 </td>
 <td style="text-align:right;">
-0.7638373
+1.0613828
 </td>
 <td style="text-align:right;">
-1.4654650
+1.6953064
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+146
+</td>
+<td style="text-align:right;">
+0.9951237
+</td>
+<td style="text-align:right;">
+-0.2189076
+</td>
+<td style="text-align:right;">
+0.7827233
+</td>
+<td style="text-align:right;">
+1.4333707
 </td>
 <td style="text-align:left;">
 virginica
@@ -4624,22 +4623,45 @@ virginica
 147
 </td>
 <td style="text-align:right;">
-0.5754364
+0.5070521
 </td>
 <td style="text-align:right;">
--1.3368976
+-1.3643542
 </td>
 <td style="text-align:right;">
-0.7073033
+0.6712596
 </td>
 <td style="text-align:right;">
-0.9341786
+0.9094992
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+148
+</td>
+<td style="text-align:right;">
+0.7510879
+</td>
+<td style="text-align:right;">
+-0.2189076
+</td>
+<td style="text-align:right;">
+0.7827233
+</td>
+<td style="text-align:right;">
+1.0404670
+</td>
+<td style="text-align:left;">
+virginica
+</td>
+<td style="text-align:left;">
+2
 </td>
 </tr>
 <tr>
@@ -4647,22 +4669,22 @@ virginica
 150
 </td>
 <td style="text-align:right;">
-0.0845428
+0.0189806
 </td>
 <td style="text-align:right;">
--0.1432390
+-0.2189076
 </td>
 <td style="text-align:right;">
-0.7638373
+0.7269915
 </td>
 <td style="text-align:right;">
-0.8013570
+0.7785313
 </td>
 <td style="text-align:left;">
 virginica
 </td>
 <td style="text-align:left;">
-3
+1
 </td>
 </tr>
 </tbody>
@@ -4682,11 +4704,16 @@ virginica
 </div>
 <img src="Dim_Reduction_files/figure-html5/unnamed-chunk-6-2.png" width="624" />
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>Clusterdata</span>,mapping <span class='op'>=</span> <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>Sepal.Width</span>,y<span class='op'>=</span><span class='va'>Petal.Width</span>,color<span class='op'>=</span><span class='va'>Species</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>geom_point</span><span class='op'>(</span>alpha<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span> <span class='op'>+</span> 
-   <span class='fu'>geom_point</span><span class='op'>(</span>data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>Clusters</span><span class='op'>$</span><span class='va'>centers</span><span class='op'>)</span>, <span class='fu'>aes</span><span class='op'>(</span>color<span class='op'>=</span><span class='st'>"Cluster center"</span><span class='op'>)</span>, size<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>theme</span><span class='op'>(</span>legend.title <span class='op'>=</span> <span class='fu'>element_blank</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>ggtitle</span><span class='op'>(</span><span class='st'>"Iris Cluster Demonstration"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>Clusterdata</span>,mapping <span class='op'>=</span> <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>Sepal.Width</span>,y<span class='op'>=</span><span class='va'>Petal.Width</span>,color<span class='op'>=</span><span class='va'>Species</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>alpha<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span> <span class='op'>+</span> 
+   <span class='fu'>geom_point</span><span class='op'>(</span>data<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>Clusters</span><span class='op'>$</span><span class='va'>centers</span><span class='op'>)</span>, <span class='fu'>aes</span><span class='op'>(</span>color<span class='op'>=</span><span class='st'>"Cluster center"</span><span class='op'>)</span>, size<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>theme</span><span class='op'>(</span>legend.title <span class='op'>=</span> <span class='fu'>element_blank</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span><span class='fu'>ggtitle</span><span class='op'>(</span><span class='st'>"Iris Cluster Demonstration"</span><span class='op'>)</span>
 </code></pre>
 </div>
 <p><img src="Dim_Reduction_files/figure-html5/unnamed-chunk-6-3.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><style>.panelset{--panel-tab-font-family: inherit;}</style></p>
 </div>
 <h2 id="exercise-1">Exercise 1</h2>
 <p>Using the code above, answer the following question.</p>
@@ -4863,8 +4890,8 @@ PCA used 4 components as specified</code></pre>
 </p>
 </details>
 <ol start="2" type="1">
-<li>Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the <span class="math display">\[Clustering\]</span>(#clustering) section. Where are the new cluster centers? Does this look better or worse?</li>
-<li>What does the <span class="math display">\[set.seed\]</span>(<a href="https://r-coder.com/set-seed-r/)" class="uri">https://r-coder.com/set-seed-r/)</a> function in R do? Why use it? Should we have used it above?</li>
+<li>Change the `centers` hyper-parameter in the cluster finding code example to two (and four) in the <a href="#clustering">Clustering</a> section. Where are the new cluster centers? Does this look better or worse?</li>
+<li>What does the <a href="https://r-coder.com/set-seed-r/">set.seed</a> function in R do? Why use it? Should we have used it above?</li>
 </ol>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
@@ -4880,15 +4907,6 @@ PCA used 4 components as specified</code></pre>
 <div class="d-appendix">
 </div>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->

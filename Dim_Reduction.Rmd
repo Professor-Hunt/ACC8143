@@ -12,6 +12,8 @@ output:
 
 When confronted with a large, multi-dimensional data set, one approach to simplify any subsequent analysis is to reduce the number of dimensions (or features) that must be processed. In some cases, features can be removed from an analysis based on business logic, or the features that contain the most information can be quantified somehow. More generally, however, we can employ [dimensional reduction](https://en.wikipedia.org/wiki/Dimensionality_reduction), a machine learning technique that quantifies relationships between the original dimensions (or features, attributes, or columns of a DataFrame) to identify new dimensions that better capture the inherent relationships within the data.
 
+## PCA
+
 The standard technique to perform this is known as [principal component analysis](https://en.wikipedia.org/wiki/Principal_component_analysis), or PCA. Mathematically, we can derive PCA by using linear algebra to solve a set of linear equations. This process effectively rotates the data into a new set of dimensions, and by ranking the importance of the new dimensions, we can optimally select fewer dimensions for use in other machine learning algorithms.
 
 The *PCA* estimator requires one tunable hyper-parameter that specifies the target number of dimensions. This value can be arbitrarily selected, perhaps based on prior information, or it can be iteratively determined. After the model is created, we fit the model to the data and next create our new, rotated data set. This is demonstrated in the next code cell.
@@ -76,12 +78,28 @@ detach(package:plyr)
 
 ```
 
-### **Clustering** {#clustering}
+## **Clustering** {#clustering}
 
 The last machine learning technique we will explore in this notebook is [cluster finding](https://en.wikipedia.org/wiki/Cluster_analysis). In this introductory notebook, we will demonstrate one of the simplest clustering techniques, spatial clustering, which seeks to first find NN clusters in a data set and to subsequently identify to which cluster each instance (or data point) belongs. The specific algorithm we employ below is the [k-means algorithm](https://en.wikipedia.org/wiki/K-means_clustering), which is one of the simplest to understand. In this algorithm, we start with a guess for the number of clusters (again this can be based on prior information or iteratively quantified). We randomly place cluster centers in the data and determine how well the data *cluster* to these cluster centers. This information is used to pick new cluster centers, and the process continues until a solution converges (or we reach a predefined number of iterations).
 
 ```{r,echo=TRUE}
 
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+irisTrain <- iris[ trainIndex,]
+irisTest  <- iris[-trainIndex,]
+
+#normalize variables
+preProcValues <- preProcess(irisTrain, method = c("center", "scale"))
+trainTransformed <- predict(preProcValues, irisTrain)
+
+preProcValues <- preProcess(irisTest, method = c("center", "scale"))
+testTransformed <- predict(preProcValues, irisTest)
+
+#cluster
 Clusters<-kmeans(trainTransformed[,-5],centers=3)
 
 Clusters
@@ -119,8 +137,18 @@ ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Cluster)
 
 ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Cluster))+geom_point(alpha=0.5)+facet_wrap(~Species)
 
-ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species))+geom_point(alpha=0.5) + 
-   geom_point(data=as.data.frame(Clusters$centers), aes(color="Cluster center"), size=5) + theme(legend.title = element_blank())+ggtitle("Iris Cluster Demonstration")
+ggplot(data=Clusterdata,mapping = aes(x=Sepal.Width,y=Petal.Width,color=Species))+
+  geom_point(alpha=0.5) + 
+   geom_point(data=as.data.frame(Clusters$centers), aes(color="Cluster center"), size=5) + 
+  theme(legend.title = element_blank())+ggtitle("Iris Cluster Demonstration")
+```
+
+```{r panels, echo=FALSE}
+library(xaringan)
+library(xaringanExtra)
+#lets me use panels
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
 
 ## Exercise 1
@@ -254,5 +282,5 @@ Components4
 
 </details>
 
-2.  Change the \`centers\` hyper-parameter in the cluster finding code example to two (and four) in the \[Clustering\](#clustering) section. Where are the new cluster centers? Does this look better or worse?
-3.  What does the \[set.seed\](<https://r-coder.com/set-seed-r/)> function in R do? Why use it? Should we have used it above?
+2.  Change the \`centers\` hyper-parameter in the cluster finding code example to two (and four) in the [Clustering](#clustering) section. Where are the new cluster centers? Does this look better or worse?
+3.  What does the [set.seed](https://r-coder.com/set-seed-r/) function in R do? Why use it? Should we have used it above?
