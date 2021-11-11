@@ -144,8 +144,8 @@ trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
 irisTrain <- iris[ trainIndex,]
 irisTest  <- iris[-trainIndex,]
 
-ggplot(data=irisTrain,mapping = aes(x=Petal.Length,y=Petal.Width,color=Species))+geom_point(alpha=0.5) + 
-  geom_point(data=irisTest, color="darkred", shape=4) + 
+ggplot(data=irisTrain)+geom_point(mapping = aes(x=Petal.Length,y=Petal.Width,color=Species),alpha=0.5) + labs(color = "Training Species")+
+geom_point(data=irisTest, ,mapping = aes(x=Petal.Length,y=Petal.Width,shape=Species)) + labs(shape = "Testing Species") +
   ggtitle("The data")+
   theme(plot.title = element_text(hjust=0.5, size=10, face='bold'))
 
@@ -216,6 +216,164 @@ coord_flip()
 1.  Use the tips data and predict `sex`. Use only continuous variables. What are the results?
 2.  Use the tips data and predict `sex`. Use all of the variables. Did the model improve from 1?
 3.  What are the most important variables from 2?
+
+## Decision Surfaces
+
+```{r surface1}
+
+set.seed(1)
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+train <- iris[ trainIndex,]
+test  <- iris[-trainIndex,]
+
+IrisRF<- train(
+  form = factor(Species) ~ .,
+  data = train,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "rf",
+  tuneGrid=data.frame(mtry=1))
+
+
+pl = seq(min(iris$Petal.Length), max(iris$Petal.Length), by=0.1)
+pw = seq(min(iris$Petal.Width), max(iris$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+IrisRFGrid2 <- predict(IrisRF, newdata=lgrid)
+IrisRFGrid <- as.numeric(IrisRFGrid2)
+
+# get the points from the test data...
+testPred <- predict(IrisRF, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(IrisRFGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=IrisRFGrid),bins=10) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=IrisRFGrid2),alpha=.2) +
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width, shape=Species), size=2) + 
+  labs(shape = "Testing Species") +
+  geom_point(data=train, aes(x=Petal.Length, y=Petal.Width, color=Species), size=2, alpha=0.75)+
+  theme_bw()+ 
+  labs(color = "Training Species")+
+  ggtitle("Decision Surface mtry=1")
+ 
+
+```
+
+```{r surface2, echo=FALSE}
+
+set.seed(1)
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+train <- iris[ trainIndex,]
+test  <- iris[-trainIndex,]
+
+IrisRF<- train(
+  form = factor(Species) ~ .,
+  data = train,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "rf",
+  tuneGrid=data.frame(mtry=2))#why 3?
+
+
+pl = seq(min(iris$Petal.Length), max(iris$Petal.Length), by=0.1)
+pw = seq(min(iris$Petal.Width), max(iris$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+IrisRFGrid2 <- predict(IrisRF, newdata=lgrid)
+IrisRFGrid <- as.numeric(IrisRFGrid2)
+
+# get the points from the test data...
+testPred <- predict(IrisRF, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(IrisRFGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=IrisRFGrid),bins=10) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=IrisRFGrid2),alpha=.2) +
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width, shape=Species), size=2) + labs(shape = "Testing Species") +
+  geom_point(data=train, aes(x=Petal.Length, y=Petal.Width, color=Species), size=2, alpha=0.75)+
+  theme_bw()+ 
+  labs(color = "Training Species")+
+  ggtitle("Decision Surface mtry=2")#+
+  #scale_color_hue(labels=c('setosa', 'versicolor', 'virginica'))
+
+```
+
+```{r surface3, echo=FALSE}
+
+set.seed(1)
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+train <- iris[ trainIndex,]
+test  <- iris[-trainIndex,]
+
+IrisRF<- train(
+  form = factor(Species) ~ .,
+  data = train,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "rf",
+  tuneGrid=data.frame(mtry=3))#why 3?
+
+
+pl = seq(min(iris$Petal.Length), max(iris$Petal.Length), by=0.1)
+pw = seq(min(iris$Petal.Width), max(iris$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+IrisRFGrid2 <- predict(IrisRF, newdata=lgrid)
+IrisRFGrid <- as.numeric(IrisRFGrid2)
+
+# get the points from the test data...
+testPred <- predict(IrisRF, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(IrisRFGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=IrisRFGrid),bins=10) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=IrisRFGrid2),alpha=.2) +
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width, shape=Species), size=2) + labs(shape = "Testing Species") +
+  geom_point(data=train, aes(x=Petal.Length, y=Petal.Width, color=Species), size=2, alpha=0.75)+
+  theme_bw()+ 
+  labs(color = "Training Species")+
+  ggtitle("Decision Surface mtry=3")#+
+  #scale_color_hue(labels=c('setosa', 'versicolor', 'virginica'))
+```
 
 ## **Random Forrest: Regression**
 
@@ -302,7 +460,7 @@ plot(gain, main = "Gain Chart")
 
 perf <- ROCR::performance(pred,"lift","rpp")
 
-plot(perf, main="Lift curve", colorize=T) 
+plot(perf, main="Lift curve") 
 
 ```
 
