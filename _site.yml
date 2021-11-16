@@ -40,5 +40,7 @@ navbar:
           href: Support_Vector_Machine.html
         - text: "Bagging and Random Forest"
           href: BaggingRandomForest.html
+        - text: "Gradient Boosting"
+          href: Gradient_Boosting.html
 output: distill::distill_article
 theme: "theme.css"
