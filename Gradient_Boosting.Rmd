@@ -1,0 +1,431 @@
+---
+title: "Gradient Boosting"
+description: |
+  Introduction to Gradient Boosting
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+# Introduction to Boosting 
+
+This module introduces the concept of boosting, an ensemble learning technique in which weak learners are combined together by using weights. This iterative process is continued by modifying the weights to emphasize inaccurate predictions, which can then be better predicted in future iterations.
+
+## **Objectives**
+
+By the end of this lesson, you will be able to
+
+-   explain the concept of boosting,
+-   articulate the benefits of using boosting, and how it differs from bagging, and
+-   apply boosting algorithms, such as the gradient boosted decision tree
+
+# Boosting
+
+The [decision tree](https://en.wikipedia.org/wiki/Decision_tree) is one of the simplest machine learning algorithms to understand. Simple to develop and easy to apply, they quickly became a popular machine learning tool. However, they can be prone to overfitting the data, especially when they become too large. As a result, ensemble techniques were developed that combined the predictions from many decision trees, that in general are small and might be trained only on a fraction of the data, to make a more powerful meta-estimator.
+
+In the *Bagging* lesson, we explored the concept of bagging, which can be used to construct one type of ensemble estimator. Bagging employs bootstrap aggregation to first create samples of the original data set, which are each used to construct a weak learner, generally by using a decision tree. Finally, these weak learners are aggregated together to make a more powerful predictor.
+
+In this module, we introduce a second approach, known as [boosting](https://en.wikipedia.org/wiki/Boosting_(machine_learning)), where many weak learners, for example, very shallow decision trees (also known as *tree stumps*), are trained. The predictions from these weak learners are combined together, for example, by majority voting, and the results are used to generate weights for the input training data. These weights are used by the boosting algorithm to emphasize instances that are incorrectly predicted, and to deemphasize instances that are correctly predicted. This process continues iteratively, during which the weak learners eventually become more accurate.
+
+I introduce two algorithms that implement boosting: Gradient Tree Boosting and Adaboost. For space considerations, we focus most of the module on effectively using Gradient Boosted Trees (GBT). First, we demonstrate this algorithm on the Iris classification task, which also allows us to demonstrate how this algorithm can be used to compute feature importances, as well as use decision surfaces to explore different hyperparameters. Finally, the Adaboost algorithm is quickly presented by applying it to these same data sets.
+
+Throughout this module, you should think about how these results from boosting are different than the results from the other algorithms, in particular the bagging algorithms introduced in a different module. You also should explore how changes in the default hyperparameter values affect the performance of this algorithm.
+
+## **Formalism**
+
+While there are a number of different boosting algorithms two of the more popular ones are the [Adaboost](https://en.wikipedia.org/wiki/AdaBoost) algorithm, which is short for adaptive boosting, and the [Gradient Tree Boosting](https://en.wikipedia.org/wiki/Gradient_boosting) algorithm. The Adaboost algorithm works as the earlier boosting description outlined. Weights are generated in each iteration and used to improve the overall prediction of the aggregated weak learners. The Gradient Tree Boosting algorithm extends this to support arbitrary [cost (or loss)](http://scikit-learn.org/stable/modules/ensemble.html#gradient-boosting-loss) functions, beyond the minimization of the deviation between predicted and actual labels (classification), or least squares (regression).
+
+These two algorithms will both be explored in this module, although most of the module focuses on the Gradient Tree Boosting, with the Adaboost algorithm presented at the end for comparison purposes. The construction of the individual base learners is based on a permutation of the features when determining the best split. Thus, the individual learners can be different, even if they are constructed by using all of the training data. These and other characteristics of the Gradient Tree Boosting algorithm are controlled by a set of hyperparameters, many of which are the same as for bagging estimators. Some of the more useful hyperparameters include:
+
+-   n.trees	
+
+Integer specifying the total number of trees to fit. This is equivalent to the number of iterations and the number of basis functions in the additive expansion. Default is 100.
+
+-   interaction.depth	
+
+Integer specifying the maximum depth of each tree (i.e., the highest level of variable interactions allowed). A value of 1 implies an additive model, a value of 2 implies a model with up to 2-way interactions, etc. Default is 1.
+
+-   n.minobsinnode	
+
+Integer specifying the minimum number of observations in the terminal nodes of the trees. Note that this is the actual number of observations, not the total weight.
+
+-   shrinkage	
+
+a shrinkage parameter applied to each tree in the expansion. Also known as the learning rate or step-size reduction; 0.001 to 0.1 usually work, but a smaller learning rate typically requires more trees. Default is 0.1.
+
+## **Classification: Iris Data**
+
+Here we go again 😆
+
+```{r train}
+library(tidyverse)
+
+set.seed(1)
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+irisTrain <- iris[ trainIndex,]
+irisTest  <- iris[-trainIndex,]
+
+ggplot(data=irisTrain)+geom_point(mapping = aes(x=Petal.Length,y=Petal.Width,color=Species),alpha=0.5) + labs(color = "Training Species")+
+geom_point(data=irisTest, ,mapping = aes(x=Petal.Length,y=Petal.Width,shape=Species)) + labs(shape = "Testing Species") +
+  ggtitle("The data")+
+  theme(plot.title = element_text(hjust=0.5, size=10, face='bold'))
+
+
+```
+
+#### The Model
+
+```{r gb1}
+
+set.seed(1)
+#added something here
+IrisXGB<- train(
+  form = factor(Species) ~ .,
+  data = irisTrain,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "gbm",
+  tuneLength = 20,
+  #add this please
+  verbose=FALSE)
+
+#IrisXGB
+knitr::kable(IrisXGB$bestTune)
+
+plot(IrisXGB)
+
+
+IrisXGB_Pred<-predict(IrisXGB,irisTest,type="prob")
+
+knitr::kable(IrisXGB_Pred)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "50%",height="300px")
+
+irisXGBtestpred<-cbind(IrisXGB_Pred,irisTest)
+
+irisXGBtestpred<-irisXGBtestpred%>%
+  mutate(prediction=if_else(setosa>versicolor & setosa>virginica,"setosa",
+                            if_else(versicolor>setosa & versicolor>virginica, "versicolor",
+                                    if_else(virginica>setosa & virginica>versicolor,"virginica", "PROBLEM"))))
+
+table(irisXGBtestpred$prediction)
+
+XgbConfusion<-confusionMatrix(factor(irisXGBtestpred$prediction),factor(irisXGBtestpred$Species))
+
+XgbConfusion
+```
+
+Lets have a little fun with ggplot and the confusion matrix 😈
+
+```{r moreconfusion}
+
+ggplot(as.data.frame(XgbConfusion$table))+ 
+  geom_raster(aes(x=Reference, y=Prediction, fill=Freq)) + 
+  geom_text(aes(x=Reference, y=Prediction, label=Freq)) +
+   scale_fill_gradient2( low = "darkred", high = "pink", na.value="black", name = "Freq" )+
+  scale_x_discrete(name="Actual Class") + 
+  scale_y_discrete(name="Predicted Class")+
+  ggtitle("Confusion is fun")+
+  theme(plot.title = element_text(hjust=0.5, size=10, face='bold'))
+
+```
+
+How did I figure out how to make the above graph? 🤔
+
+### **Gradient Tree Boosting: Feature Importance**
+
+We can leverage the fact that the gradient tree boosting algorithm builds many weak learners and iteratively improves them to determine the importance of the different features. By default, these values simply encode the importance of a feature, where higher values are more important. We can take the ratio of these values, however, to compute a relative importance.
+
+```{r xgbimp}
+library(gbm)
+
+summary(IrisXGB)
+
+#had to add something 
+V<-caret::varImp(IrisXGB, n.trees=500)$importance%>%
+  arrange(desc(Overall))
+
+knitr::kable(V)
+
+ggplot2::ggplot(V, aes(x=reorder(rownames(V),Overall), y=Overall)) +
+geom_point( color="blue", size=4, alpha=0.6)+
+geom_segment( aes(x=rownames(V), xend=rownames(V), y=0, yend=Overall), 
+color='skyblue') +
+xlab('Variable')+
+ylab('Overall Importance')+
+theme_light() +
+coord_flip() 
+
+```
+
+### **Gradient Tree Boosting: Decision Surface**
+
+```{r xgbdecision}
+
+set.seed(1)
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(iris$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+train <- iris[ trainIndex,]
+test  <- iris[-trainIndex,]
+
+mygrid<-expand.grid(interaction.depth = seq(2, 11, by = 2),
+                        n.trees = seq(50, 250, by = 50),
+                        n.minobsinnode = 10,
+                        shrinkage = c(0.01, 0.1))
+
+Irisgbm<- train(
+  form = factor(Species) ~ .,
+  data = train,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "gbm",
+  tuneGrid = mygrid,
+  verbose=FALSE)
+
+knitr::kable(Irisgbm$bestTune)
+
+
+pl = seq(min(iris$Petal.Length), max(iris$Petal.Length), by=0.1)
+pw = seq(min(iris$Petal.Width), max(iris$Petal.Width), by=0.1)
+
+# generates the boundaries for your graph
+lgrid <- expand.grid(Petal.Length=pl, 
+                     Petal.Width=pw,
+                     Sepal.Length = 5.4,
+                     Sepal.Width=3.1)
+
+IrisgbmGrid2 <- predict(Irisgbm, newdata=lgrid)
+IrisgbmGrid <- as.numeric(IrisgbmGrid2)
+
+# get the points from the test data...
+testPred <- predict(Irisgbm, newdata=test)
+testPred <- as.numeric(testPred)
+# this gets the points for the testPred...
+test$Pred <- testPred
+
+probs <- matrix(IrisgbmGrid, length(pl), length(pw))
+
+ggplot(data=lgrid) + stat_contour(aes(x=Petal.Length, y=Petal.Width, z=IrisgbmGrid),bins=10) +
+  geom_point(aes(x=Petal.Length, y=Petal.Width, colour=IrisgbmGrid2),alpha=.2) +
+  geom_point(data=test, aes(x=Petal.Length, y=Petal.Width, shape=Species), size=2) + 
+  labs(shape = "Testing Species") +
+  geom_point(data=train, aes(x=Petal.Length, y=Petal.Width, color=Species), size=2, alpha=0.75)+
+  theme_bw()+ 
+  labs(color = "Training Species")+
+  ggtitle("Decision Surface")
+```
+
+# Exercise 1
+
+1.  Use the tips data set and gradient boosting to predict `sex`. Include a confusion matrix, roc curve, gain chart, and a lift chart. Look back at the random forest module for the roc, gain, and lift code. 👍 😄
+
+```{r gbmex1, eval=FALSE}
+
+library(curl)
+
+load(curl("https://raw.githubusercontent.com/Professor-Hunt/ACC8143/main/data/tips.rda"))
+
+
+
+
+```
+
+## **Gradient Tree Boosting: Regression**
+
+We can also use gradient boosting to perform regression; however, in this case we attempt to create trees whose leaf nodes contain data that are nearby in the overall feature space. To predict a continuous value from a tree, we either have leaf nodes with only one feature, and use the relevant feature from that instance as our predictor, or we compute summary statistics from the instances in the appropriate leaf node, such as the mean or mode. The boosting algorithm combines these predictions together to (hopefully) make a more accurate estimator.
+
+Lets get some more [interesting data:](https://github.com/tyluRp/ucimlr)
+
+```{r ucimlr}
+
+# install.packages("devtools")
+# devtools::install_github("tyluRp/ucimlr")
+
+
+knitr::kable(ucimlr::ucidata())%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+
+
+auto_mpg<-ucimlr::auto_mpg
+
+knitr::kable(head(auto_mpg,100))%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "100%",height="300px")
+
+  
+```
+
+#### The model
+
+```{r gbmreg}
+
+auto_mpg<-na.omit(auto_mpg)
+
+set.seed(1)
+#lets split the data 60/40
+library(caret)
+trainIndex <- createDataPartition(auto_mpg$mpg, p = .6, list = FALSE, times = 1)
+
+#grab the data
+mpgTrain <- auto_mpg[ trainIndex,]
+mpgTest  <- auto_mpg[-trainIndex,]
+
+mpggbm<- train(
+  form = mpg ~ cylinders+displacement+horsepower+weight+acceleration+factor(model_year)+factor(origin),
+  data = mpgTrain,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10),
+  method = "gbm",
+  tuneLength = 10,
+  verbose=FALSE)
+
+knitr::kable(mpggbm$bestTune)
+
+summary(mpggbm)
+
+mpggbm_Pred<-predict(mpggbm,mpgTest)
+
+knitr::kable(mpggbm_Pred)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "50%",height="300px")
+
+mpggbmtestpred<-cbind(mpggbm_Pred,mpgTest)
+
+#root mean squared error
+RMSE(mpggbmtestpred$mpggbm_Pred,mpggbmtestpred$mpg)
+#best measure ever...RSquared 
+cor(mpggbmtestpred$mpggbm_Pred,mpggbmtestpred$mpg)^2
+```
+
+```{r pdp, eval=FALSE}
+install.packages("pdp")
+```
+
+## **Gradient Tree Boosting: Partial Dependence**
+
+The feature importance shown earlier provides an indication of the relative importance of the different features, for either classification or regression. An alternate approach to understanding the relationship between features and their importance involves the construction of [*partial dependence*](http://scikit-learn.org/stable/auto_examples/ensemble/plot_partial_dependence.html) plots. These plots show the dependence between the regression model and a specific set of features, selected from the set of all features used to build the regression model. To calculate this dependence, we marginalize over all of the other features, so that the effect of the target feature (or features) is measured. Generally, this set is restricted to a small number, such as one or two, since it becomes hard to visualize larger relationships.
+
+```{r pdp2, warning=FALSE,message=FALSE}
+
+pdp::partial(mpggbm, pred.var = "cylinders", plot = TRUE, rug = TRUE,
+              plot.engine = "ggplot2")
+
+gridExtra::grid.arrange(
+  pdp::partial(mpggbm, pred.var = "cylinders", plot = TRUE, rug = TRUE,
+              plot.engine = "ggplot2"),
+  pdp::partial(mpggbm, pred.var = "displacement", plot = TRUE, rug = TRUE,
+              plot.engine = "ggplot2"),
+  ncol = 2 
+)
+
+  pdp::partial(mpggbm, pred.var = c("cylinders","displacement"), plot = TRUE, rug = TRUE,
+              plot.engine = "ggplot2")
+ 
+```
+
+```{r pdp3}
+
+# Compute partial dependence data for lstat and rm
+pd <- pdp::partial(mpggbm, pred.var = c("weight","displacement"))
+
+# Default PDP
+pdp::plotPartial(pd)
+
+# Add contour lines and use a different color palette
+rwb <- colorRampPalette(c("darkred", "white", "pink"))
+pdp::plotPartial(pd, contour = TRUE, col.regions = rwb)
+
+# 3-D surface
+pdp::plotPartial(pd, levelplot = FALSE, zlab = "mpg", colorkey = TRUE, 
+                    screen = list(z = -20, x = -60))
+```
+
+```{r 3d_pdp}
+#install.packages("akima")
+###### Interactive 3D partial dependence plot with coloring scale ######
+
+# Interpolate the partial dependence values
+dens <- akima::interp(x = pd$weight, y = pd$displacement, z = pd$yhat)
+
+# 3D partial dependence plot with a coloring scale
+p3 <- plotly::plot_ly(x = dens$x, 
+          y = dens$y, 
+          z = dens$z,
+          colors = c("blue", "grey", "red"),
+          type = "surface")
+# Add axis labels for 3D plots
+
+p3 <- p3%>% plotly::layout(scene = list(xaxis = list(title = 'Weight'),
+                     yaxis = list(title = 'Displacement'),
+                     zaxis = list(title = 'Predicted Mpg')))
+# Show the plot
+p3
+```
+
+## **Adaboost**
+
+We now turn our attention to the second boosting algorithm presented in this module, [Adaboost](https://en.wikipedia.org/wiki/AdaBoost), which is short for *Adaptive Boosting*. Adaboost was an early boosting algorithm that iteratively adjusts the weights on the training data to improve the performance of the ensemble algorithm. The weights are adjusted on each iteration to increase the predictive accuracy on the incorrectly predicted training data.
+
+```{r ada}
+set.seed(1)
+#lets split the data 60/40
+iris2<-iris%>%
+  filter(Species!="versicolor")
+iris2$Species<-factor(iris2$Species)
+  
+library(caret)
+trainIndex <- createDataPartition(iris2$Species, p = .6, list = FALSE, times = 1)
+
+#grab the data
+irisTrain <- iris2[ trainIndex,]
+irisTest  <- iris2[-trainIndex,]
+
+#added something here
+Irisadaboost<- train(
+  form = factor(Species) ~ .,
+  data = irisTrain,
+  #here we add classProbs because we want probs
+  trControl = trainControl(method = "cv", number = 10,
+                           classProbs =  TRUE),
+  method = "adaboost",
+  tuneLength = 5,
+  #add this please
+  verbose=FALSE)
+
+#Irisadaboost
+knitr::kable(Irisadaboost$bestTune)
+
+plot(Irisadaboost)
+
+
+Irisadaboost_Pred<-predict(Irisadaboost,irisTest,type="prob")
+
+knitr::kable(Irisadaboost_Pred)%>%
+  kableExtra::kable_styling("striped")%>%
+  kableExtra::scroll_box(width = "50%",height="300px")
+
+irisadaboosttestpred<-cbind(Irisadaboost_Pred,irisTest)
+
+irisadaboosttestpred<-irisadaboosttestpred%>%
+  mutate(prediction=if_else(setosa>virginica,"setosa",
+                            if_else(virginica>setosa,"virginica", "PROBLEM")))
+
+table(irisadaboosttestpred$prediction)
+
+adaboostConfusion<-confusionMatrix(factor(irisadaboosttestpred$prediction),factor(irisadaboosttestpred$Species))
+
+adaboostConfusion
+
+
+```
