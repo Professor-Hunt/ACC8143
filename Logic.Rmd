@@ -220,6 +220,39 @@ Example: Professor Hunt is a conspiracy theorist so you should not believe anyth
 ```{=html}
 </p>
 </div>
+```
+```{=html}
+<button type="button" class="collapsible">Ignoratio elenchi</button>
+<div class="content">
+  <p>
+```
+### Red Herring
+
+##### The latin means "Irrelevant Conclusion"
+
+**Description:** Attempting to redirect the argument to another issue to which the person doing the redirecting can better respond. The *red herring* is a deliberate diversion of attention with the intention of trying to abandon the original argument.
+
+**Logical Form:**
+
+Argument A is presented by person 1.
+
+Person 2 introduces argument B.
+
+Argument A is abandoned.
+
+**Example:**
+
+Person 1: The vaccine is unnecessary for children.
+
+Person 2: We have to do what is best for society.
+
+Argument shifts to society and discussion of children is abandoned.
+
+Note: The red herring fallacy differs from the straw man fallacy in that the opponent's argument or position is not misrepresented - the opponent's argument is simply abandoned.
+
+```{=html}
+</p>
+</div>
 
 <script>
 var coll = document.getElementsByClassName("collapsible");
