@@ -42,5 +42,7 @@ navbar:
           href: BaggingRandomForest.html
         - text: "Gradient Boosting"
           href: Gradient_Boosting.html
+        - text: "Neural Networks"
+          href: Neural_Networks.html
 output: distill::distill_article
 theme: "theme.css"
