@@ -43,6 +43,6 @@ navbar:
         - text: "Gradient Boosting"
           href: Gradient_Boosting.html
         - text: "Neural Networks"
-          href: Neural_Networks.html
+          href: Neural_Net.html
 output: distill::distill_article
 theme: "theme.css"
